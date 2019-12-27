@@ -1,0 +1,65 @@
+123                 123                                        UNIT             0.00
+123/1234            123/1234                                   UNIT             0.00
+6514/120/00946      6514/120/00946                             UNIT             0.00
+8752/060/0782       8752/060/0782                              UNIT             1.00
+8752/060/0793       8752/060/0793                              UNIT             0.00
+8752/060/0832       8752/060/0832                              UNIT            20.00
+ANT                 ANTENNA                                    UNIT            21.00
+BOM                 BOM                                        UNIT             3.00
+BOMBOM              BOM of BOM                                 UNIT            31.00
+C-PRE-100           CELCOM PREPAID-RM100                       UNIT            92.00
+C-PRE-50            CELCOM PREPAID-RM50                        UNIT            20.00
+COVER               HANDPHONE COVER                            UNIT            72.00
+D-PRE-100           DIGI PREPAID-RM100                         UNIT            31.00
+D-PRE-50            DIGI PREPAID-RM50                          UNIT            15.00
+E-A1018s            ERICSSON A1018s                            UNIT            15.00
+E-BAT               ERICSSON BATTERY                           UNIT            12.00
+E-T10s              ERICSSON T10s                              UNIT            28.00
+E-T18s              ERICSSON T18s                              UNIT            38.00
+E-T20s              ERICSSON T20s                              UNIT            25.00
+E-T28s              ERICSSON T28s                              UNIT            70.00
+FTW                 FTW                                        UNIT             0.00
+HFK                 HANDS FREE KITS                            UNIT            50.00
+HSEG                HOUSING                                    UNIT            30.00
+JMAST-BLCK-L        JMAST-BLCK-L                               UNIT             0.00
+JMAST-BLCK-M        JMAST-BLCK-M                               UNIT             0.00
+JMAST-BLCK-S        JMAST-BLCK-S                               UNIT             0.00
+JMAST-BLUE-L        JMAST-BLUE-L                               UNIT             0.00
+JMAST-BLUE-M        JMAST-BLUE-M                               UNIT             0.00
+JMAST-BLUE-S        JMAST-BLUE-S                               UNIT             0.00
+JMAST-RED -L        JMAST-RED -L                               UNIT             0.00
+JMAST-RED -M        JMAST-RED -M                               UNIT             0.00
+JMAST-RED -S        JMAST-RED -S                               UNIT             0.00
+JMAST-WHIT-L        JMAST-WHIT-L                               UNIT             0.00
+JMAST-WHIT-M        JMAST-WHIT-M                               UNIT             0.00
+JMAST-WHIT-S        JMAST-WHIT-S                               UNIT             0.00
+JMAST-YELL-L        JMAST-YELL-L                               UNIT             0.00
+JMAST-YELL-M        JMAST-YELL-M                               UNIT             0.00
+JMAST-YELL-S        JMAST-YELL-S                               UNIT             0.00
+JSON2               JSON2                                      UNIT            10.00
+KP-RAIN             KEYPAD - RAINBOW                           UNIT            16.00
+LCLIP               LEATHER CLIP                               UNIT            23.00
+M-BAT               MOTOLORA BATTERY                           UNIT             0.00
+M-P7689             MOTOLORA P7689                             UNIT             0.00
+M-PRE-120           MAXIS PREPAID-RM120                        UNIT           -12.00
+M-PRE-60            MAXIS PREPAID-RM60                         UNIT             0.00
+M-R-GP300           MOTOLORA RADIUS GP300                      UNIT        -1,080.00
+M-STV               MOTOLORA STAR TAC V SERIES                 UNIT            -1.00
+M-STX               MOTOLORA STAR TAC X SERIES                 UNIT             0.00
+M-TB LS             MOTOLORA TRI-BAND L - SERIES               UNIT             0.00
+N-3210              NOKIA 3210                                 UNIT             1.00
+N-3310              NOKIA 3310                                 UNIT           -14.00
+N-3350              NOKIA 3350                                 UNIT            -1.00
+N-5130              NOKIA 5130                                 UNIT           -12.00
+N-7110              NOKIA 7110                                 UNIT            -1.00
+N-8210              NOKIA 8210                                 UNIT             0.00
+N-8250              NOKIA 8250                                 UNIT            -2.00
+N-8850              NOKIA 8850                                 UNIT            -4.00
+N-9110C             NOKIA 9110 COMMUNICATOR                    UNIT             0.00
+N-BAT               NOKIA BATTERY                              UNIT           -18.00
+N-CHARGER           NOKIA CHARGER                              UNIT             0.00
+P-N-3120            NOKIA 3120 PACKAGE                          PKG             0.00
+P-N-7110            NOKIA 7110 PACKAGE                          PKG            -1.00
+P-N-8250            NOKIA 8250 PACKAGE                          PKG             0.00
+STK1                STK1                                       UNIT           100.00
+Total Items 64                                         Total Quantity          -422.00

@@ -1,0 +1,29 @@
+txtImport.php : will sum the shipping fee and lzd fee for same refno of multiple items
+class\orders
+html\nav.html
+ajax\
+
+\Orders\*
+RecordInserter.php
+RecordEditor.php
+RecordInserterCSV.php
+RecordUpdater.php
+
+js\RecordEditor.js
+js\RecordInserter.js
+js\SkuManager.js
+js\RecordDeleter.js
+
+db table:
+--cashsales
+orders
+orders_temp
+seller_sku
+///
+
+js\RecordInserter.js
+
+RecordUpdater.php
+Orders\StockOutTable.php
+Orders\Record.php
+Orders\Factory\DateStockOut.php

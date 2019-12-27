@@ -1,0 +1,10 @@
+{
+    "autoload": {
+        "classmap": [
+            "./inc/class/"
+        ]
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.10"
+    }
+}

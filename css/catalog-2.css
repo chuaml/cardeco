@@ -1,0 +1,193 @@
+/* CSS */
+
+:root{
+	--M_UNIT: 1mm;
+	--A4_WIDTH_INT: 210;
+	--A4_HEIGHT_INT: 297;
+	--CONTENT_MARGIN_INT: 25.4;
+	--ITEM_MARGIN_INT: 2;
+	--IMG_MARGIN_INT: 2;
+	--A4_WIDTH: calc(var(--A4_WIDTH_INT) * var(--M_UNIT));
+	--A4_HEIGHT: calc(var(--A4_HEIGHT_INT) * var(--M_UNIT));
+	--CONTENT_MARGIN: calc(var(--CONTENT_MARGIN_INT) * var(--M_UNIT));
+	--ITEM_MARGIN: calc(var(--ITEM_MARGIN_INT) * var(--M_UNIT));
+	--IMG_MARGIN: calc(var(--IMG_MARGIN_INT) * var(--M_UNIT));
+	--PRINT_PG_HEIGHT: var(--A4_HEIGHT);
+
+	--HEADER_BTM_MARGIN: 1%;
+	--FOOTER_TOP_MARGIN: 1%;
+	--HEADER_FOOTER_LEFT_RIGHT_MARGIN: 98%;
+	--HEADER_HEIGHT: calc(8% - var(--ITEM_MARGIN) - var(--HEADER_BTM_MARGIN));
+	--FOOTER_HEIGHT: calc(8% - var(--ITEM_MARGIN) - var(--FOOTER_TOP_MARGIN));
+	--CONTENT_HEIGHT: 85%;
+	--CONTENT_WIDTH: calc(100% - 2 * var(--CONTENT_MARGIN));
+
+	--num_items: 1;
+	--num_imgs: 1;
+}
+
+body{
+	background-color: rgb(158, 157, 157);
+	width: var(--A4_WIDTH);
+	/* to centre page on screen*/
+	margin: 0 auto;
+}
+
+.a4_page{
+	--PRINT_PG_HEIGHT: var(--A4_HEIGHT);
+	background-color: white;
+	min-width: var(--A4_WIDTH);
+	min-height: var(--PRINT_PG_HEIGHT);
+	width: var(--A4_WIDTH);
+	height: var(--PRINT_PG_HEIGHT);
+	max-width: var(--A4_WIDTH);
+	max-height: var(--PRINT_PG_HEIGHT);
+	overflow: hidden;
+	display: block;
+	page-break-after: always;
+}
+
+.header{
+	width: var(--HEADER_FOOTER_LEFT_RIGHT_MARGIN);
+	height: var(--HEADER_HEIGHT);
+	margin: 0 auto var(--HEADER_BTM_MARGIN) auto;
+	position: relative;
+	/*background-color: red;*/
+}
+
+.header > img{
+	min-width: 100%;
+	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	position: absolute;
+	top: 0;
+}
+
+.footer{
+	width: var(--HEADER_FOOTER_LEFT_RIGHT_MARGIN);
+	height: var(--FOOTER_HEIGHT);
+	margin: var(--FOOTER_TOP_MARGIN) auto 0 auto;
+	position: relative;
+	/*background-color: green;*/
+}
+
+.footer > img{
+	min-width: 100%;
+	width: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	position: absolute;
+	bottom: 0;
+}
+
+.content{
+	width: var(--CONTENT_WIDTH);
+	height: var(--CONTENT_HEIGHT);
+	/*background-color: cyan;*/
+	display: flex;
+	flex-flow: row wrap;
+	align-content: flex-start;
+	margin: 0 var(--CONTENT_MARGIN); 
+}
+
+.item{
+	/*background-color: black;*/
+	width: calc(100% / var(--num_items) - 2 * var(--ITEM_MARGIN));
+	height: calc(100% / var(--num_items) - 2 * var(--ITEM_MARGIN));
+	margin: var(--ITEM_MARGIN);
+}
+
+.img_container{
+	--img_c_width: calc((var(--A4_WIDTH) - 2 * var(--CONTENT_MARGIN)) / var(--num_items) - 2 * var(--ITEM_MARGIN));
+	width: 100%;
+	height: var(--img_c_width);
+	/*background-color: red;*/
+	display: flex;
+	flex-direction: row;
+    flex-wrap: wrap-reverse;
+	justify-content: space-evenly;
+	align-items: center;
+	align-content: center;
+}
+
+.img_container > div{
+	--MAX_WIDTH: var(--img_c_width);
+	--img_margin: calc(var(--IMG_MARGIN) / var(--num_items));
+	margin: var(--img_margin);
+	width: calc((var(--MAX_WIDTH) / var(--num_imgs)) - (2 * var(--img_margin)));
+	height: calc((var(--MAX_WIDTH) / var(--num_imgs)) - (2 * var(--img_margin)));;
+	/*background-color: yellow;*/
+	position: relative;
+}
+
+.img_container > div > img{
+	min-width: 100%;
+	min-height: 100%;
+	width: 100%;
+	height: 100%;
+	max-width: 100%;
+	max-height: 100%;
+	overflow: hidden;
+	position: absolute;
+}
+/* Watermark */
+.img_container > div > img:nth-child(2){
+	mix-blend-mode: multiply;
+	opacity: .5;
+}
+
+.description {
+	--padding: 1%;
+	--top_padding: 4%;
+	width: calc(100% - 2 * var(--padding));
+	height: calc(37.5% - (2 * .6 * var(--padding)) - var(--top_padding));
+	overflow-wrap: break-word;
+	padding: var(--padding);
+	padding-top: var(--top_padding);
+	/*background-color: blue;*/
+}
+
+.description > table{
+	word-break: break-word;
+	font-size: calc((9 * var(--M_UNIT)) / var(--num_items));
+}
+
+.description > table th{
+	--font-size: calc((8 * var(--M_UNIT)) / var(--num_items));
+	font-size: var(--font-size);
+	width: 30%;
+	height: calc(var(--font-size) * 2);
+}
+
+
+
+/* media queries */
+
+/* Portrait & 100% scale only */
+
+@media print{
+	@page {
+		size: a4 portrait;
+	}
+}
+
+@media only screen{
+	.a4_page{
+		margin-top: 8px;
+		margin-bottom: 7px;
+	}
+}
+
+@media only print{
+	body{background-color: white;}
+	.a4_page{--PRINT_PG_HEIGHT: calc(var(--A4_HEIGHT) - (2 * var(--M_UNIT)));}
+}
+
+/*
+@media print and (orientation:landscape){
+	body{background-color: black;}
+}
+*/

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <h3>Insert Orders Record</h3>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="orders" accept=".csv" required>
+
+        <select name="platform" required>
+            <option value="" selected>Please select</option>
+            <option value="Lazada">Lazada</option>
+            <option value="Shopee">Shopee</option>
+        </select>
+
+        <input type="submit" />
+
+        <div class="error">
+            <?php echo $errorMsg; ?>
+        </div>
+        <p>
+            <?php echo $msg; ?>
+        </p>
+    </form>
+
+    <form id="deleteRecord" method="POST" enctype="multipart/form-data">
+
+        <datalist id="insertLogIdList">
+            <?php 
+            $tmp_option = '';
+            foreach($insertLogId as $r){
+                $tmp_option .= '<option value="' .$r['id'] .'">'
+                            .$r['fileName']
+                            .'</option>';
+                }
+            echo $tmp_option;
+            ?>
+        </datalist>
+        <hr>
+        <p>inserted history: </p>
+        <input type="text" list="insertLogIdList" id="insertLogId" name="insertLogId" maxlength="9" placeholder="inserted"
+            required />
+        <input type="submit" name="submit" value="delete" />
+    </form>
+    <p id="ordersMonthlyRecord"></p>
+</body>
+
+<?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/RecordDeleter.js"></script>
+
+</html>

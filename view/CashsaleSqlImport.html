@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <div class="paper">
+        <h3>Convert To SQL Import</h3>
+    <form method="post" enctype="multipart/form-data" onsubmit="showLoadingIcon()">
+     <label>
+         Submit monthly record .xlsx Excel file<br>
+         <input type="file" name="dataFile" accept=".xlsx" required>
+         <br>
+         <i>*must include header at first row</i>
+        </label>
+     <br><br>
+        
+    File tab: 
+     <select name="fileTab" required>
+        <option value="">Please Select...</option>
+        <option value="Lazada">Lazada</option>
+        <option value="Shopee">Shopee</option>
+        <option value="Lelong">Lelong</option>
+        <option value="Cash Bil">Cash Bil</option>
+     </select>
+     =>
+     <label>
+        start at row:
+         <input type="number" name="startRowPos" value="1" step="1" min="1" max="9999999" placeholder="row start including header..." required />
+
+     </label>
+   
+    <br><br>
+    <label>limit rows <input type="checkbox" onclick="chk(this)"/></label>
+    <br>
+    <input type="number" name="lastRowPos" id="lastRowPos" value="-1" step="1" min="-1" max="9999999" placeholder="last row..." disabled />
+    
+    <br><br>
+    <input type="submit" name="submit"> <span id="loadingIcon"></span>
+    
+    </form>
+    <p class="error">
+        <?= $errmsg; ?>
+    </p>
+    </div>
+    </body>
+
+<script>
+    function chk(checkbox){
+        let limitRow = document.getElementById('lastRowPos');
+        if(checkbox.checked === true){
+            limitRow.value = 100;
+            limitRow.disabled = false;
+        } else {
+            limitRow.value = -1;
+            limitRow.disabled = true;
+        }
+    }
+
+    let loadingIcon = null;
+    function showLoadingIcon(){
+        let div = document.getElementById('loadingIcon');
+        let symbol = div.innerText;
+        loadingIcon = setInterval(function(){
+            if(symbol === '--'){symbol = '\\';}
+            else if(symbol ==='\\'){symbol = '|';}
+            else if(symbol === '|'){symbol = '/';}
+            else if(symbol === '/'){symbol = '--';}
+            else{symbol = '--';}
+            div.innerText = symbol;
+        }, 160)
+        setTimeout(function(){
+            clearInterval(loadingIcon);
+            document.getElementById('loadingIcon').innerText = '';
+        }, 10000);
+    }
+</script>
+
+</html>

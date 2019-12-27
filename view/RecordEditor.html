@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html'); ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <div id="result_pages">
+        <?php echo $pageFloor; ?>
+    </div>
+
+
+    <div>
+        <form method="GET" name="SearchForm">
+            <input type="search" name="searchValue" maxlength="255" />
+            <input type="submit" value="Search" />
+            <select name="searchField">
+                <option value="orderNum">Order Number</option>
+                <option value="date">date</option>
+                <option value="dateStockOut">date stock out</option>
+            </select>
+
+            <select name="platformCharges">
+                <option value="ALL">All</option>
+                <option value="Lazada">Lazada</option>
+                <option value="Shopee">Shopee</option>
+                <option value="11Street">11Street</option>
+                <option value="GHL">GHL</option>
+            </select>
+        </form>
+
+        <form method="GET">
+            <span>Record Month: </span>
+            <input type="month" name="RecordMonth" onchange="submit()" max="<?php echo date_format(date_create(),'Y-m'); ?>"
+                value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" required />
+            <input type="submit" name="exportCSV[default]" value="Export" />
+            <input type="submit" name="exportCSV[sqlImport]" value="SQL Import" />
+        </form>
+
+    </div>
+    <span style="float: right;"><button id="btnHideShowCol">Info</button></span>
+    <form method="POST" id="RecordEditorForm">
+        <input type="submit" value="Save" tabindex="1" />
+        <?php echo $recordEditor; ?>
+    </form>
+</body>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/RecordEditor.js"></script>
+
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <p>for SQL import: </p>
+    <form method="POST">
+        Date stock out:
+        <input type="date" name="dateStockOut" max="<?= date('Y-m-d')?>" required />
+        <input type="submit" value="export" />
+    </form>
+    <p class="error">
+        <?= $msg; ?>
+    </p>
+</body>
+
+</html>

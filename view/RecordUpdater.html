@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <h3>Update date stock out of Monthly Records</h3>
+    <div style="width: 300px;">
+        <span>File .csv format for tracking numbers
+            <br>*without header. delimiter comma <b>,</b></span>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>tracking number</th>
+                    <th>date stockout</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>....</td>
+                    <td>yyyy-mm-dd</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="stockOut" accept=".csv" required>
+        <input type="submit" />
+
+        <div class="error">
+            <?php echo $error->getMessage(); ?>
+        </div>
+        <p>
+            <?php echo $msg;?>
+        </p>
+    </form>
+
+    <hr>
+    <!-- stockOut summary-->
+    <h3>Stock out summary</h3>
+    <form method="GET">
+        date stock out:
+        <input type="date" name="dateStockOut" onchange="submit()" value="<?php echo $_GET['dateStockOut'] ?? '' ?>" />
+        <?php echo $stockOutTable ?>
+    </form>
+</body>
+
+</html>

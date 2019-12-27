@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <h3>Item Manager</h3>
+    <form method="GET">
+        <input type="text" name="itemCode" id="itemCode" list="itemCodeList" maxlength="255" placeholder="Item Code..."
+            required>
+        <input type="submit" value="search">
+    </form>
+    <hr>
+    <form method="POST" id="ItemEditorForm">
+        <?php if(!empty($itemEditor)){ ?>
+        <input type="submit" value="save">
+        <?= $itemEditor;?>
+        <?php };?>
+    </form>
+
+    <p class="error">
+        <?= $error;?>
+    </p>
+</body>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/ItemManager.js"></script>
+
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.html') ?>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+<H1>Lazada</H1>
+<body>
+    <form method="POST" enctype="multipart/form-data">
+        <label for="itemlistForm">Select CSV file to submit<br></label>
+        <input type="file" name="lzdOrders" accept=".csv" 
+        oninput="this.form.submit();this.disabled=true" required>
+        
+    </form>
+    <hr>
+    <div class="error">
+        <?= $msg;?>
+    </div>
+    <?php if($Data['orders'] !== ''){ ?>
+        <div id="restock" class="paper">
+            <i>to Restock:</i>
+            <hr>
+            <?= $Data['toRestock']?>
+        </div>
+        <div id="itemList" class="paper">
+            <i>to Collect:</i>
+            <button onclick="printPaper()" class="button">Print</button>
+            <hr>
+            <?= $Data['toCollect']?>
+        </div>
+        <div id="notfound" class="paper error">
+            <i>not found:</i>
+            <hr>
+            <?= $Data['notFound']?>
+        </div>
+
+        <hr>
+
+        <div id="orders" class="paper">
+            <i>Lazada orders</i>
+            <hr>
+            <?= $Data['orders']?>
+        </div>
+    <?php };?>
+</body>
+
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/lazadaOrders.js"></script>
+<!-- to print item to collect-->
+<script src="js/function"></script>
+
+</html>

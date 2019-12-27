@@ -1,0 +1,92 @@
+/* CSS */
+
+:root{
+	--HEIGHT: 297mm;
+	--WIDTH: 210mm;
+	--num_items: 1;
+	--item_image_padding: .2em;
+}
+
+body{
+	background-color: rgb(183, 176, 166);
+	/*height: var(--HEIGHT);*/
+	width: var(--WIDTH);
+	/* to centre page on screen*/
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.catalog_item_print {
+	background-color: white;
+	page-break-after: always;
+	margin: inherit;
+	min-height: var(--HEIGHT);
+	max-height: var(--HEIGHT);
+	overflow: hidden;
+}
+
+div.item_image_container{
+	min-height: var(--WIDTH);
+	width: var(--WIDTH);
+	margin-top: 0;
+	line-height: 0;
+	max-height: var(--WIDTH);
+	overflow: hidden;
+}
+
+div.item_image_container_2{
+	margin: auto;
+	max-width: var(--WIDTH);
+	max-height: var(--WIDTH);
+	min-width: min-content;
+	text-align: center;
+}
+
+span.img_subcontainer{
+	margin: 0;
+	padding: 0;
+	position: relative;
+	max-width: var(--WIDTH);
+	max-height: var(--WIDTH);
+	overflow: hidden;
+	display: inline-block;
+}
+
+span.img_subcontainer > img{
+	max-width: var(--WIDTH);
+	max-height: var(--WIDTH);
+	width: 100%;
+	height: 100%;
+}
+
+span.img_subcontainer > img.image_watermark{
+	position: absolute;
+	opacity: .5;
+	mix-blend-mode: multiply;
+}
+
+div.item_text_container{
+	margin-bottom: 0;
+	padding: .5em;
+	font-size: 2.5em;
+	line-height: 1.15em;
+	max-height: calc(var(--HEIGHT) * .28);
+	overflow: hidden;
+}
+
+div.item_text_container > table{
+	margin: auto;
+	padding: 0;
+	min-width: 100%;
+	max-width: var(--WIDTH);
+}
+
+div.item_text_container > table > tbody > tr{
+	height: 2em;
+	vertical-align: top;
+}
+
+div.item_text_container > table > tbody > tr > td{
+	max-width: calc(var(--WIDTH) * .7);
+	overflow-wrap: break-word;
+}
