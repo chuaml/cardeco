@@ -9,7 +9,9 @@
 /.settings
 /.idea
 
+#
 *.xlsx
 *.txt
 _*.*
-*.php
+*.7z
+*.rar
