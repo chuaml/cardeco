@@ -29,11 +29,7 @@ final class CashSales
      */
     private static function fillBlank(array $list, string ...$key):array
     {
-        //get all args, remove first arg $list
-        $keyArgs = func_get_args();
-        array_splice($keyArgs, 0, 1);
-    
-        $lastSeenValue = array_fill_keys($keyArgs, '');
+        $lastSeenValue = array_fill_keys($key, '');
  
         foreach ($list as $i => $r) {
             foreach ($lastSeenValue as $key => $c) {
@@ -71,7 +67,7 @@ final class CashSales
         return $itemUom;
     }
 
-    private static function setItemUOM(array $itemUomMap, array $list)
+    private static function setItemUOM(array $itemUomMap, array $list):array
     {
         foreach ($list as $i => $r) {
             if (array_key_exists($r['SELLER SKU'], $itemUomMap) === true) {
@@ -83,7 +79,7 @@ final class CashSales
         return $list;
     }
 
-    private static function groupByKey($key, array $list)
+    private static function groupByKey($key, array $list):array
     {
         $cashSales = [];
         foreach ($list as $r) {
@@ -97,38 +93,64 @@ final class CashSales
         return $cashSales;
     }
 
-    private static function sumBySameItemEntries(array $cashSales)
+    private static function sumBySameItemEntries(array $cashSales):array
     {
         $cashSalesWithSumByItemCode = [];
         foreach ($cashSales as $orderNum => $list) {
-            $cashSalesWithSumByItemCode[$orderNum] = self::countByKey('SELLER SKU', 'count', $list);
+            $cashSalesWithSumByItemCode[$orderNum] = self::countByKey(
+                'SELLER SKU',
+                'count',
+                $list,
+                'COURIER PAY BY CUSTOMER',
+                'SELLER VOUCHER',
+                'PLATFORM FEE CHARGES'
+            );
         }
+
         return $cashSalesWithSumByItemCode;
     }
 
-    private static function countByKey($key, string $countAsKey, array $list)
+    /**
+     * count array $r by and group by $r[key]
+     * inaddition sum the specified $r[keysToSum] of each $r
+     * In SQL lang example: SELECT COUNT(key) AS 'count', SUM(subTotal) AS 'subTotal' FROM list
+     */
+    private static function countByKey($key, string $countAsKey, array $list, string ...$keysToSum):array
     {
         $occuredValues = []; //key => index of first occured $r in groupedList
         $groupedList = [];
         $i=0;
         foreach ($list as $r) {
             if (array_key_exists($r[$key], $occuredValues) === false) {
+                $r[$countAsKey] = 1;
+                foreach ($keysToSum as $keyToSum) {
+                    if (array_key_exists($keyToSum, $r) === false) {
+                        throw new \InvalidArgumentException("undifined index key: {$keyToSum}");
+                    }
+    
+                    $r[$keyToSum] = doubleval($r[$keyToSum]);
+                }
+    
                 $groupedList[$i] = $r;
-                $groupedList[$i][$countAsKey] = 1;
+    
                 $occuredValues[$r[$key]] = $i++;
                 continue;
             }
-        
             $groupedList[$occuredValues[$r[$key]]][$countAsKey] += 1;
+            foreach ($keysToSum as $keyToSum) {
+                $groupedList[$occuredValues[$r[$key]]][$keyToSum] += doubleval($r[$keyToSum]);
+            }
         }
         return $groupedList;
     }
 
-    private static function addShippingFeeEntries(array $cashSales)
+    private static function addShippingFeeEntries(array $cashSales):array
     {
         foreach ($cashSales as $orderNum => $list) {
             foreach ($list as $r) {
-                if ($r['COURIER PAY BY CUSTOMER'] === '' || $r['COURIER PAY BY CUSTOMER'] === null) {
+                if ($r['COURIER PAY BY CUSTOMER'] === 0.00
+                || $r['COURIER PAY BY CUSTOMER'] === ''
+                || $r['COURIER PAY BY CUSTOMER'] === null) {
                     continue;
                 }
 
@@ -231,7 +253,7 @@ final class CashSales
         $entry['Tax(10)'] = '';
         $entry['TaxInclusive'] = 0.00;
         $entry['TaxAmt'] = 0.00;
-        $entry['Amount'] =  ($sellingPrice * $r['count']) - (doubleval($r['SELLER VOUCHER']) * $r['count']);
+        $entry['Amount'] =  ($sellingPrice * $r['count']) - doubleval($r['SELLER VOUCHER']);
         $entry['P_AMOUNT'] = null; //sum of amount of an ordernum, later after only sum all the $entry['Amount']
         $entry['P_PAYMENTMETHOD'] = $PaymentCharges->getPaymentInto(); //
         $entry['P_BANKCHARGE'] = doubleval($r['PLATFORM FEE CHARGES']); //
