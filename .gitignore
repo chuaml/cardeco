@@ -15,3 +15,8 @@
 _*.*
 *.7z
 *.rar
+*.zip
+[a-zA-Z0-9].php
+
+#ignore folder
+/public/*
