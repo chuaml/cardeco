@@ -19,7 +19,7 @@
             "cwd": "${fileDirname}",
             "port": 9000,
             "stopOnEntry": true,
-            "runtimeExecutable": "C:\\wamp64\\bin\\php\\php7.2.14\\php.exe",
+            "runtimeExecutable": "H:\\wamp64\\bin\\php\\php7.3.21\\php.exe",
             "xdebugSettings": {
                 "max_children": 256,
                 "max_data": 1024,

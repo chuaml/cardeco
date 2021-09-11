@@ -58,15 +58,16 @@ class Database_Stock_Updater extends Database_Manager{
         $new_items = [];
         $result = [];
         foreach($this->result as $row){
-            $result[$row['item_code']] = $row['id'];
+            $result[strtolower(trim($row['item_code']))] = $row['id'];
         }
         unset($row);
 
         $temp = [];
         foreach($this->itemList as $k => $row){
-            if(array_key_exists($row['item_code'], $result)){
+            $itemCode = strtolower(trim($row['item_code']));
+            if(array_key_exists($itemCode, $result)){
                 $temp = $row;
-                $temp['id'] = intval($result[$row['item_code']]);
+                $temp['id'] = intval($result[$itemCode]);
                 $old_items[] = $temp;
             } else {
                 $new_items[] = $row;
@@ -78,6 +79,7 @@ class Database_Stock_Updater extends Database_Manager{
     }
 
     public function update_All_Old_Items_Stock(){
+        mysqli_autocommit($this->con, false);
         $sql = "UPDATE stock SET quantity = ? WHERE id = ? ;";
         $stmt = mysqli_prepare($this->con, $sql);
         if(!$stmt){
@@ -87,15 +89,18 @@ class Database_Stock_Updater extends Database_Manager{
         foreach($this->old_items as $row){
             mysqli_stmt_bind_param($stmt, 'ii', $row['quantity'], $row['id']);
             if(!mysqli_stmt_execute($stmt)){
-                trigger_error(mysqli_error($stmt));
+                trigger_error(mysqli_error($this->con));
+                mysqli_rollback($this->con);
                 return false;
             }
         }
-        
+        mysqli_commit($this->con);
+        mysqli_autocommit($this->con, true);
         return true;
     }
 
     public function insert_New_Items(){
+        mysqli_autocommit($this->con, false);
         $sql = "INSERT INTO stock_items(item_code, description, uom, item_group) VALUES (?,?,?,?);";
         $stmt = mysqli_prepare($this->con, $sql);
         if(!$stmt){
@@ -113,18 +118,21 @@ class Database_Stock_Updater extends Database_Manager{
             mysqli_stmt_bind_param($stmt, 'ssss', 
             $row['item_code'], $row['description'], $row['uom'], $row['item_group']);
             if(!mysqli_stmt_execute($stmt)){
-                trigger_error(mysqli_error($stmt));
+                trigger_error(mysqli_error($this->con));
+                mysqli_rollback($this->con);
                 return false;
             }
 
             $last_id = mysqli_stmt_insert_id($stmt);
             mysqli_stmt_bind_param($stmt2, 'ii', $last_id , $row['quantity']);
             if(!mysqli_stmt_execute($stmt2)){
-                trigger_error(mysqli_error($stmt2));
+                trigger_error(mysqli_error($this->con));
+                mysqli_rollback($this->con);
                 return false;
             }
         }
-
+        mysqli_commit($this->con);
+        mysqli_autocommit($this->con, true);
         return true;
     }
 }

@@ -21,4 +21,9 @@
 </form>
 
 </body>
+<script defer>
+	document.getElementById('Form_Update').addEventListener('submit', e => { 
+		document.getElementById('submit').disabled = true; 
+	});
+</script>
 </html>

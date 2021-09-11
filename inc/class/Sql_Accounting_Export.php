@@ -17,16 +17,16 @@ class Sql_Accounting_Export{
 		$this->PAGE_DELIMITER = [
 			0 => 'Item Code',
 			3 => 'Description',
-			10 => 'UOM',
-			12 => 'Book Qty',
+			9 => 'UOM',
+			11 => 'Book Qty',
 			13 => 'Physical Qty',
-			16 => 'Remarks'
+			15 => 'Remarks'
 		];
 		$this->ITEM_TARGET_COL = [
 			0 => 'item_code',
 			3 => 'description',
-			10 => 'uom', 
-			11 => 'quantity'
+			9 => 'uom', 
+			10 => 'quantity'
 		];
 	}
 
@@ -100,7 +100,9 @@ class Sql_Accounting_Export{
 		$PAGE_DELIMITER = $this->PAGE_DELIMITER;
 			end($PAGE_DELIMITER);
 		$TARGET_NUM_COL = key($PAGE_DELIMITER) + 1;
-		foreach($this->itemList as $k => $row){
+		$count = count($this->itemList);
+		for($k=0;$k<$count;++$k){
+			$row = (array) $this->itemList[$k];
 			if(sizeof($row) !== $TARGET_NUM_COL){continue;}
 			$found_page = true;
 			foreach($this->PAGE_DELIMITER as $c => $col){
@@ -144,7 +146,7 @@ class Sql_Accounting_Export{
 				$current_row_index = ($r + 2 + $i); 
 				if($current_row_index > $ENDLINE){break;}
 
-				$current_row = $this->itemList[$current_row_index]; 
+				$current_row = (array) $this->itemList[$current_row_index]; 
 				if(strtolower(trim($current_row[0])) === 'sub-total for'){
 					continue;
 				}

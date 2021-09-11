@@ -6,16 +6,12 @@ require('../inc/class/Database_Stock_Updater.php');
 
 $msg = '';
 
-if(!isset($_POST['btnSubmit'])){
-	die('No event trigger.');
-}
-
 if(!isset($_FILES['fileTextdata'])){
 	die('no file');
 }
 
 try{
-	$file_export = new Sql_Accounting_Export;
+	$file_export = new Sql_Accounting_Export();
 	$db = new Database_Stock_Updater($con);
 
 	$db->setItemList($file_export, $_FILES['fileTextdata']);
@@ -28,7 +24,7 @@ try{
 
 	if(error_get_last() !== null){
 		trigger_error('some error has occure. process is stopped.');
-		throw new Exception();
+		throw new Exception(error_get_last());
 	}
 
 	$msg = '<script>alert("Stock updated.");
