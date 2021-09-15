@@ -17,16 +17,16 @@ class Sql_Accounting_Export{
 		$this->PAGE_DELIMITER = [
 			0 => 'Item Code',
 			3 => 'Description',
-			9 => 'UOM',
-			11 => 'Book Qty',
+			10 => 'UOM',
+			12 => 'Book Qty',
 			13 => 'Physical Qty',
-			15 => 'Remarks'
+			16 => 'Remarks'
 		];
 		$this->ITEM_TARGET_COL = [
 			0 => 'item_code',
 			3 => 'description',
-			9 => 'uom', 
-			10 => 'quantity'
+			10 => 'uom', 
+			11 => 'quantity'
 		];
 	}
 
