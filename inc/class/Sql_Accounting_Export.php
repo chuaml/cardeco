@@ -158,7 +158,8 @@ class Sql_Accounting_Export{
 				$temp_col = [];
 				foreach($this->ITEM_TARGET_COL as $c => $col){
 					if($col === 'quantity'){
-						$temp_col[$col] = intval($current_row[$c]);
+						$quantity = preg_replace('/[^0-9]+/', '', $current_row[$c]);
+						$temp_col[$col] = intval($quantity);
 						continue;
 					}
 					$temp_col[$col] = trim($current_row[$c]);
