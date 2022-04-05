@@ -1,22 +1,23 @@
 <?php
+
 namespace Controller;
 
-require_once('inc/class/Product/Manager/ItemManager.php');
-require_once('inc/class/Lazada/Manager/ItemManager.php');
-require_once('inc/class/Product/Item.php');
-require_once('inc/class/Orders/Record.php');
-require_once('inc/class/Orders/Lazada/AutoFilling.php');
-require_once('inc/class/HTML/TableDisplayer.php');
-require_once('inc/class/IO/FileInputStream.php');
-require_once('inc/class/IO/CSVInputStream.php');
-require('../db/conn_staff.php');
+require_once 'inc/class/Product/Manager/ItemManager.php';
+require_once 'inc/class/Lazada/Manager/ItemManager.php';
+require_once 'inc/class/Product/Item.php';
+require_once 'inc/class/Orders/Record.php';
+require_once 'inc/class/Orders/Lazada/AutoFilling.php';
+require_once 'inc/class/HTML/TableDisplayer.php';
+require_once 'inc/class/IO/FileInputStream.php';
+require_once 'inc/class/IO/CSVInputStream.php';
+require '../db/conn_staff.php';
 
-use Product\Manager\ItemManager;
-use HTML\TableDisplayer;
-use IO\CSVInputStream;
-use Orders\Lazada\AutoFilling;
-use Exception;
 use mysqli;
+use Exception;
+use HTML\TableDisplayer;
+use Orders\Lazada\AutoFilling;
+use Product\Manager\ItemManager;
+use Orders\Factory\Excel\ExcelReader;
 
 class LazadaOrdersController
 {
@@ -29,10 +30,11 @@ class LazadaOrdersController
         'notFound' => '',
         'orders' => ''
     ];
+
     public function __construct(mysqli $con, array $FILE)
     {
         if ($FILE['error'] !== 0) {
-            throw new Exception('error on file: ' .$_FILES['lzdOrders']['name']);
+            throw new Exception('error on file: ' . $_FILES['lzdOrders']['name']);
         }
         $file = $FILE['tmp_name'];
         if (!file_exists($file)) {
@@ -63,38 +65,33 @@ class LazadaOrdersController
 
     private function getOrders():array
     {
-        $LAZADA_CSV_DELIMITER = ';';
-        $in = new CSVInputStream($this->file, $LAZADA_CSV_DELIMITER);
-        $orders = [];
-        try {
-            $orders = $in->readLines();
-        } finally {
-            $in->close();
-        }
+        $orders = ExcelReader::fetch($this->file);
+
         if (count($orders) === 0) {
             throw new Exception("No data captured. Possible invalid file: {$this->file}.");
         }
         if (count($orders[0]) < 64) {
-            throw new Exception('Too less columns. Invalid file: ' .$this->FILE['name']);
+            throw new Exception('Too less columns. Invalid file: ' . $this->FILE['name']);
         }
         array_splice($orders, 0, 1);
         return array_map(function ($r) {
             return [
-                'orderNum' => trim($r[8]),
-                'date' => trim($r[7]),
-                'sku' => trim($r[4]),
-                'description' => trim($r[44]),
-                'sellingPrice' => trim($r[41]),
-                'shippingFee' => trim($r[42]),
+                'orderNum' => trim($r[12]),
+                'date' => trim($r[9]),
+                'sku' => trim($r[5]),
+                'description' => trim($r[51]),
+                'sellingPrice' => trim($r[47]),
+                'shippingFee' => trim($r[49]),
 
-                'paidPrice' => trim($r[40]),
-                'shippingProvider' => trim($r[47]),
-                'trackingNum' => trim($r[51]),
-                'shippingState' => trim($r[21]),
+                'paidPrice' => trim($r[46]),
+                'shippingProvider' => trim($r[53]),
+                'trackingNum' => trim($r[58]),
+                'shippingState' => trim($r[27]),
                 'stock' => null
             ];
         }, $orders);
     }
+
     private function getKeyedSku(array &$orders):array
     {
         //sku from all orders as index
@@ -107,6 +104,7 @@ class LazadaOrdersController
         }
         return $keyedSku;
     }
+
     private function getKeyedItemCode(array &$keyedSku):array
     {
         //item code from stock as index
@@ -121,6 +119,7 @@ class LazadaOrdersController
         }
         return $keyItemCode;
     }
+
     private function joinItemCodeToSku(array &$keyedSku, array &$keyedItemCode):void
     {
         foreach ($keyedItemCode as $itemCode => $r) {
@@ -132,6 +131,7 @@ class LazadaOrdersController
             }
         }
     }
+
     private function setItemsToData(array &$keyedSku):void
     {
         $HEADER = [
@@ -167,16 +167,17 @@ class LazadaOrdersController
 
         $Tbl = new TableDisplayer();
         $Tbl->setHead($HEADER, true);
-        
+
         $Tbl->setBody($itemToRestock);
         $this->Data['toRestock'] = $Tbl->getTable();
- 
+
         $Tbl->setBody($itemToCollect);
         $this->Data['toCollect'] = $Tbl->getTable();
 
         $Tbl->setBody($notFoundItems);
         $this->Data['notFound'] = $Tbl->getTable();
     }
+
     private function setShippingFeeByWeight(array &$orders):void
     {
         $Records = array_map(function (array $r) {
@@ -188,7 +189,7 @@ class LazadaOrdersController
             $Record->setShippingFee((double) $r['shippingFee']);
             $Record->setShippingState($r['shippingState']);
             $Record->setTrackingNum($r['trackingNum']);
-            
+
             $Record->setDate($r['date']);
             return $Record;
         }, $orders);
@@ -251,4 +252,4 @@ try {
     $con->close();
 }
 
-require('view/lazada.html');
+require 'view/lazada.html';
