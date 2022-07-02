@@ -3,8 +3,8 @@
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 
-// ;sample XDebug configuration for php.ini
-// ; XDEBUG Extension
+// ;sample XDebug 3.1.1 configuration for php.ini
+// ; XDEBUG 3.1.1 Extension
 // [xdebug]
 // zend_extension="C:/wamp64/bin/php/php7.4.26/zend_ext/php_xdebug-3.1.1-7.4-vc15-x86_64.dll"
 // ;xdebug.mode allowed are : off develop coverage debug gcstats profile trace
