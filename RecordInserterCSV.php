@@ -1,5 +1,5 @@
 <?php 
-require_once(__DIR__ .'/../db/conn_staff.php');
+require_once(__DIR__ .'/db/conn_staff.php');
 require_once('inc/class/Orders/Factory/Lazada.php');
 require_once('inc/class/Orders/Factory/Shopee.php');
 require_once('inc/class/Orders/RecordInserter.php');

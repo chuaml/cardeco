@@ -6,7 +6,7 @@ require_once('inc/class/Orders/Factory/MonthlyRecord.php');
 require_once('inc/class/Orders/RecordEditor.php');
 require_once('inc/class/Lazada/Manager/ItemManager.php');
 require_once('inc/class/Orders/Lazada/AutoFilling.php');
-require_once(__DIR__ .'/../db/conn_staff.php');
+require_once(__DIR__ .'/db/conn_staff.php');
 
 use Exception;
 use Orders\Factory as Factory;

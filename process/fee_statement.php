@@ -1,5 +1,5 @@
 <?php 
-require('../../db/conn_staff.php');
+require('../db/conn_staff.php');
 header("Cache-Control: no-cache");
 
 if(!isset($_POST['btnSubmit'])){
