@@ -1,5 +1,5 @@
 <?php 
-require_once('../db/conn_staff.php');
+require_once('db/conn_staff.php');
 require_once('inc/class/Orders/MonthlyRecordUpdater.php');
 
 use Orders\MonthlyRecordUpdater;

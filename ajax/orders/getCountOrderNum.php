@@ -1,6 +1,6 @@
 <?php 
 if(isset($_GET['orderNum']) && strlen($_GET['orderNum']) > 0){
-    require_once(__DIR__ .'/../../../db/conn_staff.php');
+    require_once(__DIR__ .'/../../db/conn_staff.php');
     
     $stmt = $con->prepare('SELECT COUNT(id) FROM orders WHERE orderNum = ?');
     $stmt->bind_param('s', $_GET['orderNum']);

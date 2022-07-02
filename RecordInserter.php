@@ -6,7 +6,7 @@ require_once('inc/class/Orders/RecordInserter.php');
 require_once('inc/class/Orders/PaymentCharges/PlatformCharges.php');
 require_once('inc/class/Orders/Lazada/AutoFilling.php');
 require_once('inc/class/Lazada/Manager/ItemManager.php');
-require_once(__DIR__ .'/../db/conn_staff.php');
+require_once(__DIR__ .'/db/conn_staff.php');
 
 use \Orders\Factory\Record;
 use \Orders\RecordInserter;

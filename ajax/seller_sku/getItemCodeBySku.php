@@ -1,6 +1,6 @@
 <?php 
 if(isset($_GET['sku']) && !empty($_GET['sku'])){
-    require_once(__DIR__ .'/../../../db/conn_staff.php');
+    require_once(__DIR__ .'/../../db/conn_staff.php');
     
     $stmt = $con->prepare('SELECT itemCode FROM seller_sku WHERE sku = ? LIMIT 1;');
     $sku = trim($_GET['sku']);

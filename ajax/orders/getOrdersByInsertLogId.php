@@ -1,6 +1,6 @@
 <?php 
 if(isset($_GET['insertLogId']) && !empty(trim($_GET['insertLogId']))){
-    require_once(__DIR__ .'/../../../db/conn_staff.php');
+    require_once(__DIR__ .'/../../db/conn_staff.php');
     
     $stmt = $con->prepare(
         'SELECT orderNum, date, dateStockOut, sku, trackingNum, sellingPrice, status, platformCharges '
