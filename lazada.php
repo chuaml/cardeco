@@ -65,14 +65,7 @@ class LazadaOrdersController
 
     private function getOrders():array
     {
-        $orders = ExcelReader::fetch($this->file);
-
-        // if (count($orders) === 0) {
-        //     throw new Exception("No data captured. Possible invalid file: {$this->file}.");
-        // }
-        // if (count($orders[0]) < 64) {
-        //     throw new Exception('Too less columns. Invalid file: ' . $this->FILE['name']);
-        // }
+        $orders = (new ExcelReader($this->file))->read();
         
         $list = [];
         foreach($orders as $r){
