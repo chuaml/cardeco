@@ -1,6 +1,6 @@
 <?php 
 if(true || $_SERVER['SERVER_ADDR'] != $_SERVER['REMOTE_ADDR']){
-	// error_reporting(0);	
+	error_reporting(0);	
 }
 mb_internal_encoding('UTF-8');
 mb_http_output('UTF-8');
