@@ -8,7 +8,7 @@ require_once('inc/class/HTML/TableDisplayer.php');
 require_once('inc/class/IO/FileInputStream.php');
 require_once('inc/class/IO/CSVInputStream.php');
 require_once('inc/class/Orders/Factory/Shopee.php');
-require('../db/conn_staff.php');
+require('db/conn_staff.php');
 
 use Product\Manager\ItemManager;
 use HTML\TableDisplayer;

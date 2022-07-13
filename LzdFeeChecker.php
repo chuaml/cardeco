@@ -12,7 +12,7 @@ require_once 'inc/class/Lazada/FeeStatement.php';
 require_once 'inc/class/HTML/TableDisplayer.php';
 require_once 'inc/class/IO/FileInputStream.php';
 require_once 'inc/class/IO/CSVInputStream.php';
-require_once __DIR__ . '/../db/conn_staff.php';
+require_once __DIR__ . '/db/conn_staff.php';
 
 use \Lazada\Manager\Fee_StatementsManager;
 use \Lazada\Manager\OrdersManager;

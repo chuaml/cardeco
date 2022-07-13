@@ -1,10 +1,15 @@
 <?php
 namespace Orders\Factory\Excel;
 
-use Exception;
+use Generator;
 
 class ExcelReader
 {
+    private $fileName;
+    
+    public function __construct(string $fileName){
+        $this->fileName = $fileName;
+    }
     private static function ColumnAlphabetToNumber(string $columnAlphabet):int{
         $col = str_split(strtoupper($columnAlphabet));
         
@@ -47,18 +52,16 @@ class ExcelReader
         }
         return $number;
     } 
-    private static function readData(string $fileName, ?string $sheetName, int $startRowPos , int $lastRowPos):array
+    private function readData(?string $sheetName, int $startRowPos , int $lastRowPos):Generator
     {
         $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $spreadsheet = $reader->load($fileName);
+        $spreadsheet = $reader->load($this->fileName);
         
         if($sheetName != null){
             $spreadsheet->setActiveSheetIndexByName($sheetName);
         }
 
         $worksheet = $spreadsheet->getActiveSheet();
-        
-        $list = [];
         
         $count = intval($worksheet->getHighestRow());
         if($lastRowPos <= -1 || $lastRowPos > $count){
@@ -79,18 +82,16 @@ class ExcelReader
                 }
             }
 
-            $list[] = $r;
+            yield $r;
         }
-
-        return $list;
     }
 
-    public static function fetch(string $fileName, ?string $fileTab = null, int $startRowPos = 1 , int $lastRowPos = -1)
+    public function read(?string $fileTab = null, int $startRowPos = 1 , int $lastRowPos = -1)
     {
         //assume row 1 is header
-        $header = self::readData($fileName, $fileTab,1,1)[0];
-        foreach ($header as $i => $name) {
-            $header[$i] = strtoupper($name);
+        $header = [];
+        foreach ($this->readData($fileTab,1,1)->current() as $c) {
+            $header[] = strtoupper($c);
         }
 
         if($startRowPos <= 1){
@@ -98,20 +99,19 @@ class ExcelReader
             $startRowPos = 2;
         }
 
-        $list = self::readData($fileName, $fileTab,$startRowPos,$lastRowPos);
-        $listCount = count($list);
-        if($listCount === 0){
-            return $list;
-        } 
-        
+        $rows = $this->readData($fileTab,$startRowPos,$lastRowPos);
         $colCount = count($header);
-        //add reference named index
-        for ($i=0;$i<$listCount;++$i) {
+        
+        //add named index
+        foreach ($rows as $r) {
             for ($c=0;$c<$colCount;++$c) {
-                $list[$i][$header[$c]] =& $list[$i][$c];
+                $c_name = $header[$c];
+
+                $r[$c_name] = $r[$c];
             }
+            
+            yield $r;
         }
 
-        return $list;
     }
 }

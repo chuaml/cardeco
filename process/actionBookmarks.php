@@ -1,5 +1,5 @@
 <?php 
-require_once('../../db/conn_staff.php');
+require_once('../db/conn_staff.php');
 require('../inc/class/Bookmark.php');
 require('../inc/class/catalog_generator.php');
 header("Cache-Control: no-cache");

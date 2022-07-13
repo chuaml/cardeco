@@ -1,6 +1,6 @@
 <?php 
 if(isset($_GET['itemCode']) && strlen($_GET['itemCode']) > 0){
-    require_once(__DIR__ .'/../../../db/conn_staff.php');
+    require_once(__DIR__ .'/../../db/conn_staff.php');
     
     $stmt = $con->prepare('SELECT sku FROM seller_sku WHERE itemCode = ?;');
     $itemCode = trim($_GET['itemCode']);

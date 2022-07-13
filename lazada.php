@@ -10,7 +10,7 @@ require_once 'inc/class/Orders/Lazada/AutoFilling.php';
 require_once 'inc/class/HTML/TableDisplayer.php';
 require_once 'inc/class/IO/FileInputStream.php';
 require_once 'inc/class/IO/CSVInputStream.php';
-require '../db/conn_staff.php';
+require 'db/conn_staff.php';
 
 use mysqli;
 use Exception;
@@ -65,17 +65,11 @@ class LazadaOrdersController
 
     private function getOrders():array
     {
-        $orders = ExcelReader::fetch($this->file);
-
-        if (count($orders) === 0) {
-            throw new Exception("No data captured. Possible invalid file: {$this->file}.");
-        }
-        if (count($orders[0]) < 64) {
-            throw new Exception('Too less columns. Invalid file: ' . $this->FILE['name']);
-        }
-        array_splice($orders, 0, 1);
-        return array_map(function ($r) {
-            return [
+        $orders = (new ExcelReader($this->file))->read();
+        
+        $list = [];
+        foreach($orders as $r){
+            $list[] = [
                 'orderNum' => trim($r[12]),
                 'date' => trim($r[9]),
                 'sku' => trim($r[5]),
@@ -89,7 +83,9 @@ class LazadaOrdersController
                 'shippingState' => trim($r[27]),
                 'stock' => null
             ];
-        }, $orders);
+        }
+
+        return $list;
     }
 
     private function getKeyedSku(array &$orders):array

@@ -1,5 +1,5 @@
 <?php
-require_once('../db/conn_staff.php');
+require_once('db/conn_staff.php');
 
 function microtime_float(){
 	list($usec, $sec) = explode(" ", microtime());

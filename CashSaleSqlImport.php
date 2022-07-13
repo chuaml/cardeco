@@ -2,7 +2,7 @@
 namespace main;
 
 require('vendor/autoload.php');
-require('../db/conn_staff.php');
+require('db/conn_staff.php');
 
 use Exception;
 use InvalidArgumentException;
@@ -38,7 +38,8 @@ try {
 
         validateFile($file);
 
-        $list = CashSales::transformToCashSales($con, $fileTab, ExcelReader::fetch($file['tmp_name'], $fileTab, $startRowPos, $lastRowPos));
+        $rows = (new ExcelReader($file['tmp_name']))->read($fileTab, $startRowPos, $lastRowPos);
+        $list = CashSales::transformToCashSales($con, $fileTab, iterator_to_array($rows));
         $Spreadsheet = SqlImport::loadSpreadsheet($list);
         if (error_get_last() !== null) {
             http_response_code(500);
