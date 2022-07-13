@@ -236,7 +236,7 @@ final class CashSales
         if ($Date === false) {
             throw new Exception('invalid date: ' . $r['DATE']);
         }
-        $entry['DocDate'] = date_format($Date, 'm/d/Y');
+        $entry['DocDate'] = date_format($Date, 'd/m/Y');
         $entry['DocNo(20)'] = $r['SQL NO'] === '' ? '<<NEW>>' : $r['SQL NO'];
         $entry['Code(10)'] = $PaymentCharges->getCustId(); //
         $entry['CompanyName(100)'] = $PaymentCharges->getCompanyName(); //
