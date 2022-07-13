@@ -8,7 +8,7 @@
 define('DB_ADDRESS','localhost');
 define('DB_USERNAME','root');
 define('DB_PASSWORD','');
-define('DB_NAME','cardeco_dev');
+define('DB_NAME','cardeco');
 
 if ($con=mysqli_connect(DB_ADDRESS,DB_USERNAME,DB_PASSWORD,DB_NAME)) {//connection to database, phpmyadmin.
     //check connection
