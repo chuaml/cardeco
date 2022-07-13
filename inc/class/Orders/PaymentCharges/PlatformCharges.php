@@ -42,7 +42,7 @@ final class Lazada extends PlatformCharges{
         $this->setPlatform(self::PLATFORM);
         $this->setAmount($amount);
         $this->custId = '300-C0006';
-        $this->companyName = 'CASH A/C - LAZADA';
+        $this->companyName = 'CASH A/C - LAZADA (CARDECO)';
         $this->paymentInto = '321-000';
     }
     
@@ -91,7 +91,7 @@ final class Shopee extends PlatformCharges{
         $this->setPlatform(self::PLATFORM);
         $this->setAmount($amount);
         $this->custId = '300-C0008';
-        $this->companyName = 'CASH A/C - SHOPEE';
+        $this->companyName = 'CASH A/C - SHOPEE (CAR DECO)';
         $this->paymentInto = '324-000';
     }
 }
