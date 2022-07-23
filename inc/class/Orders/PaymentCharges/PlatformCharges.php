@@ -11,7 +11,9 @@ abstract class PlatformCharges extends PaymentCharges{
         'Street11' => '11Street', 
         'Netpay' => 'Netpay', 
         'GHL' => 'GHL', 
-        'Shopee' => 'Shopee'
+        'Shopee' => 'Shopee',
+        'Lazada_Eplush' => 'Lazada_Eplus',
+        'Shopee_Eplush' => 'Shopee_Eplus'
     ]; //keep track of child class for listing
     const NAMESPACE = '\Orders\PaymentCharges\\';
 
@@ -42,7 +44,7 @@ final class Lazada extends PlatformCharges{
         $this->setPlatform(self::PLATFORM);
         $this->setAmount($amount);
         $this->custId = '300-C0006';
-        $this->companyName = 'CASH A/C - LAZADA (CARDECO)';
+        $this->companyName = 'CASH A/C - LAZADA (CAR DECO)';
         $this->paymentInto = '321-000';
     }
     
@@ -95,3 +97,30 @@ final class Shopee extends PlatformCharges{
         $this->paymentInto = '324-000';
     }
 }
+
+final class Lazada_Eplus extends PlatformCharges{
+    const PLATFORM = 'Lazada_Eplus';
+
+    public function __construct(float $amount){
+        $this->setPlatform(self::PLATFORM);
+        $this->setAmount($amount);
+        $this->custId = '300-C0010';
+        $this->companyName = 'CASH A/C - LAZADA (E PLUS)';
+        $this->paymentInto = '321-100';
+    }
+    
+}
+
+final class Shopee_Eplus extends PlatformCharges{
+    const PLATFORM = 'Lazada';
+
+    public function __construct(float $amount){
+        $this->setPlatform(self::PLATFORM);
+        $this->setAmount($amount);
+        $this->custId = '300-C0011';
+        $this->companyName = 'CASH A/C - SHOPEE (E PLUS)';
+        $this->paymentInto = '324-100';
+    }
+    
+}
+
