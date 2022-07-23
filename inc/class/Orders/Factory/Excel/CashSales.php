@@ -190,6 +190,12 @@ final class CashSales
             case 'Cash Bil':
                 return new \Orders\PaymentCharges\Cash(0.00);
                 break;
+            case 'Lazada_Eplus':
+                return new \Orders\PaymentCharges\Lazada_Eplus(0.00);
+                break;
+            case 'Shopee_Eplus':
+                return new \Orders\PaymentCharges\Shopee_Eplus(0.00);
+                break;
             default:
                 throw new \InvalidArgumentException("no PaymentCharges class for: {$paymentChargesName}");
             }
