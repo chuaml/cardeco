@@ -42,7 +42,7 @@ final class Lazada extends PlatformCharges{
         $this->setPlatform(self::PLATFORM);
         $this->setAmount($amount);
         $this->custId = '300-C0006';
-        $this->companyName = 'CASH A/C - LAZADA (CARDECO)';
+        $this->companyName = 'CASH A/C - LAZADA (CAR DECO)';
         $this->paymentInto = '321-000';
     }
     
