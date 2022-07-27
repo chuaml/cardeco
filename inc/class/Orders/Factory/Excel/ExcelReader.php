@@ -58,7 +58,8 @@ class ExcelReader
         $spreadsheet = $reader->load($this->fileName);
         
         if($sheetName != null){
-            $spreadsheet->setActiveSheetIndexByName($sheetName);
+            $spreadsheet->setActiveSheetIndex(0);
+            // $spreadsheet->setActiveSheetIndexByName($sheetName);
         }
 
         $worksheet = $spreadsheet->getActiveSheet();
