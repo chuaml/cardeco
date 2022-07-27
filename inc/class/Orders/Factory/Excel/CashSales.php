@@ -190,18 +190,54 @@ final class CashSales
             case 'Cash Bil':
                 return new \Orders\PaymentCharges\Cash(0.00);
                 break;
+            case 'Lazada_Eplus':
+                return new \Orders\PaymentCharges\Lazada_Eplus(0.00);
+                break;
+            case 'Shopee_Eplus':
+                return new \Orders\PaymentCharges\Shopee_Eplus(0.00);
+                break;
             default:
                 throw new \InvalidArgumentException("no PaymentCharges class for: {$paymentChargesName}");
             }
     }
+
+    private static function isDirectCharge_Cash(array $r):bool {
+        if(isset($r['CASH']) === false)
+            return false;
+
+        $paymentAmount = preg_replace('/[^0-9\.]+/', '', $r['CASH']);
+
+        return $paymentAmount !== '';
+    }
+    
+    private static function isDirectCharge_BankIn(array $r):bool {
+        if(isset($r['BANK TRANSFER']) === false)
+            return false;
+
+        $paymentAmount = preg_replace('/[^0-9\.]+/', '', $r['BANK TRANSFER']);
+
+        return $paymentAmount !== '';
+    }
+
     private static function transformToSqlImportEntries(array $cashSales, PaymentCharges $PaymentCharges):array
     {
         $entries = [];
         foreach ($cashSales as $list) {
             $i = 1;
             $tempEntries = []; //one batch, one cashsale contains list of entries
+            $BankInCharge = new \Orders\PaymentCharges\BankIn(0.00);
+            $previousPaymentType = $PaymentCharges;
             foreach ($list as $r) {
-                $tempEntries[] = self::createSqlImportEntry($i++, $PaymentCharges, $r);
+                if(self::isDirectCharge_Cash($r) === true) {
+                    $previousPaymentType = $PaymentCharges;
+                    $tempEntries[] = self::createSqlImportEntry($i++, $PaymentCharges, $r);
+                } else if(self::isDirectCharge_BankIn($r) === true){
+                    $previousPaymentType = $BankInCharge;
+                    $tempEntries[] = self::createSqlImportEntry($i++, $BankInCharge, $r);
+                } else {
+                    $tempEntries[] = self::createSqlImportEntry($i++, $previousPaymentType, $r);
+                } 
+                
             }
 
             //sum the amount and bankcharge for P_AMOUNT and P_BANKCHARGE respectively
