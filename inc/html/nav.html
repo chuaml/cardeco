@@ -1,4 +1,4 @@
-<?php if(IS_PRODUCTION !== true) { ?>
+<?php if(isset($_isProduction) === true && $_isProduction !== true) { ?>
 	<div style="padding: 0.5em;background-color: green;">test server: dev</div>	
 <?php } ?>
 
