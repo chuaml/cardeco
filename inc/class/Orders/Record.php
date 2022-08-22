@@ -14,7 +14,6 @@ class Record{
     private $orderNum = '';
     private $date = '';
     private $trackingNum = '';
-    private $status = '';
     private $sellingPrice = 0.00;
     private $voucher = 0.00;
     private $shippingFee = 0.00; //paid by seller
@@ -122,7 +121,7 @@ class Record{
     }
 
     public function getItem():?Item{
-        $Item;
+        $Item = null;
         if($this->Item === null){
             $Item = $this->Item;
         } else {
@@ -132,8 +131,8 @@ class Record{
     }
 
     public function getAll():array{
-        $itemCode;
-        $itemName;
+        $itemCode = null;
+        $itemName = null;
         if($this->Item === null){
             $itemCode = $this->Item;
             $itemName = $this->Item;
@@ -148,7 +147,6 @@ class Record{
             'sku' => $itemCode,
             'itemName' => $itemName,
             'trackingNum' => $this->trackingNum,
-            'status' => $this->status,
             'sellingPrice' => $this->sellingPrice,
             'voucher' => $this->voucher,
             'shippingFee' => $this->shippingFee,

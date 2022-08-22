@@ -22,7 +22,6 @@ class RecordInserter implements Insertable, Updatable{
             'sku' => 's',
             'trackingNum' => 's',
             'sellingPrice' => 'd',
-            'status' => 's',
             'voucher' => 'd',
             'shippingFee' => 'd',
             'shippingFeeByCust' => 'd',
@@ -177,7 +176,6 @@ class RecordInserter implements Insertable, Updatable{
         //update existing Record trackingNum & status
         $col = [
             'trackingNum' => 's',
-            'status' => 's'
         ];
         $whereCol = [
             'orderNum' => 's'
