@@ -208,7 +208,6 @@ class MonthlyRecord implements RecordFactory{
         $M->setShippingFeeByCust((double)$r['shippingFeeByCust']);
         $M->setShippingState($r['shippingState']);
         $M->setShippingWeight((double)$r['shippingWeight']);
-        $M->setStatus($r['status']);
         $M->setTrackingNum($r['trackingNum']);
         $M->setTransferCharges((double)$r['transferCharges']);
         $M->setVoucher((double)$r['voucher']);

@@ -44,7 +44,6 @@ class Record implements RecordFactory{
 
         $Record->setDate($row['date']);
         $Record->setTrackingNum(trim($row['trackingNum']));
-        $Record->setStatus(trim($row['status']));
         $Record->setSellingPrice(doubleval($row['sellingPrice']));
         $Record->setShippingFee(doubleval($row['shippingFee']));
         $Record->setShippingFeeByCust(doubleval($row['shippingFeeByCust']));

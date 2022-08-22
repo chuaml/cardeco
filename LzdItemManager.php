@@ -16,7 +16,7 @@ try{
     try{
         if(isset($_FILES['LzdProducts'])){
             if($_FILES['LzdProducts']['error'] !== 0){
-                throw new Exception("File has error.");
+                throw new \Exception("File has error.");
             }
             $file = $_FILES['LzdProducts']['tmp_name'];
             $Fac = new LzdItemFactory($file);
