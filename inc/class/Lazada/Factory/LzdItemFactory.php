@@ -25,7 +25,6 @@ class LzdItemFactory{
         'package_length',
         'package_width',
         'package_height',
-        'Status'
     ];
 
     private $fieldIndex = null;
@@ -133,9 +132,7 @@ class LzdItemFactory{
         $Item->setLength((double)$row[$this->fieldIndex[self::TARGET_FIELD[11]]]);
         $Item->setWidth((double)$row[$this->fieldIndex[self::TARGET_FIELD[12]]]);
         $Item->setHeight((double)$row[$this->fieldIndex[self::TARGET_FIELD[13]]]);
-        $Item->setStatus(
-            trim($row[$this->fieldIndex[self::TARGET_FIELD[14]]]) === 'active' ? 1 : 0
-        );
+      
         return $Item;
     }
 

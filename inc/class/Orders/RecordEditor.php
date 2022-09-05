@@ -88,7 +88,6 @@ class RecordEditor extends TableDisplayer{
         $fieldName['itemName'] = 'Description';
         $fieldName['sku'] = 'Seller SKU';
         $fieldName['trackingNum'] = 'Tracking Number';
-        $fieldName['status'] = 'Status';
         $fieldName['sellingPrice'] = 'Selling Price';
         $fieldName['grandTotal'] = 'Grand Total';
         $fieldName['shippingFee'] = 'Courier';
