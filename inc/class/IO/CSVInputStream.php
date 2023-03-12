@@ -11,24 +11,25 @@ class CSVInputStream extends FileInputStream
     private $delimiter = ',';
     private $enclosure = '"';
     private $escape = '\\';
+    private $maxFieldLength = 0;
 
     public function __construct(
         string $file,
         string $delimiter = ',',
         string $enclosure = '"',
-        string $escape = '\\'
+        string $escape = '\\',
+        int $maxFieldLength = 0
     ) {
         parent::__construct($file);
         $this->delimiter = $delimiter;
         $this->enclosure = $enclosure;
         $this->escape = $escape;
+        $this->maxFieldLength = $maxFieldLength;
     }
 
     public function setMaxFieldLength(int $maxFieldLength): void
     {
-        if ($maxFieldLength >= 0) {
-            $this->maxFieldLength = $maxFieldLength;
-        }
+        $this->maxFieldLength = $maxFieldLength;
     }
 
     public function readLine(): Generator
