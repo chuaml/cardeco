@@ -14,6 +14,7 @@ class FileInputStream{
         if(!file_exists($file)){
             throw new Exception("File does not exist: {$file}.");
         }
+        $openMode = self::OPEN_MODE;
         if(($this->IO = fopen($file, self::OPEN_MODE)) === false){
             throw new Exception("Fail to open IO Stream file: {$file}, open mode: {$openMode}");
         }
