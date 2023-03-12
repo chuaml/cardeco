@@ -2,6 +2,7 @@
 namespace IO;
 
 use Exception;
+use Generator;
 
 class FileInputStream{
     protected $IO;
@@ -35,12 +36,12 @@ class FileInputStream{
         return $data;
     }
 
-    public function readLine():?string{
+    public function readLine():Generator{
         $line = fgets($this->IO, $this->bufferLength);
         if($line === false){
-            return null;
+            return;
         }
-        return $line;
+        yield $line;
     }
 
     public function setBufferLength(int $bufferLength):void{
