@@ -7,6 +7,8 @@ use Exception;
 use HTML\TableDisplayer;
 use IO\CSVInputStream;
 use Orders\Lazada\AutoFilling;
+use Orders\Record;
+use Product\Item;
 use Product\Manager\ItemManager;
 
 class TikTokOrder
@@ -49,23 +51,36 @@ class TikTokOrder
         $orders = (new CSVInputStream($this->file, ','))->readLines();
         
         $list = [];
-        foreach($orders as $r){
-            $list[] = [
-                'orderNum' => trim($r[0]),
-                'date' =>  implode('-', array_reverse(explode('/',explode(' ', trim($r[24]))[0]))),
-                'sku' => trim($r[6]),
-                'description' => trim($r[7]),
-                'sellingPrice' => trim($r[15]),
-                'shippingFee' => trim($r[16]),
+        foreach($orders as $r) {
+            $x = new Record(
+                null,
+                trim($r[0]),
+                new Item(null, $r[6], null)
+            );
+    
+            $x->setOrderNum(trim($r[0]));
+            $x->setDate(trim($r[24]));
+            $x->setSellingPrice((double) preg_replace('/[^0-9\.]+/', '', $r[12]));
+            $x->setVoucher((double) preg_replace('/[^0-9\.]+/', '', $r[14]));
+            $x->setShippingFee((double) preg_replace('/[^0-9\.]+/', '', $r[16]));
+            $x->setShippingState(trim($r[42]));
+            $x->setTrackingNum(trim($r[33]));
 
-                'paidPrice' => trim($r[15]),
-                'shippingProvider' => trim($r[34]),
-                'trackingNum' => trim($r[49]),
-                'shippingState' => trim($r[42]),
+            $list[] = [
+                'orderNum' => $x->orderNum,
+                'date' =>  $x->date,
+                'sku' =>  $x->getItem()->code,
+                'description' => trim($r[7]),
+                'sellingPrice' => trim($x->sellingPrice),
+                'sellerVoucher' => trim($x->voucher),
+                'shippingFee' => trim($x->shippingFee),
+
+                'shippingProvider' => trim($r[35]),
+                'trackingNum' => trim($x->trackingNum),
+                'shippingState' => trim($x->shippingState),
                 'stock' => null
             ];
         }
-
         return $list;
     }
 
@@ -192,12 +207,12 @@ class TikTokOrder
             'date' => 'Date',
             'sku' => 'SKU',
             'description' => 'Description',
-            // 'sellingPrice' => 'Selling Price',
-            // 'shippingFee' => 'Shipping Fee',
+            'sellingPrice' => 'Selling Price',
+            'sellerVoucher' => 'Seller Voucher',
+            'shippingFee' => 'Shipping Fee',
             // 'shippingFeeByWeight' => 'Shipping Fee2',
             // 'shippingWeight' => 'Weight',
 
-            'paidPrice' => 'Paid Price',
             'shippingProvider' => 'Shipping Provider',
             'trackingNum' => 'Tracking Number'
         ];
