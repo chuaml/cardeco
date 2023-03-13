@@ -41,7 +41,12 @@ class TableDisplayer{
             foreach($data as $row){
                 $this->tbody .= '<tr>';
                 foreach($this->theadKeys as $index){
-                    $this->tbody .= '<td>' .$row[$index] .'</td>';
+                    $value = $row[$index];
+                    if(is_float($value) === true){
+                        $this->tbody .= '<td>' .number_format($value, 2, '.', ',') .'</td>';
+                    } else {
+                        $this->tbody .= '<td>' .$value .'</td>';
+                    }
                 }
                 $this->tbody .= '</tr>';
             }
