@@ -71,9 +71,9 @@ class TikTokOrder
                 'date' =>  $x->date,
                 'sku' =>  $x->getItem()->code,
                 'description' => trim($r[7]),
-                'sellingPrice' => trim($x->sellingPrice),
-                'sellerVoucher' => trim($x->voucher),
-                'shippingFee' => trim($x->shippingFee),
+                'sellingPrice' => $x->sellingPrice,
+                'sellerVoucher' => $x->voucher,
+                'shippingFee' => $x->shippingFee,
 
                 'shippingProvider' => trim($r[35]),
                 'trackingNum' => trim($x->trackingNum),
