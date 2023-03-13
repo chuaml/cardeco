@@ -11,7 +11,7 @@ final class TikTok_Test extends TestCase
     public function testListOrder_OrderFile_OrderSummary(): void
     {
         $con = require 'tests/db.connection.php';
-        $q = new TikTokOrder($con, 'tests/tiktok/data.input/input.order.example.csv');
+        $q = new TikTokOrder($con, 'tests/tiktok/data.input/tiktok.input.order.sample.csv');
 
         $data = $q->getData();
         $data['toRestock'];
