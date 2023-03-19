@@ -1,5 +1,13 @@
 /* CSS */
 
+:not(read-only):not(:disabled) select:not(:disabled),
+:not(read-only):not(:disabled) input[type=file]:not(:disabled),
+:not(read-only):not(:disabled) input[type=checkbox]:not(:disabled),
+:not(read-only):not(:disabled) input[type=radio]:not(:disabled)
+{
+	cursor: pointer;
+}
+
 nav{
 	margin-bottom: 18px;
 }
