@@ -112,7 +112,7 @@ final class Lazada_Eplus extends PlatformCharges{
 }
 
 final class Shopee_Eplus extends PlatformCharges{
-    const PLATFORM = 'Lazada';
+    const PLATFORM = 'Shopee_Eplus';
 
     public function __construct(float $amount){
         $this->setPlatform(self::PLATFORM);
