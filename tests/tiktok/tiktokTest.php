@@ -3,11 +3,12 @@
 namespace test\tiktok;
 
 use OrderProcess\TikTokOrder;
+use Orders\Factory\Excel\CashSales;
+use Orders\Factory\Excel\ExcelReader;
 use PHPUnit\Framework\TestCase;
 
-final class TikTok_Test extends TestCase
+final class TikTokTest extends TestCase
 {
-    // @test
     public function testListOrder_OrderFile_OrderSummary(): void
     {
         $con = require 'tests/db.connection.php';
@@ -23,5 +24,24 @@ final class TikTok_Test extends TestCase
         $this->assertTrue($data['toCollect'] !== null);
         $this->assertTrue($data['notFound'] !== null);
     }
-}
 
+    public function testConvertToSqlImport_MonthlyCashSalesRecord_ValidConstantValue()
+    {
+        $con = require 'tests/db.connection.php';
+        $testInputFilePath = 'tests/tiktok/data.input/tiktok.monthly.cashsales.record.sample.xlsx';
+        $xlsx = new ExcelReader($testInputFilePath);
+        $paymentType = 'TikTok_Eplus';
+        $startRowPos = 1;
+        $lastRowPos = -1;
+        $rows = $xlsx->read($paymentType, $startRowPos, $lastRowPos);
+
+        $list = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
+
+        foreach ($list as $x) {
+            $this->assertTrue($x['Code(10)'] === '300-C0013');
+            $this->assertTrue($x['CompanyName(100)'] === 'CASH A/C - TIKTOK (E PLUS)');
+            $this->assertTrue($x['P_PAYMENTMETHOD'] === '325-100');
+        }
+        $this->assertTrue(count($list) > 0);
+    }
+}
