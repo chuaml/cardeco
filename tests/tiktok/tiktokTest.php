@@ -5,7 +5,7 @@ namespace test\tiktok;
 use OrderProcess\TikTokOrder;
 use PHPUnit\Framework\TestCase;
 
-final class TikTok_Test extends TestCase
+final class TikTokTest extends TestCase
 {
     // @test
     public function testListOrder_OrderFile_OrderSummary(): void
