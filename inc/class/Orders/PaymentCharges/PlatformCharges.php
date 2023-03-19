@@ -124,3 +124,16 @@ final class Shopee_Eplus extends PlatformCharges{
     
 }
 
+
+final class TikTok_Eplus extends PlatformCharges{
+    const PLATFORM = 'TikTok_Eplus';
+
+    public function __construct(float $amount){
+        $this->setPlatform(self::PLATFORM);
+        $this->setAmount($amount);
+        $this->custId = '300-C0013';
+        $this->companyName = 'CASH A/C - TIKTOK (E PLUS)';
+        $this->paymentInto = '325-100';
+    }
+    
+}
