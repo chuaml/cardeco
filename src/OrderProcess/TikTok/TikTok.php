@@ -68,6 +68,10 @@ class TikTokOrder
                 $x->setShippingState(trim($r[42]));
                 $x->setTrackingNum(trim($r[33]));
 
+                if(preg_match('/[^0-9]+/', $x->trackingNum)){
+                    throw new Exception('invalid tracking number: ' . $x->trackingNum);
+                }
+
                 $list[] = [
                     'orderNum' => $x->orderNum,
                     'date' =>  $x->date,
