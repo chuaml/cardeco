@@ -31,7 +31,7 @@ class TikTokOrder
         $this->file = $file;
     }
 
-    public function getData():array
+    public function getData(): array
     {
         $orders = $this->getOrders();
 
@@ -46,45 +46,48 @@ class TikTokOrder
         return $this->Data;
     }
 
-    private function getOrders():array
+    public function getOrders(): array
     {
         $orders = (new CSVInputStream($this->file, ','))->readLines();
-        
+
         $list = [];
-        foreach($orders as $r) {
-            $x = new Record(
-                null,
-                trim($r[0]),
-                new Item(null, $r[6], null)
-            );
-    
-            $x->setOrderNum(trim($r[0]));
-            $x->setDate(trim($r[24]));
-            $x->setSellingPrice((double) preg_replace('/[^0-9\.]+/', '', $r[12]));
-            $x->setVoucher((double) preg_replace('/[^0-9\.]+/', '', $r[14]));
-            $x->setShippingFee((double) preg_replace('/[^0-9\.]+/', '', $r[16]));
-            $x->setShippingState(trim($r[42]));
-            $x->setTrackingNum(trim($r[33]));
+        foreach ($orders as $r) {
+            $quantity = intval($r[9]);
+            for ($i = 0; $i < $quantity; ++$i) {
+                $x = new Record(
+                    null,
+                    trim($r[0]),
+                    new Item(null, $r[6], null)
+                );
 
-            $list[] = [
-                'orderNum' => $x->orderNum,
-                'date' =>  $x->date,
-                'sku' =>  $x->getItem()->code,
-                'description' => trim($r[7]),
-                'sellingPrice' => $x->sellingPrice,
-                'sellerVoucher' => $x->voucher,
-                'shippingFee' => $x->shippingFee,
+                $x->setOrderNum(trim($r[0]));
+                $x->setDate(trim($r[24]));
+                $x->setSellingPrice((float) preg_replace('/[^0-9\.]+/', '', $r[12]));
+                $x->setVoucher((float) preg_replace('/[^0-9\.]+/', '', $r[14]));
+                $x->setShippingFee((float) preg_replace('/[^0-9\.]+/', '', $r[16]));
+                $x->setShippingState(trim($r[42]));
+                $x->setTrackingNum(trim($r[33]));
 
-                'shippingProvider' => trim($r[35]),
-                'trackingNum' => trim($x->trackingNum),
-                'shippingState' => trim($x->shippingState),
-                'stock' => null
-            ];
+                $list[] = [
+                    'orderNum' => $x->orderNum,
+                    'date' =>  $x->date,
+                    'sku' =>  $x->getItem()->code,
+                    'description' => trim($r[7]),
+                    'sellingPrice' => $x->sellingPrice,
+                    'sellerVoucher' => $x->voucher,
+                    'shippingFee' => $x->shippingFee,
+
+                    'shippingProvider' => trim($r[35]),
+                    'trackingNum' => trim($x->trackingNum),
+                    'shippingState' => trim($x->shippingState),
+                    'stock' => null
+                ];
+            }
         }
         return $list;
     }
 
-    private function getKeyedSku(array &$orders):array
+    private function getKeyedSku(array &$orders): array
     {
         //sku from all orders as index
         $keyedSku = [];
@@ -97,7 +100,7 @@ class TikTokOrder
         return $keyedSku;
     }
 
-    private function getKeyedItemCode(array &$keyedSku):array
+    private function getKeyedItemCode(array &$keyedSku): array
     {
         //item code from stock as index
         $IM = new ItemManager($this->con);
@@ -112,7 +115,7 @@ class TikTokOrder
         return $keyItemCode;
     }
 
-    private function joinItemCodeToSku(array &$keyedSku, array &$keyedItemCode):void
+    private function joinItemCodeToSku(array &$keyedSku, array &$keyedItemCode): void
     {
         foreach ($keyedItemCode as $itemCode => $r) {
             if (\array_key_exists($itemCode, $keyedSku)) {
@@ -124,7 +127,7 @@ class TikTokOrder
         }
     }
 
-    private function setItemsToData(array &$keyedSku):void
+    private function setItemsToData(array &$keyedSku): void
     {
         $HEADER = [
             'sku' => 'Item Code',
@@ -170,7 +173,7 @@ class TikTokOrder
         $this->Data['notFound'] = $Tbl->getTable();
     }
 
-    private function setShippingFeeByWeight(array &$orders):void
+    private function setShippingFeeByWeight(array &$orders): void
     {
         $Records = array_map(function (array $r) {
             $Record = new \Orders\Record(
@@ -178,7 +181,7 @@ class TikTokOrder
                 $r['orderNum'],
                 new \Product\Item(null, $r['sku'], null)
             );
-            $Record->setShippingFee((double) $r['shippingFee']);
+            $Record->setShippingFee((float) $r['shippingFee']);
             $Record->setShippingState($r['shippingState']);
             $Record->setTrackingNum($r['trackingNum']);
 
@@ -198,7 +201,7 @@ class TikTokOrder
         }
     }
 
-    private function setOrdersToData(array &$orders):void
+    private function setOrdersToData(array &$orders): void
     {
         $Tbl = new TableDisplayer();
 
@@ -222,4 +225,3 @@ class TikTokOrder
         $this->Data['orders'] = $Tbl->getTable();
     }
 }
-

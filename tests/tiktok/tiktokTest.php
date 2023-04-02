@@ -25,6 +25,15 @@ final class TikTokTest extends TestCase
         $this->assertTrue($data['notFound'] !== null);
     }
 
+    public function testListOrder_OrderFile_QuantityMatch(): void
+    {
+        $con = require 'tests/db.connection.php';
+        $q = new TikTokOrder($con, 'tests/tiktok/data.input/tiktok.input.order.sample.2.csv');
+
+        $list = $q->getOrders();
+        $this->assertTrue(count($list) === 6);
+    }
+
     public function testConvertToSqlImport_MonthlyCashSalesRecord_ValidConstantValue()
     {
         $con = require 'tests/db.connection.php';
