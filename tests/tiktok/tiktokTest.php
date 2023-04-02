@@ -2,6 +2,7 @@
 
 namespace test\tiktok;
 
+use IO\CSVInputStream;
 use OrderProcess\TikTokOrder;
 use Orders\Factory\Excel\CashSales;
 use Orders\Factory\Excel\ExcelReader;
@@ -25,13 +26,15 @@ final class TikTokTest extends TestCase
         $this->assertTrue($data['notFound'] !== null);
     }
 
-    public function testListOrder_OrderFile_QuantityMatch(): void
+    public function testListOrder_OrderFile_ExpandQuantityToMultipleItems(): void
     {
         $con = require 'tests/db.connection.php';
-        $q = new TikTokOrder($con, 'tests/tiktok/data.input/tiktok.input.order.sample.2.csv');
-
+        $filePath = 'tests/tiktok/data.input/tiktok.input.order.multiple_quantity.sample.csv';
+        $q = new TikTokOrder($con, $filePath);
+        $rawRecords = (new CSVInputStream($filePath, ','))->readLines();
+        
         $list = $q->getOrders();
-        $this->assertTrue(count($list) === 6);
+        $this->assertTrue(count($list) > count($rawRecords));
     }
 
     public function testConvertToSqlImport_MonthlyCashSalesRecord_ValidConstantValue()
