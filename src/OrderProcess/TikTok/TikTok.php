@@ -60,8 +60,7 @@ class TikTokOrder
                     new Item(null, $r[6], null)
                 );
 
-                $excelCopyFriendlyNumber = chunk_split(trim($r[0]), 4, ' ');
-                $x->setOrderNum($excelCopyFriendlyNumber);
+                $x->setOrderNum(trim($r[0]));
                 $x->setDate(trim($r[24]));
                 $x->setSellingPrice((float) preg_replace('/[^0-9\.]+/', '', $r[12]));
                 $x->setVoucher((float) preg_replace('/[^0-9\.]+/', '', $r[14]));
