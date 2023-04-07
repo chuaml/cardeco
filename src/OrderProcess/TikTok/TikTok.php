@@ -53,6 +53,8 @@ class TikTokOrder
         $list = [];
         foreach ($orders as $r) {
             $quantity = intval($r[9]);
+            $voucher = ((float) preg_replace('/[^0-9\.]+/', '', $r[14])) / $quantity;
+            $sellingPrice = ((float) preg_replace('/[^0-9\.]+/', '', $r[11])) - $voucher;
             for ($i = 0; $i < $quantity; ++$i) {
                 $x = new Record(
                     null,
@@ -62,13 +64,13 @@ class TikTokOrder
 
                 $x->setOrderNum(trim($r[0]));
                 $x->setDate(trim($r[24]));
-                $x->setSellingPrice((float) preg_replace('/[^0-9\.]+/', '', $r[12]));
-                $x->setVoucher((float) preg_replace('/[^0-9\.]+/', '', $r[14]));
+                $x->setVoucher($voucher);
+                $x->setSellingPrice($sellingPrice);
                 $x->setShippingFee((float) preg_replace('/[^0-9\.]+/', '', $r[16]));
                 $x->setShippingState(trim($r[42]));
                 $x->setTrackingNum(trim($r[33]));
 
-                if(preg_match('/[^0-9]+/', $x->trackingNum)){
+                if (preg_match('/[^0-9]+/', $x->trackingNum)) {
                     throw new Exception('invalid tracking number: ' . $x->trackingNum);
                 }
 
