@@ -32,9 +32,23 @@ final class TikTokTest extends TestCase
         $filePath = 'tests/tiktok/data.input/tiktok.input.order.multiple_quantity.sample.csv';
         $q = new TikTokOrder($con, $filePath);
         $rawRecords = (new CSVInputStream($filePath, ','))->readLines();
-        
+
         $list = $q->getOrders();
         $this->assertTrue(count($list) > count($rawRecords));
+    }
+
+    public function testListOrder_OrderFile_ExpectedOutputList(): void
+    {
+        $con = require 'tests/db.connection.php';
+        $filePath = 'tests/tiktok/data.input/tiktok.input.order.multiple_quantity.sample.csv';
+        $q = new TikTokOrder($con, $filePath);
+        $expectedResult = file_get_contents('tests/tiktok/data.input/tiktok.output.order.multiple_quantity.expected.json');
+        $expectedResult = json_decode($expectedResult);
+        $expectedResult = json_encode($expectedResult, JSON_PRETTY_PRINT);
+
+        $orders = $q->getOrders();
+        $orders = json_encode($orders, JSON_PRETTY_PRINT);
+        $this->assertEquals($orders, $expectedResult);
     }
 
     public function testConvertToSqlImport_MonthlyCashSalesRecord_ValidConstantValue()

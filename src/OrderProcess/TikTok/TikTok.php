@@ -80,7 +80,7 @@ class TikTokOrder
                     'sku' =>  $x->getItem()->code,
                     'description' => trim($r[7]),
                     'sellingPrice' => $x->sellingPrice,
-                    'sellerVoucher' => $x->voucher,
+                    'sellerVoucher' => 0.00,
                     'shippingFee' => $x->shippingFee,
 
                     'shippingProvider' => trim($r[35]),
