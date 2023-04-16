@@ -129,6 +129,10 @@ a.button {
 	width: max-content;
 }
 
+span > a.button {
+	cursor: default;
+}
+
 a.button:hover {
     background-color: yellow;
 	color: blue;
