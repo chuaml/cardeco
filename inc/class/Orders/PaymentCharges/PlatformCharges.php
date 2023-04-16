@@ -111,6 +111,19 @@ final class Lazada_Eplus extends PlatformCharges{
     
 }
 
+final class Lazada_Paling_Best extends PlatformCharges{
+    const PLATFORM = 'Lazada_Paling_Best';
+
+    public function __construct(float $amount){
+        $this->setPlatform(self::PLATFORM);
+        $this->setAmount($amount);
+        $this->custId = '300-C0014';
+        $this->companyName = 'CASH A/C - LAZADA (PALING BEST)';
+        $this->paymentInto = '321-200';
+    }
+    
+}
+
 final class Shopee_Eplus extends PlatformCharges{
     const PLATFORM = 'Shopee_Eplus';
 
