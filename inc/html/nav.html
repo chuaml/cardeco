@@ -1,6 +1,20 @@
 <?php if(isset($_isProduction) === true && $_isProduction !== true) { ?>
-	<div style="padding: 0.5em;background-color: green;">test server: dev</div>	
+	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>	
+<?php } else { ?>
+
+<!-- Google tag (gtag.js) -->
+<script async defer src="https://www.googletagmanager.com/gtag/js?id=G-139719LGJQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-139719LGJQ');
+</script>
+
 <?php } ?>
+
+
 
 <nav>
 
@@ -9,6 +23,7 @@
 		<div>
 			<a href="index" class="button">Lazada</a>
 			<a href="shopee" class="button">Shopee</a>
+			<a href="tiktok" class="button">TikTok</a>
 		</div>
 	</span>
 

@@ -27,7 +27,7 @@ class Record{
 
     const DATE_FORMAT = 'd-M-Y';
     const DECIMAL_PLACES = 2;
-    const INVALID_ORDER_NUM = '/[^a-zA-Z0-9]/';
+    const INVALID_ORDER_NUM = '/[^a-zA-Z0-9\s]/';
     public function __construct(?int $recordId = null, ?string $orderNum = null, ?Item $Item = null){
         $this->recordId = $recordId;
         $this->orderNum = $orderNum;

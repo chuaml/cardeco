@@ -6,11 +6,11 @@
 // mb_http_output('UTF-8');
 
 $_dbName = 'cardeco';
-$_isProduction = true;
+$_isProduction = false;
 define('_CURRENT_BRANCH_NAME', exec('git branch --show-current', $_output, $_result));
-if($_result === 0 && _CURRENT_BRANCH_NAME === 'dev'){
+if($_result === 0 && _CURRENT_BRANCH_NAME === 'main'){
     $_dbName .= '_' . _CURRENT_BRANCH_NAME;
-    $_isProduction = false;
+    $_isProduction = true;
 }
 
 define('IS_PRODUCTION', $_isProduction);

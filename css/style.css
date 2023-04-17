@@ -1,5 +1,15 @@
 /* CSS */
 
+:not(read-only):not(:disabled) select:not(:disabled),
+:not(read-only):not(:disabled) input[type=file]:not(:disabled),
+:not(read-only):not(:disabled) input[type=checkbox]:not(:disabled),
+:not(read-only):not(:disabled) input[type=radio]:not(:disabled),
+:not(read-only):not(:disabled) input[type=submit]:not(:disabled),
+:not(read-only):not(:disabled) button:not(:disabled)
+{
+	cursor: pointer;
+}
+
 nav{
 	margin-bottom: 18px;
 }
@@ -117,6 +127,10 @@ a.button {
     color: #000;
 	display: inline-block;
 	width: max-content;
+}
+
+span > a.button {
+	cursor: default;
 }
 
 a.button:hover {

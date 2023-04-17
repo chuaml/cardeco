@@ -193,8 +193,14 @@ final class CashSales
             case 'Lazada_Eplus':
                 return new \Orders\PaymentCharges\Lazada_Eplus(0.00);
                 break;
+            case 'Lazada_Paling_Best':
+                return new \Orders\PaymentCharges\Lazada_Paling_Best(0.00);
+                break;
             case 'Shopee_Eplus':
                 return new \Orders\PaymentCharges\Shopee_Eplus(0.00);
+                break;
+            case 'TikTok_Eplus':
+                return new \Orders\PaymentCharges\TikTok_Eplus(0.00);
                 break;
             default:
                 throw new \InvalidArgumentException("no PaymentCharges class for: {$paymentChargesName}");
