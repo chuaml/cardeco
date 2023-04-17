@@ -9,7 +9,7 @@ $_dbName = 'cardeco';
 $_isProduction = false;
 define('_CURRENT_BRANCH_NAME', exec('git branch --show-current', $_output, $_result));
 if($_result === 0 && _CURRENT_BRANCH_NAME === 'main'){
-    $_dbName .= '_' . _CURRENT_BRANCH_NAME;
+    // $_dbName .= '_' . _CURRENT_BRANCH_NAME;
     $_isProduction = true;
 }
 
