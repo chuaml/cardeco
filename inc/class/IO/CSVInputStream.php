@@ -38,7 +38,7 @@ class CSVInputStream extends FileInputStream
         if ($r === null) {
             throw new Exception('Fail to parse CSV file: ' . $this->file);
         }
-        // yield $r;
+        yield $r;
 
         while (true) {
             $r = fgetcsv($this->IO, $this->maxFieldLength, $this->delimiter, $this->enclosure, $this->escape);
