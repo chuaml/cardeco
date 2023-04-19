@@ -49,6 +49,7 @@ class TikTokOrder
     public function getOrders(): array
     {
         $orders = (new CSVInputStream($this->file, ','))->readLines();
+        array_splice($orders, 0, 1); // skip 1st line header
 
         $list = [];
         foreach ($orders as $r) {
