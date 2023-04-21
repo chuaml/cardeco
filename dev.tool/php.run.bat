@@ -1,0 +1,2 @@
+set XDEBUG_MODE=debug& set XDEBUG_SESSION=1& set XDEBUG_CONFIG=vsc
+php -d zend_extension="D:/wamp64/bin/php/php7.4.26/zend_ext/php_xdebug-3.1.1-7.4-vc15-x86_64.dll" -d xdebug.mode=develop,debug,trace,profile,gcstats -d xdebug.output_dir="D:/wamp64/tmp" -d xdebug.show_local_vars=1 -d xdebug.log_level=7 -d xdebug.client_port=9003 -d xdebug.start_with_request=yes -d xdebug.idekey=vsc -d xdebug.trigger_value=vsc %1
