@@ -1,0 +1,17 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "php run current script file",
+            "type": "shell",
+            "command": "php -d xdebug.log=\"CON\" -d xdebug.log_level=3 -d xdebug.mode=develop,debug,trace,profile  -d xdebug.show_local_vars=1 -d xdebug.start_with_request=yes \"${file}\""
+        },
+         {
+            "label": "composer dumpautoload", 
+            "type": "shell",
+            "command": "composer dumpautoload",
+         }
+    ]
+}
