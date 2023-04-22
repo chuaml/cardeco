@@ -46,4 +46,25 @@ final class Lazada_MonthlyCashSales_ConvertToSqlImportTest extends TestCase
         }
     }
 
+    public function testDirectCharges_BankIn_ValidConstantValue()
+    {
+        $chargeType = new BankIn(0.00);
+        $platformName = (new Lazada(0.00))->getPlatform();
+        $testInputFilePath = 'tests/lazada/data.input/lazada.monthly.cashsales.direct_charges.bankin.record.xlsx';
+
+        $list = $this->getMonthlyCashSalesRecord_As_SqlImport($testInputFilePath, $platformName);
+
+        $this->assertNotEquals(0, count($list));
+        foreach ($list as $i => $x) {
+            try {
+                $this->assertEquals($chargeType->getCustId(), $x['Code(10)']);
+                $this->assertEquals($chargeType->getCompanyName(), $x['CompanyName(100)']);
+                $this->assertEquals($chargeType->getPaymentInto(), $x['P_PAYMENTMETHOD']);
+            } catch (\Throwable $ex) {
+                echo 'fail at index $i: ' . $i;
+                var_dump($x);
+                throw $ex;
+            }
+        }
+    }
 }
