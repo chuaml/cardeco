@@ -34,7 +34,8 @@ final class TikTokTest extends TestCase
         $rawRecords = (new CSVInputStream($filePath, ','))->readLines();
 
         $list = $q->getOrders();
-        $this->assertTrue(count($list) > count($rawRecords));
+
+        $this->assertLessThan(count($list), count($rawRecords));
     }
 
     public function testListOrder_OrderFile_ExpectedOutputList(): void
@@ -48,7 +49,7 @@ final class TikTokTest extends TestCase
 
         $orders = $q->getOrders();
         $orders = json_encode($orders, JSON_PRETTY_PRINT);
-        $this->assertEquals($orders, $expectedResult);
+        $this->assertEquals($expectedResult, $orders);
     }
 
     public function testConvertToSqlImport_MonthlyCashSalesRecord_ValidConstantValue()
@@ -56,18 +57,18 @@ final class TikTokTest extends TestCase
         $con = require 'tests/db.connection.php';
         $testInputFilePath = 'tests/tiktok/data.input/tiktok.monthly.cashsales.record.sample.xlsx';
         $xlsx = new ExcelReader($testInputFilePath);
-        $paymentType = 'TikTok_Eplus';
+        $platformType = 'TikTok_Eplus';
         $startRowPos = 1;
         $lastRowPos = -1;
-        $rows = $xlsx->read($paymentType, $startRowPos, $lastRowPos);
+        $rows = $xlsx->read($platformType, $startRowPos, $lastRowPos);
 
-        $list = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
+        $list = CashSales::transformToCashSales($con, $platformType, iterator_to_array($rows));
 
+        $this->assertTrue(count($list) > 0);
         foreach ($list as $x) {
             $this->assertTrue($x['Code(10)'] === '300-C0013');
             $this->assertTrue($x['CompanyName(100)'] === 'CASH A/C - TIKTOK (E PLUS)');
             $this->assertTrue($x['P_PAYMENTMETHOD'] === '325-100');
         }
-        $this->assertTrue(count($list) > 0);
     }
 }

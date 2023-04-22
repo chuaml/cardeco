@@ -36,6 +36,7 @@ final class LazadaTest extends TestCase
 
         $orders = $q->getOrders();
         $orders = json_encode($orders, JSON_PRETTY_PRINT);
-        $this->assertEquals($orders, $expectedResult);
+
+        $this->assertEquals($expectedResult, $orders);
     }
 }
