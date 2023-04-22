@@ -2,13 +2,10 @@
 
 namespace test\lazada;
 
-use OrderProcess\LazadaOrderProcess;
 use Orders\Factory\Excel\CashSales;
 use Orders\Factory\Excel\ExcelReader;
 use Orders\PaymentCharges\BankIn;
-use Orders\PaymentCharges\Cash;
 use Orders\PaymentCharges\Lazada;
-use PhpParser\Node\Stmt\TryCatch;
 use PHPUnit\Framework\TestCase;
 
 final class Lazada_MonthlyCashSales_ConvertToSqlImportTest extends TestCase

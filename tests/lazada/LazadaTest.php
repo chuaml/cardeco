@@ -3,9 +3,6 @@
 namespace test\lazada;
 
 use OrderProcess\LazadaOrderProcess;
-use Orders\Factory\Excel\CashSales;
-use Orders\Factory\Excel\ExcelReader;
-use PhpParser\Node\Stmt\TryCatch;
 use PHPUnit\Framework\TestCase;
 
 final class LazadaTest extends TestCase
