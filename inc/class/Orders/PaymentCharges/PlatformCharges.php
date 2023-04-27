@@ -146,7 +146,7 @@ final class TikTok_Eplus extends PlatformCharges{
         $this->setAmount($amount);
         $this->custId = '300-C0013';
         $this->companyName = 'CASH A/C - TIKTOK (E PLUS)';
-        $this->paymentInto = '325-100';
+        $this->paymentInto = '325-000';
     }
     
 }

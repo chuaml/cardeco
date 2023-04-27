@@ -77,7 +77,7 @@ final class TikTokTest extends TestCase
         foreach ($list as $x) {
             $this->assertTrue($x['Code(10)'] === '300-C0013');
             $this->assertTrue($x['CompanyName(100)'] === 'CASH A/C - TIKTOK (E PLUS)');
-            $this->assertTrue($x['P_PAYMENTMETHOD'] === '325-100');
+            $this->assertTrue($x['P_PAYMENTMETHOD'] === '325-000');
         }
     }
 }
