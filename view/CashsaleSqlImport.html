@@ -10,53 +10,103 @@
 <body>
     <div class="paper">
         <h3>Convert To SQL Import</h3>
-    <form method="post" enctype="multipart/form-data" onsubmit="showLoadingIcon()">
-     <label>
-         Submit monthly record .xlsx Excel file<br>
-         <input type="file" name="dataFile" accept=".xlsx" required>
-         <br>
-         <i>*must include header at first row</i>
-        </label>
-     <br><br>
-        
-    File tab: 
-     <select name="fileTab" required>
-        <option value="">Please Select...</option>
-        <option value="Lazada">Lazada</option>
-        <option value="Lazada_Eplus">Lazada (Eplus)</option>
-        <option value="Lazada_Paling_Best">Lazada (Paling Best)</option>
-        <option value="Shopee">Shopee</option>
-        <option value="Shopee_Eplus">Shopee (Eplus)</option>
-        <!-- <option value="Lelong">Lelong</option> -->
-        <option value="Cash Bil">Cash Bil</option>
-        <option value="TikTok_Eplus">TikTok (Eplus)</option>
-     </select>
-     =>
-     <label>
-        start at row:
-         <input type="number" name="startRowPos" value="1" step="1" min="1" max="9999999" placeholder="row start including header..." required />
+        <form method="post" enctype="multipart/form-data" onsubmit="showLoadingIcon()">
+            <label>
+                Submit monthly record .xlsx Excel file<br>
+                <input type="file" name="dataFile" accept=".xlsx" required>
+                <br>
+                <i>*must include header at first row</i>
+            </label>
+            <br><br>
 
-     </label>
-   
-    <br><br>
-    <label>limit rows <input type="checkbox" onclick="chk(this)"/></label>
-    <br>
-    <input type="number" name="lastRowPos" id="lastRowPos" value="-1" step="1" min="-1" max="9999999" placeholder="last row..." disabled />
-    
-    <br><br>
-    <input type="submit" name="submit"> <span id="loadingIcon"></span>
-    
-    </form>
-    <p class="error">
-        <?= $errmsg; ?>
-    </p>
+            File tab:
+            <select name="fileTab" required>
+                <option value="">Please Select...</option>
+                <option value="Lazada">Lazada</option>
+                <option value="Lazada_Eplus">Lazada (Eplus)</option>
+                <option value="Lazada_Paling_Best">Lazada (Paling Best)</option>
+                <option value="Shopee">Shopee</option>
+                <option value="Shopee_Eplus">Shopee (Eplus)</option>
+                <!-- <option value="Lelong">Lelong</option> -->
+                <option value="Cash Bil">Cash Bil</option>
+                <option value="TikTok_Eplus">TikTok (Eplus)</option>
+            </select>
+            =>
+            <label>
+                start at row:
+                <input type="number" name="startRowPos" value="1" step="1" min="1" max="9999999"
+                    placeholder="row start including header..." required />
+
+            </label>
+
+            <br><br>
+            <label>limit rows <input type="checkbox" onclick="chk(this)" /></label>
+            <br>
+            <input type="number" name="lastRowPos" id="lastRowPos" value="-1" step="1" min="-1" max="9999999"
+                placeholder="last row..." disabled />
+
+            <br><br>
+            <input type="submit" name="submit"> <span id="loadingIcon"></span>
+
+        </form>
+        <p class="error">
+            <?= $errmsg; ?>
+        </p>
     </div>
-    </body>
+
+    <script>
+        document.addEventListener('change', function (e) {
+            const input = e.target.closest('input[type=file]');
+            if (input === null) return;
+
+            if (input.files[0] === undefined) return;
+
+            requestAnimationFrame(_ => {
+                setTimeout(() => {
+                    const select = document.querySelector('select[name="fileTab"]');
+                    const fileName = input.files[0].name.toLowerCase();
+                    if (fileName.includes('lazada')) {
+                        if (fileName.includes('eplus')) {
+                            select.selectedIndex = select.querySelector('option[value="Lazada_Eplus"]')?.index || 0;
+                        }
+                        else if (fileName.includes('paling best')) {
+                            select.selectedIndex = select.querySelector('option[value="Lazada_Paling_Best"]')?.index || 0;
+                        }
+                        else {
+                            select.selectedIndex = select.querySelector('option[value="Lazada"]')?.index || 0;
+                        }
+                    }
+                    else if (fileName.includes('shopee')) {
+                        if (fileName.includes('eplus')) {
+                            select.selectedIndex = select.querySelector('option[value="Shopee_Eplus"]')?.index || 0;
+                        }
+                        else {
+                            select.selectedIndex = select.querySelector('option[value="Shopee"]')?.index || 0;
+                        }
+                    }
+                    else if (fileName.includes('cash bil')) {
+                        select.selectedIndex = select.querySelector('option[value="Cash Bil"]')?.index || 0;
+
+                    }
+                    else if (fileName.includes('tiktok')) {
+                        select.selectedIndex = select.querySelector('option[value="TikTok_Eplus"]')?.index || 0;
+
+                    } 
+                    else {
+                        select.selectedIndex = 0;
+                    }
+                }, 100);
+            });
+        }, { passive: true });
+    </script>
+
+
+</body>
 
 <script>
-    function chk(checkbox){
+    function chk(checkbox) {
         let limitRow = document.getElementById('lastRowPos');
-        if(checkbox.checked === true){
+        if (checkbox.checked === true) {
             limitRow.value = 100;
             limitRow.disabled = false;
         } else {
@@ -66,18 +116,18 @@
     }
 
     let loadingIcon = null;
-    function showLoadingIcon(){
+    function showLoadingIcon() {
         let div = document.getElementById('loadingIcon');
         let symbol = div.innerText;
-        loadingIcon = setInterval(function(){
-            if(symbol === '--'){symbol = '\\';}
-            else if(symbol ==='\\'){symbol = '|';}
-            else if(symbol === '|'){symbol = '/';}
-            else if(symbol === '/'){symbol = '--';}
-            else{symbol = '--';}
+        loadingIcon = setInterval(function () {
+            if (symbol === '--') { symbol = '\\'; }
+            else if (symbol === '\\') { symbol = '|'; }
+            else if (symbol === '|') { symbol = '/'; }
+            else if (symbol === '/') { symbol = '--'; }
+            else { symbol = '--'; }
             div.innerText = symbol;
         }, 160)
-        setTimeout(function(){
+        setTimeout(function () {
             clearInterval(loadingIcon);
             document.getElementById('loadingIcon').innerText = '';
         }, 10000);
