@@ -57,9 +57,9 @@ final class SqlImport{
     private static function setAllData(array $list, Worksheet $workSheet):void{
         $i = 2;
         foreach($list as $r){
-            $c = 1;
-            foreach($r as $col){
-                $workSheet->setCellValueByColumnAndRow($c++, $i, $col);
+            $c = 'A';
+            foreach($r as $value){
+                $workSheet->setCellValueExplicit($c++ . $i, $value, \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING);
             }
             $i += 1;
         }
