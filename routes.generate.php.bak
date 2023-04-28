@@ -1,0 +1,27 @@
+<?php
+
+function generateRoutes($dir)
+{
+    $routes = [];
+    // Scan the directory for PHP files
+    $files = glob($dir . '/*.php');
+    foreach ($files as $file) {
+        // Extract the filename and remove the ".php" extension
+        $filename = basename($file, '.php');
+
+        $route = str_replace(' ', '_', $filename);
+        $route = strtolower($route);
+
+        // Add the route to the routing table
+        $routes[$route] = $file;
+    }
+    return $routes;
+}
+
+$routes = generateRoutes('.');
+
+// Convert the routes array to a PHP code string
+$php_code = '<?php' . PHP_EOL . 'return ' . var_export($routes, true) . ';';
+
+// Write the PHP code to a file
+file_put_contents('routes.php', $php_code);
