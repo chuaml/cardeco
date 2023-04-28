@@ -1,5 +1,7 @@
 <?php
 
+require 'vendor/autoload.php';
+
 
 // define routes
 // $routes = require 'routes.php';
@@ -23,16 +25,18 @@ use Exception\HttpException;
 try {
 
     if ($_SERVER['REQUEST_URI'] === '/') {
-        return require 'lazada.php';
+        return require 'public/request_handler/lazada.php';
     }
 
-    if (file_exists($_SERVER['REQUEST_URI']) === true) {
+    $_requestUri = 'public/request_handler' . $_SERVER['REQUEST_URI'];
+    if (is_dir($_requestUri) === true) {
+        $_requestUri .= 'index.php';
+    } else {
+        $_requestUri .= '.php';
+    }
 
-        if (is_dir($_SERVER['REQUEST_URI']) === true) {
-            require $_SERVER['REQUEST_URI'] . 'index.php';
-        } else {
-            require $_SERVER['REQUEST_URI'];
-        }
+    if (file_exists($_requestUri) === true) {
+        require $_requestUri;
     } else {
         throw new HttpException(404, 'page not found!!!!');
     }
@@ -49,8 +53,8 @@ try {
 } catch (Throwable $ex) {
     header("HTTP/1.1 500 Internal Server Error");
 
-    // error        
-    
+    // error 
+    var_dump($ex);
 }
 
 var_dump($_SERVER);
