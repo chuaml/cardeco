@@ -2,8 +2,8 @@
 
 namespace Controller;
 
-require 'vendor/autoload.php';
-require 'db/conn_staff.php';
+
+
 
 use Exception;
 use OrderProcess\TikTokOrder;

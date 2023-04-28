@@ -1,6 +1,6 @@
 <?php
 
-require('inc/class/Bookmark.php');
+
 ?>
 
 <!DOCTYPE html>

@@ -1,8 +1,8 @@
 <?php 
 namespace main;
 
-require_once('inc/class/Orders/SkuManager.php');
-require_once(__DIR__ .'/db/conn_staff.php');
+
+
 
 use Orders\SkuManager;
 use \Exception;

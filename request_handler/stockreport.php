@@ -1,6 +1,6 @@
 <?php
 
-require('inc/class/StockReport.php');
+
 ?>
 
 <!DOCTYPE html>

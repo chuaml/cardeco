@@ -1,7 +1,7 @@
 <?php
 
-require('inc/class/StockManager.php');
-require('inc/class/Bookmark.php');
+
+
 function ctime(){
 		list($usec, $sec) = explode(' ', microtime());
 		return ((float)$usec + (float)$sec);

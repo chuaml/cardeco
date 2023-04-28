@@ -26,7 +26,8 @@ try {
     require(__DIR__ . '/db/conn_staff.php');
 
     if ($_SERVER['REQUEST_URI'] === '/') {
-        return require 'request_handler/lazada.php';
+        require 'request_handler/lazada.php';
+        return;
     }
 
     $_requestUri = 'request_handler' . $_SERVER['REQUEST_URI'];
@@ -39,13 +40,15 @@ try {
     if (file_exists($_requestUri) === true) {
         require $_requestUri;
     } else {
-        throw new HttpException(404, 'page not found!!!!');
+        throw new HttpException(404, 'page not found: ' . $_requestUri);
     }
 } catch (HttpException $ex) {
 
     $statusCode = $ex->getStatusCode();
     if ($statusCode === 404) {
         header("HTTP/1.1 404 Not Found");
+        var_dump($ex);
+        
     } else if ($statusCode === 500) {
         header("HTTP/1.1 500 Internal Server Error");
     } else {

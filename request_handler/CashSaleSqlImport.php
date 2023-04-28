@@ -1,7 +1,7 @@
 <?php
 namespace main;
 
-require('vendor/autoload.php');
+
 
 
 use Exception;

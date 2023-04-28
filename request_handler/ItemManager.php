@@ -1,12 +1,6 @@
 <?php 
 namespace main;
 
-require_once('inc/class/Product/ItemManager.php');
-require_once('inc/class/Product/ItemEditor.php');
-require_once('inc/class/Product/Item.php');
-require_once(__DIR__ .'/db/conn_staff.php');
-
-use \Orders\MonthlyRecord;
 use \Product\ItemEditor;
 use \Product\ItemManager;
 use \Product\Item;
