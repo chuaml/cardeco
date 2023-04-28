@@ -23,12 +23,13 @@ require 'vendor/autoload.php';
 use Exception\HttpException;
 
 try {
+    require(__DIR__ . '/db/conn_staff.php');
 
     if ($_SERVER['REQUEST_URI'] === '/') {
-        return require 'public/request_handler/lazada.php';
+        return require 'request_handler/lazada.php';
     }
 
-    $_requestUri = 'public/request_handler' . $_SERVER['REQUEST_URI'];
+    $_requestUri = 'request_handler' . $_SERVER['REQUEST_URI'];
     if (is_dir($_requestUri) === true) {
         $_requestUri .= 'index.php';
     } else {
