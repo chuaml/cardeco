@@ -56,9 +56,4 @@ try {
     }
 } catch (Throwable $ex) {
     header("HTTP/1.1 500 Internal Server Error");
-
-    // error 
-    var_dump($ex);
 }
-
-var_dump($_SERVER);
