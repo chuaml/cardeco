@@ -1,6 +1,6 @@
 <?php
-require_once('db/conn_staff.php');
-require('inc/class/StockReport.php');
+
+
 ?>
 
 <!DOCTYPE html>

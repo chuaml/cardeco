@@ -1,10 +1,10 @@
 <?php 
 namespace main;
 
-require_once('inc/class/Lazada/Item.php');
-require_once('inc/class/Lazada/Manager/ItemManager.php');
-require_once('inc/class/Lazada/Factory/LzdItemFactory.php');
-require_once(__DIR__ .'/db/conn_staff.php');
+
+
+
+
 
 use Lazada\Item;
 use Lazada\Factory\LzdItemFactory;

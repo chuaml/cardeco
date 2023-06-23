@@ -1,5 +1,5 @@
 <?php
-require_once('db/conn_staff.php');
+
 
 if(isset($_POST['btnSubmit'])){
 	include('process/exportAll_StockImages.php');

@@ -2,4 +2,5 @@
 
 require 'vendor/autoload.php';
 
-require 'lazada.php';
+
+require 'router.php';

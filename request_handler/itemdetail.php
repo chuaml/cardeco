@@ -1,6 +1,6 @@
 <?php
-require_once('db/conn_staff.php');
-require('inc/class/StockItem_detail.php');
+
+
 
 $id = isset($_GET['id']) && strlen($_GET['id']) > 0 ? intval($_GET['id']) : false;
 $description = '';

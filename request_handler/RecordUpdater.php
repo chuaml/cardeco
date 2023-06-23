@@ -1,10 +1,10 @@
 <?php 
 namespace main;
-require_once(__DIR__ .'/db/conn_staff.php');
-require_once('inc/class/Orders/Factory/DateStockOut.php');
-require_once('inc/class/Orders/Factory/MonthlyRecord.php');
-require_once('inc/class/Orders/RecordUpdater.php');
-require_once('inc/class/Orders/StockOutTable.php');
+
+
+
+
+
 
 use \Orders\Factory\DateStockOut;
 use \Orders\Factory\MonthlyRecord;

@@ -1,8 +1,8 @@
 <?php
 namespace main;
 
-require('vendor/autoload.php');
-require('db/conn_staff.php');
+
+
 
 use Exception;
 use InvalidArgumentException;

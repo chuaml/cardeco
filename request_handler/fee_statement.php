@@ -1,5 +1,5 @@
 <?php 
-require('db/conn_staff.php');
+
 
 $USER_IP = mysqli_real_escape_string($con, $_SERVER['REMOTE_ADDR']);
 $num_courier_records = 'items loaded: ';

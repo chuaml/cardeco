@@ -1,5 +1,5 @@
 <?php 
-require('db/conn_staff.php');
+
 
 //capture the POST data sent from client with jQuery ajax
 $txtInput = $_POST['txtInput'] ?? '';

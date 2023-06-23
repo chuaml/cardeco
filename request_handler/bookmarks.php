@@ -1,8 +1,8 @@
 <?php
-require_once('db/conn_staff.php');
-require('inc/class/Bookmark.php');
-require('inc/class/StockBookmark.php');
-require('inc/class/Page_Handler_Bookmark.php');
+
+
+
+
 
 function ctime(){
 		list($usec, $sec) = explode(' ', microtime());
