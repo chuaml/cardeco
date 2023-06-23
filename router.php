@@ -30,7 +30,6 @@ try {
     $statusCode = $ex->getStatusCode();
     if ($statusCode === 404) {
         header("HTTP/1.1 404 Not Found");
-        var_dump($ex);
     } else if ($statusCode === 500) {
         header("HTTP/1.1 500 Internal Server Error");
     } else {
