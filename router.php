@@ -6,14 +6,16 @@ use Exception\HttpException;
 try {
     require(__DIR__ . '/db/conn_staff.php');
 
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+
     // default route
-    if ($_SERVER['REQUEST_URI'] === '/') {
+    if ($path === '/') {
         require 'request_handler/lazada.php';
         return;
     }
 
     // other route
-    $_requestUri = 'request_handler' . $_SERVER['REQUEST_URI'];
+    $_requestUri = 'request_handler' . $path;
     if (is_dir($_requestUri) === true) {
         $_requestUri .= 'index.php';
     } else {
