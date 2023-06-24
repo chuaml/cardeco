@@ -1,4 +1,10 @@
 <?php if(isset($_isProduction) === true && $_isProduction !== true) { ?>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){ console.log(arguments); dataLayer.push(arguments);}
+		gtag('js', new Date());
+	</script>
+
 	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>	
 <?php } else { ?>
 
