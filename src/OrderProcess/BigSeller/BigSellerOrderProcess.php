@@ -200,7 +200,7 @@ class BigSellerOrderProcess
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
-        $Tbl->setAttributes('id="lazadaOrders"');
+        $Tbl->setAttributes('id="orders"');
         $this->Data['orders'] = $Tbl->getTable();
     }
 }
