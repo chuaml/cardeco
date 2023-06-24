@@ -192,7 +192,7 @@ $Data = [
 ];
 $msg = '';
 
-$jsonOrders = [];
+$jsonOrders = '';
 $dailyOrderFile_Sha1Hash = '';
 
 try {
