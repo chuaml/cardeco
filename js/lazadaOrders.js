@@ -1,4 +1,4 @@
-$(document).ready(function () {
+(function () {
 
     const tblRecord = "table#lazadaOrders";
     const th = tblRecord + ">thead>tr>th";
@@ -59,4 +59,4 @@ $(document).ready(function () {
     }
     highlightInvalidShippingFee2();
 
-});
+})();
