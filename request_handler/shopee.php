@@ -58,7 +58,7 @@ class ShopeeOrdersController
         $this->setOrdersToData($orders);
     }
 
-    private function getOrders():array
+    public function getOrders():array
     {
         $orders = (new Shopee($this->file))->generateRecords();
         return array_map(function (\Orders\Record $o) {
@@ -191,12 +191,19 @@ $Data = [
     'orders' => ''
 ];
 $msg = '';
+
+$jsonOrders = [];
+$dailyOrderFile_Sha1Hash = '';
+
 try {
     if (isset($_FILES['shopeeOrders'])) {
         try {
             $L = new ShopeeOrdersController($con, $_FILES['shopeeOrders']);
             $L->initData();
             $Data = $L->getData();
+
+            $jsonOrders = json_encode($L->getOrders());
+            $dailyOrderFile_Sha1Hash = sha1_file($_FILES['shopeeOrders']['tmp_name']);
         } catch (Exception $e) {
             $msg = $e->getMessage();
         }
