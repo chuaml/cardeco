@@ -4,10 +4,17 @@ async function sendOrdersTo_GA4(orders, transaction_id, seller_platform, currenc
         if (!transaction_id) reject();
         if (!currency) reject();
 
+        orders = orders.filter(r => {
+            if (typeof (r.sku) !== 'string' && r.sku.trim() === '') return false;
+
+            return true;
+        })
+        if (orders.length === 0) reject();
+
         const items = orders.map(r => {
             const x = {};
-            x.item_id = r.sku;
-            x.item_name = r.description;
+            x.item_id = r.sku.trim();
+            x.item_name = r.description?.trim();
             x.price = parseFloat(r.sellingPrice);
             x.quantity = 1;
 

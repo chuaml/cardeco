@@ -58,19 +58,21 @@
     const app = window.app || {};
     app.orders = {};
     app.orders.dailyOrderFile_Sha1Hash = '<?= $dailyOrderFile_Sha1Hash ?>';
-    app.orders.data = JSON.parse(document.getElementById('jsonOrders').innerText);
+    app.orders.data = JSON.parse(document.getElementById('jsonOrders').innerText.trim() || 'null');
 
     app.seller_platform = 'Shopee';
 </script>
 
 <script src="js/daily-orders-to-gtag-ga4.js"></script>
 <script>
-    sendOrdersTo_GA4(
-        app.orders.data,
-        app.orders.dailyOrderFile_Sha1Hash,
-        app.seller_platform,
-        'MYR'
-    );
+    if (app.orders.data) {
+        sendOrdersTo_GA4(
+            app.orders.data,
+            app.orders.dailyOrderFile_Sha1Hash,
+            app.seller_platform,
+            'MYR'
+        );
+    }
 </script>
 
 </body>
