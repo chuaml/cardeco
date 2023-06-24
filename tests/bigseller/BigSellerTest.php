@@ -1,6 +1,6 @@
 <?php
 
-namespace test\lazada;
+namespace test\bigseller;
 
 use OrderProcess\BigSellerOrderProcess;
 use PHPUnit\Framework\TestCase;
