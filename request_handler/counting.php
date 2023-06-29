@@ -19,9 +19,17 @@
 	<option value="3column">3columns Excel</option>
  </select>
  <input type="submit" name="submit"> <br>
- <textarea name="txtItems" rows="25" cols="64" maxlength="65536" required></textarea>
+ <textarea name="txtItems" rows="25" cols="64" maxlength="65536" required><?= rtrim($_POST['txtItems'] ?? '') ?></textarea>
 
 </form>
+
+
+<script>
+	// auto select previous selected option
+	var lastSelectedOption = '<?= $_POST['Select'] ?? '' ?>';
+	var selection = document.querySelector('select[name="Select"]');
+	selection.selectedIndex = [...selection.options].find(x => x.value === lastSelectedOption).index;
+</script>
 
 <hr>
 
