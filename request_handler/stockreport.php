@@ -7,10 +7,8 @@
 <html>
 <title>CarDeco sys</title>
 <head>
-	<link rel="stylesheet" href="css/style.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php require('view/template/head.php') ?>
 
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="js/jquery-3.3.1.min"></script>
 	<script src="js/myscript"></script>
 	<script src="js/function"></script>
