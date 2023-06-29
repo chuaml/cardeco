@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<?php require('view/template/head.php') ?>
 
-	<title>CarDeco sys</title>
-	<link rel="stylesheet" href="css/style.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<script src="js/jquery-3.3.1.min"></script>
 	<script src="js/myscript"></script>
 </head>
