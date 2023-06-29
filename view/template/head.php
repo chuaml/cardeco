@@ -76,12 +76,25 @@
 	<p><i>loading...</i></p>
 </div>
 <script>
+	
+	// toggle show loading
 	window.addEventListener('beforeunload', _ => {
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'flex';
 			setTimeout(() => {
 				loader.classList.toggle('loading');
+			}, 50);
+		});
+	});
+
+	// hide loading when returning current loading page
+	window.addEventListener('pageshow', function (e) {
+		requestAnimationFrame(_ => {
+			const loader = document.getElementById('page-loader');
+			loader.style['display'] = 'none';
+			setTimeout(() => {
+				loader.classList.remove('loading');
 			}, 50);
 		});
 	});
