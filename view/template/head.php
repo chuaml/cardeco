@@ -7,9 +7,6 @@
 
 
 <?php if(isset($_isProduction) === true && $_isProduction !== true) { ?>
-
-    <link rel="shortcut icon" href="view/icon.png" type="image/png" />
-
 	<script>
 		window.dataLayer = window.dataLayer || [];
 		function gtag(){ console.log(arguments); dataLayer.push(arguments);}
@@ -28,6 +25,10 @@
 
   gtag('config', 'G-139719LGJQ');
 </script>
+
+
+<link rel="shortcut icon" href="view/icon.png" type="image/png" />
+
 
 <?php } ?>
 
