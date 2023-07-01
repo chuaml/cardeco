@@ -1,4 +1,5 @@
 <?php
+
 namespace Orders\Factory\Excel;
 
 use Generator;
@@ -6,13 +7,20 @@ use Generator;
 class ExcelReader
 {
     private $fileName;
-    
-    public function __construct(string $fileName){
+    private $spreadsheet;
+
+    public function __construct(string $fileName)
+    {
         $this->fileName = $fileName;
+
+        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+        $this->spreadsheet = $reader->load($this->fileName);
     }
-    private static function ColumnAlphabetToNumber(string $columnAlphabet):int{
+
+    private static function ColumnAlphabetToNumber(string $columnAlphabet): int
+    {
         $col = str_split(strtoupper($columnAlphabet));
-        
+
         $map = [
             'A' => 1,
             'B' => 2,
@@ -41,40 +49,39 @@ class ExcelReader
             'Y' => 25,
             'Z' => 26
         ];
-        
+
         //calc the column alphabets as actual number
         //alphabet is number base 26 
         $number = 0;
         $count = count($col);
-        $digitPos = count($col) -1;
-        for($i=0;$i<$count;++$i, --$digitPos){
+        $digitPos = count($col) - 1;
+        for ($i = 0; $i < $count; ++$i, --$digitPos) {
             $number += (26 ** $digitPos) * $map[$col[$i]];
         }
         return $number;
-    } 
-    private function readData(?string $sheetName, int $startRowPos , int $lastRowPos):Generator
+    }
+    private function readData(?string $sheetName, int $startRowPos, int $lastRowPos): Generator
     {
-        $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-        $spreadsheet = $reader->load($this->fileName);
-        
-        if($sheetName != null){
+        $spreadsheet = $this->spreadsheet;
+
+        if ($sheetName != null) {
             $spreadsheet->setActiveSheetIndex(0);
             // $spreadsheet->setActiveSheetIndexByName($sheetName);
         }
 
         $worksheet = $spreadsheet->getActiveSheet();
-        
+
         $count = intval($worksheet->getHighestRow());
-        if($lastRowPos <= -1 || $lastRowPos > $count){
+        if ($lastRowPos <= -1 || $lastRowPos > $count) {
             $lastRowPos = $count;
         }
-        
+
         $lastCol = self::ColumnAlphabetToNumber($worksheet->getHighestColumn());
 
-        for($i=$startRowPos; $i<=$lastRowPos ; ++$i){
+        for ($i = $startRowPos; $i <= $lastRowPos; ++$i) {
             $r = [];
-            for($c=1;$c<=$lastCol;++$c){
-                $cell = $worksheet->getCellByColumnAndRow($c,$i);
+            for ($c = 1; $c <= $lastCol; ++$c) {
+                $cell = $worksheet->getCellByColumnAndRow($c, $i);
 
                 try {
                     $r[] = trim($cell->getFormattedValue());
@@ -87,32 +94,31 @@ class ExcelReader
         }
     }
 
-    public function read(?string $fileTab = null, int $startRowPos = 1 , int $lastRowPos = -1)
+    public function read(?string $fileTab = null, int $startRowPos = 1, int $lastRowPos = -1)
     {
         //assume row 1 is header
         $header = [];
-        foreach ($this->readData($fileTab,1,1)->current() as $c) {
+        foreach ($this->readData($fileTab, 1, 1)->current() as $c) {
             $header[] = strtoupper($c);
         }
 
-        if($startRowPos <= 1){
+        if ($startRowPos <= 1) {
             //move after first line header
             $startRowPos = 2;
         }
 
-        $rows = $this->readData($fileTab,$startRowPos,$lastRowPos);
+        $rows = $this->readData($fileTab, $startRowPos, $lastRowPos);
         $colCount = count($header);
-        
+
         //add named index
         foreach ($rows as $r) {
-            for ($c=0;$c<$colCount;++$c) {
+            for ($c = 0; $c < $colCount; ++$c) {
                 $c_name = $header[$c];
 
                 $r[$c_name] = $r[$c];
             }
-            
+
             yield $r;
         }
-
     }
 }
