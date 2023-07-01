@@ -2,24 +2,26 @@
     // Use IntelliSense to learn about possible attributes.
     // Hover to view descriptions of existing attributes.
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-
-// ;sample XDebug 3.1.1 configuration for php.ini
-// ; XDEBUG 3.1.1 Extension
-// [xdebug]
-// zend_extension="D:/wamp64/bin/php/php7.4.26/zend_ext/php_xdebug-3.1.1-7.4-vc15-x86_64.dll"
-// ;;xdebug.mode allowed are : off develop coverage debug gcstats profile trace
-// xdebug.mode=develop,debug
-// xdebug.output_dir="D:/wamp64/tmp"
-// xdebug.show_local_vars=1
-// ;xdebug.log="D:/wamp64/logs/xdebug.log"
-// ;xdebug.log_level=10
-// xdebug.log_level=7
-// xdebug.client_port=9003
-// xdebug.start_with_request=yes
-// ;; cmd; set XDEBUG_MODE=debug& set XDEBUG_SESSION=1& set XDEBUG_CONFIG=vsc
-// xdebug.idekey=vsc
-// xdebug.trigger_value=vsc
-
+    //
+    // ;sample XDebug 3.1.1 configuration for php.ini
+    // ; XDEBUG Extension
+    // [xdebug]
+    // zend_extension="D:/wamp64/bin/php/php7.4.26/zend_ext/php_xdebug-3.1.1-7.4-vc15-x86_64.dll"
+    // ;;xdebug.mode allowed are : off develop coverage debug gcstats profile trace
+    // xdebug.mode=develop,debug
+    // ;xdebug.mode=profile
+    // xdebug.output_dir="D:/wamp64/tmp"
+    // xdebug.show_local_vars=1
+    // ;xdebug.log="D:/wamp64/logs/xdebug.log"
+    // ;xdebug.log_level=10
+    // xdebug.log_level=3
+    // xdebug.client_port=9003
+    // xdebug.start_with_request=yes
+    // ;xdebug.start_with_request=trigger
+    // ;; cmd; set XDEBUG_MODE=debug& set XDEBUG_SESSION=1& set XDEBUG_CONFIG=vsc
+    // xdebug.idekey=vsc
+    // xdebug.trigger_value=vsc
+    //
     "version": "0.2.0",
     "configurations": [
         {
@@ -43,7 +45,6 @@
                 "max_data": 1024,
                 "show_hidden": 1
             }
-            
         }
     ]
 }
