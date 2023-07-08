@@ -46,22 +46,34 @@ class BigSellerOrderProcess
 
         $list = [];
         foreach ($orders as $r) {
-            $list[] = [
-                'orderNum' => trim($r[0]),
-                'date' => trim($r[12]),
-                'sku' => trim($r[30]),
-                'description' => trim($r[29]), //product name
-                'sellingPrice' => trim($r[33]),
-                'shippingFee' => trim($r[52]),
-                'trackingNum' => trim($r[1]),
+            $quantity = intval($r[34]);
+            $sellingPrice = intval(preg_replace('/[^0-9]+/', '', $r[33])) / 100;
+            for ($i = 0; $i < $quantity; ++$i) {
+                $list[] = [
+                    'orderNum' => trim($r[0]),
+                    'date' => trim($r[11]),
+                    'sku' => trim($r[30]),
+                    'description' => trim($r[29]), //product name
+                    'sellingPrice' => $sellingPrice,
+                    'shippingFee' => trim($r[53]),
+                    'trackingNum' => trim($r[44]),
 
-                'paidPrice' => trim($r[35]),
-                'shippingProvider' => trim($r[40]),
-                'shippingState' => trim($r[26]),
+                    'paidPrice' => trim($r[36]),
+                    'shippingProvider' => trim($r[42]),
+                    'shippingState' => trim($r[26]),
 
-                'stock' => null
-            ];
+                    'marketPlace' => trim($r[4]),
+
+                    'stock' => null
+                ];
+            }
         }
+
+        // sort by marketPlace
+        $marketPlace = array_column($list, 'marketPlace');
+        array_multisort($marketPlace, SORT_ASC, $list);
+
+        // exit(json_encode($list));
 
         return $list;
     }
@@ -196,7 +208,8 @@ class BigSellerOrderProcess
 
             // 'paidPrice' => 'Paid Price',
             'shippingProvider' => 'Shipping Provider',
-            'trackingNum' => 'Tracking Number'
+            'trackingNum' => 'Tracking Number',
+            'marketPlace' => 'Marketplace'
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
