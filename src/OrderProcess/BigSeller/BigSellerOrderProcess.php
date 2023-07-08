@@ -50,15 +50,15 @@ class BigSellerOrderProcess
             for ($i = 0; $i < $quantity; ++$i) {
                 $list[] = [
                     'orderNum' => trim($r[0]),
-                    'date' => trim($r[12]),
+                    'date' => trim($r[11]),
                     'sku' => trim($r[30]),
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => trim($r[33]),
-                    'shippingFee' => trim($r[52]),
-                    'trackingNum' => trim($r[43]),
+                    'shippingFee' => trim($r[53]),
+                    'trackingNum' => trim($r[44]),
 
-                    'paidPrice' => trim($r[35]),
-                    'shippingProvider' => trim($r[40]),
+                    'paidPrice' => trim($r[36]),
+                    'shippingProvider' => trim($r[42]),
                     'shippingState' => trim($r[26]),
 
                     'marketPlace' => trim($r[4]),
@@ -71,6 +71,8 @@ class BigSellerOrderProcess
         // sort by marketPlace
         $marketPlace = array_column($list, 'marketPlace');
         array_multisort($marketPlace, SORT_ASC, $list);
+
+        // exit(json_encode($list));
 
         return $list;
     }
