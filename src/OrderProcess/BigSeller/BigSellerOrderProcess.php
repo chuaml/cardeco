@@ -46,21 +46,24 @@ class BigSellerOrderProcess
 
         $list = [];
         foreach ($orders as $r) {
-            $list[] = [
-                'orderNum' => trim($r[0]),
-                'date' => trim($r[12]),
-                'sku' => trim($r[30]),
-                'description' => trim($r[29]), //product name
-                'sellingPrice' => trim($r[33]),
-                'shippingFee' => trim($r[52]),
-                'trackingNum' => trim($r[1]),
+            $quantity = intval($r[34]);
+            for ($i = 0; $i < $quantity; ++$i) {
+                $list[] = [
+                    'orderNum' => trim($r[0]),
+                    'date' => trim($r[12]),
+                    'sku' => trim($r[30]),
+                    'description' => trim($r[29]), //product name
+                    'sellingPrice' => trim($r[33]),
+                    'shippingFee' => trim($r[52]),
+                    'trackingNum' => trim($r[1]),
 
-                'paidPrice' => trim($r[35]),
-                'shippingProvider' => trim($r[40]),
-                'shippingState' => trim($r[26]),
+                    'paidPrice' => trim($r[35]),
+                    'shippingProvider' => trim($r[40]),
+                    'shippingState' => trim($r[26]),
 
-                'stock' => null
-            ];
+                    'stock' => null
+                ];
+            }
         }
 
         return $list;
