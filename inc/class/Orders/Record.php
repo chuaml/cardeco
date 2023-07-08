@@ -43,6 +43,8 @@ class Record{
     }
 
     protected static final function formatDate(string $date):string{
+        if (trim($date) === '') throw new InvalidArgumentException('empty date value');
+
         //use - instead of / 
         //php treat date with / as M/d/Y where - is always Y-m-d or d-m-Y
         $d = date_create(str_replace('/', '-', $date));
