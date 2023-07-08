@@ -55,11 +55,13 @@ class BigSellerOrderProcess
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => trim($r[33]),
                     'shippingFee' => trim($r[52]),
-                    'trackingNum' => trim($r[1]),
+                    'trackingNum' => trim($r[43]),
 
                     'paidPrice' => trim($r[35]),
                     'shippingProvider' => trim($r[40]),
                     'shippingState' => trim($r[26]),
+
+                    'marketPlace' => trim($r[4]),
 
                     'stock' => null
                 ];
@@ -199,7 +201,8 @@ class BigSellerOrderProcess
 
             // 'paidPrice' => 'Paid Price',
             'shippingProvider' => 'Shipping Provider',
-            'trackingNum' => 'Tracking Number'
+            'trackingNum' => 'Tracking Number',
+            'marketPlace' => 'Marketplace'
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
