@@ -47,7 +47,8 @@ class BigSellerOrderProcess
         $list = [];
         foreach ($orders as $r) {
             $quantity = intval($r[34]);
-            $sellingPrice = intval(preg_replace('/[^0-9]+/', '', $r[33])) / 100;
+            $sellingPrice = floatval(preg_replace('/[^0-9\.]+/', '', $r[33]));
+            $shippingFee = floatval(preg_replace('/[^0-9\.]+/', '', $r[53]));
             for ($i = 0; $i < $quantity; ++$i) {
                 $list[] = [
                     'orderNum' => trim($r[0]),
@@ -55,7 +56,7 @@ class BigSellerOrderProcess
                     'sku' => trim($r[30]),
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => $sellingPrice,
-                    'shippingFee' => trim($r[53]),
+                    'shippingFee' => $shippingFee,
                     'trackingNum' => trim($r[44]),
 
                     'paidPrice' => trim($r[36]),
