@@ -68,6 +68,10 @@ class BigSellerOrderProcess
             }
         }
 
+        // sort by marketPlace
+        $marketPlace = array_column($list, 'marketPlace');
+        array_multisort($marketPlace, SORT_ASC, $list);
+
         return $list;
     }
 
