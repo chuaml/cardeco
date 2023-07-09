@@ -139,6 +139,31 @@ class BigSellerOrderProcess
             }
         }
 
+        $toCollect = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        foreach ($toCollect as $col_platform => $items) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    // $order[$col_platform] = array_reduce($r, function ($total, $order) use ($col_platform) {
+                    //     return strtolower($order['marketPlace']) === $col_platform ? $total++ : $total;
+                    // }, 0);
+
+                    if ($o['stock'] === null) continue;
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $toCollect[$col_platform]) === false)
+                        $toCollect[$col_platform][$sku] = [];
+
+                    $toCollect[$col_platform][$sku][] = $o;
+                }
+            }
+        }
+
         $itemToRestock = [];
         $itemToCollect = [];
         foreach ($foundItems as $r) {
@@ -158,8 +183,27 @@ class BigSellerOrderProcess
         $Tbl->setBody($itemToRestock);
         $this->Data['toRestock'] = $Tbl->getTable();
 
-        $Tbl->setBody($itemToCollect);
-        $this->Data['toCollect'] = $Tbl->getTable();
+        foreach ($toCollect as $col_platform => $items) {
+            foreach ($itemToCollect as &$r) {
+                if (array_key_exists($r['sku'], $items) === true) {
+                    $r[$col_platform] = count($items[$r['sku']]);
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+        $tblPackList = new TableDisplayer();
+        $tblPackList->setHead([
+            'sku' => 'Item Code',
+            'description' => 'Description',
+            'quantity' => 'Total Q.',
+            'stock' => 'Stock',
+            'lazada' => 'Lazada',
+            'shopee' => 'Shopee',
+            'tiktok' => 'TikTok',
+        ], true);
+        $tblPackList->setBody($itemToCollect);
+        $this->Data['toCollect'] = $tblPackList->getTable();
 
         $Tbl->setBody($notFoundItems);
         $this->Data['notFound'] = $Tbl->getTable();
