@@ -36,4 +36,26 @@ final class BigSellerTest extends TestCase
 
         $this->assertEquals($expectedResult, $orders);
     }
+
+
+    public function testListOrder_OrderFile_ExpectedOutputHtml(): void
+    {
+        $con = require 'tests/db.connection.php';
+        $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.xlsx';
+        $q = new BigSellerOrderProcess($con, $filePath);
+
+        $htmlData = $q->getData();
+
+        $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.to-restock.html.data');
+        $this->assertEquals($expectedResult, $htmlData['toRestock']);
+
+        $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.to-collect.html.data');
+        $this->assertEquals($expectedResult, $htmlData['toCollect']);
+
+        $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.not-found.html.data');
+        $this->assertEquals($expectedResult, $htmlData['notFound']);
+
+        $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.orders.html.data');
+        $this->assertEquals($expectedResult, $htmlData['orders']);
+    }
 }
