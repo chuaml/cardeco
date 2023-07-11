@@ -35,7 +35,7 @@ class BigSellerOrderProcess
         $this->setItemsToData($keyedSku);
 
         $this->setShippingFeeByWeight($orders);
-        $this->setOrdersToData($orders);
+        $this->Data['orders'] = $this->getOrdersToData($orders);
 
         return $this->Data;
     }
@@ -63,7 +63,8 @@ class BigSellerOrderProcess
                     'shippingProvider' => trim($r[42]),
                     'shippingState' => trim($r[26]),
 
-                    'marketPlace' => trim($r[4]),
+                    'marketPlace' => trim($r[4]), // necessary for computation; grouping item counts
+                    'storeName_BigSeller' => trim($r[5]),
 
                     'stock' => null
                 ];
@@ -121,12 +122,7 @@ class BigSellerOrderProcess
 
     private function setItemsToData(array &$keyedSku): void
     {
-        $HEADER = [
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Quantity',
-            'stock' => 'Stock'
-        ];
+        // split items to found and notFound group
         $foundItems = [];
         $notFoundItems = [];
         foreach ($keyedSku as $r) {
@@ -138,60 +134,22 @@ class BigSellerOrderProcess
                 $foundItems[] = $order;
             }
         }
+        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems);
 
-        $toCollect = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
-        foreach ($toCollect as $col_platform => $items) {
-            foreach ($keyedSku as $sku => $orders) {
-                foreach ($orders as $o) {
-                    // $order[$col_platform] = array_reduce($r, function ($total, $order) use ($col_platform) {
-                    //     return strtolower($order['marketPlace']) === $col_platform ? $total++ : $total;
-                    // }, 0);
 
-                    if ($o['stock'] === null) continue;
+        $itemToRestock = array_filter($foundItems, function ($r) {
+            return $r['quantity'] >= $r['stock'];
+        });
+        $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
 
-                    $marketPlace = strtolower($o['marketPlace']);
-                    if ($marketPlace !== $col_platform) continue;
+        $itemToCollect = $itemToRestock = array_filter($foundItems, function ($r) {
+            return $r['quantity'] <= $r['stock'];
+        });
+        $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
+    }
 
-                    if (array_key_exists($sku, $toCollect[$col_platform]) === false)
-                        $toCollect[$col_platform][$sku] = [];
-
-                    $toCollect[$col_platform][$sku][] = $o;
-                }
-            }
-        }
-
-        $itemToRestock = [];
-        $itemToCollect = [];
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] >= $r['stock']) {
-                $itemToRestock[] = $r;
-            }
-        }
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] <= $r['stock']) {
-                $itemToCollect[] = $r;
-            }
-        }
-
-        $Tbl = new TableDisplayer();
-        $Tbl->setHead($HEADER, true);
-
-        $Tbl->setBody($itemToRestock);
-        $this->Data['toRestock'] = $Tbl->getTable();
-
-        foreach ($toCollect as $col_platform => $items) {
-            foreach ($itemToCollect as &$r) {
-                if (array_key_exists($r['sku'], $items) === true) {
-                    $r[$col_platform] = count($items[$r['sku']]);
-                } else {
-                    $r[$col_platform] = 0;
-                }
-            }
-        }
+    private function newTablePackList_HTML_Maker(): TableDisplayer
+    {
         $tblPackList = new TableDisplayer();
         $tblPackList->setHead([
             'sku' => 'Item Code',
@@ -202,12 +160,119 @@ class BigSellerOrderProcess
             'shopee' => 'Shopee',
             'tiktok' => 'TikTok',
         ], true);
-        $tblPackList->setBody($itemToCollect);
-        $this->Data['toCollect'] = $tblPackList->getTable();
-
-        $Tbl->setBody($notFoundItems);
-        $this->Data['notFound'] = $Tbl->getTable();
+        return $tblPackList;
     }
+
+    public function getToRestockHTML(array $items, array $keyedSku): string
+    {
+        $platforms = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        // group items by platform marketplace
+        foreach ($platforms as $col_platform => $dbItems) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    if ($o['stock'] === null) continue; // skip not found sku item
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
+                        $platforms[$col_platform][$sku] = [];
+
+                    $platforms[$col_platform][$sku][] = $o;
+                }
+            }
+        }
+
+        // count by each column (platforms)
+        foreach ($platforms as $col_platform => $dbItems) {
+            foreach ($items as &$r) {
+                if (array_key_exists($r['sku'], $dbItems) === true) {
+                    $r[$col_platform] = count($dbItems[$r['sku']]);
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+
+        // output as HTML
+        $tblPackList = $this->newTablePackList_HTML_Maker();
+        $tblPackList->setBody($items);
+
+        return $tblPackList->getTable();
+    }
+
+    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
+    {
+        $platforms = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        // group items by platform marketplace
+        foreach ($platforms as $col_platform => $dbItems) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    if ($o['stock'] === null) continue; // skip not found sku item
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
+                        $platforms[$col_platform][$sku] = [];
+
+                    $platforms[$col_platform][$sku][] = $o;
+                }
+            }
+        }
+
+        // count by each column (platforms)
+        foreach ($platforms as $col_platform => $dbItems) {
+            foreach ($itemToCollect as &$r) {
+                if (array_key_exists($r['sku'], $dbItems) === true) {
+                    $r[$col_platform] = count($dbItems[$r['sku']]);
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+
+        // out put as HTML
+        $tblPackList = $this->newTablePackList_HTML_Maker();
+        $tblPackList->setBody($itemToCollect);
+        return $tblPackList->getTable();
+    }
+
+    public function getNotFoundHTML(array $items): string
+    {
+        $platforms = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        // group items by platform marketplace
+        // add columns counts; count by each column (marketplace platforms)
+        foreach ($platforms as $col_platform => $itemList) {
+            foreach ($items as &$r) {
+                $marketPlace = strtolower($r['marketPlace']);
+                if ($marketPlace === $col_platform) {
+                    $r[$col_platform] = $r['quantity'];
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+
+        // output as HTML
+        $tblPackList = $this->newTablePackList_HTML_Maker();
+        $tblPackList->setBody($items);
+
+        return $tblPackList->getTable();
+    }
+
 
     private function setShippingFeeByWeight(array &$orders): void
     {
@@ -237,7 +302,7 @@ class BigSellerOrderProcess
         }
     }
 
-    private function setOrdersToData(array &$orders): void
+    public function getOrdersToData(array &$orders): string
     {
         $Tbl = new TableDisplayer();
 
@@ -254,11 +319,12 @@ class BigSellerOrderProcess
             // 'paidPrice' => 'Paid Price',
             'shippingProvider' => 'Shipping Provider',
             'trackingNum' => 'Tracking Number',
-            'marketPlace' => 'Marketplace'
+            // 'marketPlace' => 'Marketplace', // for computation only; use storeName_BigSeller to display instead
+            'storeName_BigSeller' => 'Store Nickname'
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
         $Tbl->setAttributes('id="orders-table"');
-        $this->Data['orders'] = $Tbl->getTable();
+        return $Tbl->getTable();
     }
 }

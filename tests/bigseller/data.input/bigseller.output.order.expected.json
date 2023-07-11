@@ -11,6 +11,7 @@
         "shippingProvider": "Lazada-MY-LEX MY",
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
         "stock": null
     },
     {
@@ -25,6 +26,7 @@
         "shippingProvider": "Lazada-MY-LEX MY",
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
         "stock": null
     },
     {
@@ -39,6 +41,37 @@
         "shippingProvider": "Lazada-MY-PosStore",
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "IN-0829-16",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "IN-0829-16",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
         "stock": null
     },
     {
@@ -53,6 +86,7 @@
         "shippingProvider": "Lazada-MY-LEX MY",
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Car Deco",
         "stock": null
     },
     {
@@ -67,6 +101,7 @@
         "shippingProvider": "Lazada-MY-SkyNet",
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
+        "storeName_BigSeller": "Lazada Eplusauto",
         "stock": null
     },
     {
@@ -81,6 +116,7 @@
         "shippingProvider": "Shopee-MY-J&T Express",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -95,6 +131,7 @@
         "shippingProvider": "Shopee-MY-Shopee Xpress (West Malaysia)",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -109,6 +146,7 @@
         "shippingProvider": "Shopee-MY-Shopee Xpress (West Malaysia)",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -123,6 +161,7 @@
         "shippingProvider": "Shopee-MY-J&T Express",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -137,6 +176,7 @@
         "shippingProvider": "Shopee-MY-Shopee Xpress (West Malaysia)",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Car Deco",
         "stock": null
     },
     {
@@ -151,6 +191,7 @@
         "shippingProvider": "Shopee-MY-Shopee Xpress (West Malaysia)",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Car Deco",
         "stock": null
     },
     {
@@ -165,6 +206,7 @@
         "shippingProvider": "Shopee-MY-J&T Express",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -179,6 +221,7 @@
         "shippingProvider": "",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
         "stock": null
     },
     {
@@ -193,6 +236,127 @@
         "shippingProvider": "",
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "Shopee",
+        "storeName_BigSeller": "Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "IN-0829-16",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "TikTok",
+        "storeName_BigSeller": "Tiktok Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "TikTok",
+        "storeName_BigSeller": "Tiktok Eplusauto",
+        "stock": null
+    },
+    {
+        "orderNum": "384448043217759",
+        "date": "2023-07-07 18:51",
+        "sku": "fake not founds from diff platform",
+        "description": "Proton Saga VVT 2016 High Quality ABS Anti Non Slip Rear Trunk Boot Cargo Tray",
+        "sellingPrice": 42.33,
+        "shippingFee": 1.45,
+        "trackingNum": "",
+        "paidPrice": "42.33",
+        "shippingProvider": "Lazada-MY-PosStore",
+        "shippingState": "Earth **** example",
+        "marketPlace": "TikTok",
+        "storeName_BigSeller": "Tiktok Eplusauto",
         "stock": null
     },
     {
@@ -207,20 +371,7 @@
         "shippingProvider": "TikTok-MY-J&T Express",
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
-        "stock": null
-    },
-    {
-        "orderNum": "577544991388764355",
-        "date": "2023-07-07 18:50",
-        "sku": "EX-1001-ACC03",
-        "description": "Car Door Window Pillar Trim Cover (Black \/ Chrome \/ Gold \/ Rose) - HONDA Accord, City, Civic, Hrv, Jazz",
-        "sellingPrice": 55,
-        "shippingFee": 4.9,
-        "trackingNum": "685823528310",
-        "paidPrice": "55",
-        "shippingProvider": "TikTok-MY-J&T Express",
-        "shippingState": "Earth **** example",
-        "marketPlace": "TikTok",
+        "storeName_BigSeller": "Tiktok Eplusauto",
         "stock": null
     },
     {
@@ -235,6 +386,7 @@
         "shippingProvider": "TikTok-MY-J&T Express",
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
+        "storeName_BigSeller": "Tiktok Eplusauto",
         "stock": null
     }
 ]
