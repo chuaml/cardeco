@@ -63,7 +63,8 @@ class BigSellerOrderProcess
                     'shippingProvider' => trim($r[42]),
                     'shippingState' => trim($r[26]),
 
-                    'marketPlace' => trim($r[4]),
+                    'marketPlace' => trim($r[4]), // necessary for computation; grouping item counts
+                    'storeName_BigSeller' => trim($r[5]),
 
                     'stock' => null
                 ];
@@ -318,7 +319,8 @@ class BigSellerOrderProcess
             // 'paidPrice' => 'Paid Price',
             'shippingProvider' => 'Shipping Provider',
             'trackingNum' => 'Tracking Number',
-            'marketPlace' => 'Marketplace'
+            // 'marketPlace' => 'Marketplace', // for computation only; use storeName_BigSeller to display instead
+            'storeName_BigSeller' => 'Store Nickname'
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
