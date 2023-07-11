@@ -27,7 +27,6 @@ function printPaper(){
 	let notfound_rows = notfound.getElementsByTagName('tbody')[0].innerHTML;
 
 	let len = 0;
-	let total = 0;
 	let row;
 	let qty_row;
 	let current_qty;
@@ -43,30 +42,39 @@ function printPaper(){
 		+ '</tbody>';
 
 	//calculate total
-	row = itemList.getElementsByTagName('tr');
-	len = row.length;
-	for(i=1;i<len;++i){
-		qty_row = row[i].getElementsByTagName('td')[2];
-		current_qty = parseInt(qty_row.innerText);
-		if(current_qty >= 1){
-			total += current_qty;
+	const colCount = itemList.querySelector('tr').querySelectorAll('th').length;
+	const quantityIndex = 2;
+	const columnTotals = [];
+	for (let c = quantityIndex; c < colCount; ++c) {
+		let total = 0;
+		row = itemList.getElementsByTagName('tr');
+		len = row.length;
+		for (i = 1; i < len; ++i) {
+			let td = row[i].getElementsByTagName('td');
+			qty_row = td[c];
+			current_qty = parseInt(qty_row.innerText);
+			if (current_qty >= 1) {
+				total += current_qty;
+			}
 		}
-	}
 
-	row = notfound.getElementsByTagName('tr');
-	len = row.length;
-	for(i=1;i<len;++i){
-		qty_row = row[i].getElementsByTagName('td')[2];
-		current_qty = parseInt(qty_row.innerText);
-		if(current_qty >= 1){
-			total += current_qty;
+		row = notfound.getElementsByTagName('tr');
+		len = row.length;
+		for (i = 1; i < len; ++i) {
+			let td = row[i].getElementsByTagName('td');
+			qty_row = td[c];
+			current_qty = parseInt(qty_row.innerText);
+			if (current_qty >= 1) {
+				total += current_qty;
+			}
 		}
-	}
+		columnTotals.push(total);
 
-	output += '<tr><td></td>' 
+	}
+	output += '<tr><td></td>'
 		+ '<td>Total: </td> <td>'
-		+ total
-		+ '</td><td></td></tr>'
+		+ columnTotals.join('</td><td>')
+		+ '</td></tr>'
 		+ '</table>';
 	//
 
