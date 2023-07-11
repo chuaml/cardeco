@@ -215,7 +215,7 @@ class BigSellerOrderProcess
             'tiktok' => [],
         ];
         // group items by platform marketplace
-        foreach ($platforms as $col_platform => $items) {
+        foreach ($platforms as $col_platform => $itemList) {
             foreach ($keyedSku as $sku => $orders) {
                 foreach ($orders as $o) {
                     if ($o['stock'] === null) continue; // skip not found sku item
@@ -232,10 +232,10 @@ class BigSellerOrderProcess
         }
 
         // count by each column (platforms)
-        foreach ($platforms as $col_platform => $items) {
+        foreach ($platforms as $col_platform => $itemList) {
             foreach ($itemToCollect as &$r) {
-                if (array_key_exists($r['sku'], $items) === true) {
-                    $r[$col_platform] = count($items[$r['sku']]);
+                if (array_key_exists($r['sku'], $itemList) === true) {
+                    $r[$col_platform] = count($itemList[$r['sku']]);
                 } else {
                     $r[$col_platform] = 0;
                 }
