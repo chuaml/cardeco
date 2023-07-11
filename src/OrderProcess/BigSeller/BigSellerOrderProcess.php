@@ -163,8 +163,7 @@ class BigSellerOrderProcess
 
         $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
 
-        $Tbl->setBody($notFoundItems);
-        $this->Data['notFound'] = $Tbl->getTable();
+        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
     }
 
     public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
@@ -174,6 +173,7 @@ class BigSellerOrderProcess
             'shopee' => [],
             'tiktok' => [],
         ];
+        // group items by platform marketplace
         foreach ($toCollect as $col_platform => $items) {
             foreach ($keyedSku as $sku => $orders) {
                 foreach ($orders as $o) {
@@ -190,6 +190,7 @@ class BigSellerOrderProcess
             }
         }
 
+        // count by each column (platforms)
         foreach ($toCollect as $col_platform => $items) {
             foreach ($itemToCollect as &$r) {
                 if (array_key_exists($r['sku'], $items) === true) {
@@ -199,6 +200,8 @@ class BigSellerOrderProcess
                 }
             }
         }
+
+        // out put as HTML
         $tblPackList = new TableDisplayer();
         $tblPackList->setHead([
             'sku' => 'Item Code',
@@ -212,6 +215,58 @@ class BigSellerOrderProcess
         $tblPackList->setBody($itemToCollect);
         return $tblPackList->getTable();
     }
+
+    public function getNotFoundHTML(array $items, array $keyedSku): string
+    {
+        $platforms = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        // group items by platform marketplace
+        foreach ($platforms as $col_platform => $itemList) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    if ($o['stock'] === null) continue; // skip not found sku item
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
+                        $platforms[$col_platform][$sku] = [];
+
+                    $platforms[$col_platform][$sku][] = $o;
+                }
+            }
+        }
+
+        // count by each column (platforms)
+        foreach ($platforms as $col_platform => $itemList) {
+            foreach ($items as &$r) {
+                if (array_key_exists($r['sku'], $items) === true) {
+                    $r[$col_platform] = count($items[$r['sku']]);
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+
+        // output as HTML
+        $tblPackList = new TableDisplayer();
+        $tblPackList->setHead([
+            'sku' => 'Item Code',
+            'description' => 'Description',
+            'quantity' => 'Total Q.',
+            'stock' => 'Stock',
+            'lazada' => 'Lazada',
+            'shopee' => 'Shopee',
+            'tiktok' => 'TikTok',
+        ], true);
+        $tblPackList->setBody($items);
+
+        return $tblPackList->getTable();
+    }
+
 
     private function setShippingFeeByWeight(array &$orders): void
     {
