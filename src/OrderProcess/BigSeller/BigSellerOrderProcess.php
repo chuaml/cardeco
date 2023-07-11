@@ -121,12 +121,7 @@ class BigSellerOrderProcess
 
     private function setItemsToData(array &$keyedSku): void
     {
-        $HEADER = [
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Quantity',
-            'stock' => 'Stock'
-        ];
+
         $foundItems = [];
         $notFoundItems = [];
         foreach ($keyedSku as $r) {
@@ -154,16 +149,62 @@ class BigSellerOrderProcess
             }
         }
 
-        $Tbl = new TableDisplayer();
-        $Tbl->setHead($HEADER, true);
-
-        $Tbl->setBody($itemToRestock);
-        $this->Data['toRestock'] = $Tbl->getTable();
-
+        $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
 
         $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
 
         $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
+    }
+
+    public function getToRestockHTML(array $items, array $keyedSku): string
+    {
+        $platforms = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        // group items by platform marketplace
+        foreach ($platforms as $col_platform => $itemList) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    if ($o['stock'] === null) continue; // skip not found sku item
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
+                        $platforms[$col_platform][$sku] = [];
+
+                    $platforms[$col_platform][$sku][] = $o;
+                }
+            }
+        }
+
+        // count by each column (platforms)
+        foreach ($platforms as $col_platform => $itemList) {
+            foreach ($items as &$r) {
+                if (array_key_exists($r['sku'], $items) === true) {
+                    $r[$col_platform] = count($items[$r['sku']]);
+                } else {
+                    $r[$col_platform] = 0;
+                }
+            }
+        }
+
+        // output as HTML
+        $tblPackList = new TableDisplayer();
+        $tblPackList->setHead([
+            'sku' => 'Item Code',
+            'description' => 'Description',
+            'quantity' => 'Total Q.',
+            'stock' => 'Stock',
+            'lazada' => 'Lazada',
+            'shopee' => 'Shopee',
+            'tiktok' => 'TikTok',
+        ], true);
+        $tblPackList->setBody($items);
+
+        return $tblPackList->getTable();
     }
 
     public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
