@@ -139,30 +139,7 @@ class BigSellerOrderProcess
             }
         }
 
-        $toCollect = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
-        foreach ($toCollect as $col_platform => $items) {
-            foreach ($keyedSku as $sku => $orders) {
-                foreach ($orders as $o) {
-                    // $order[$col_platform] = array_reduce($r, function ($total, $order) use ($col_platform) {
-                    //     return strtolower($order['marketPlace']) === $col_platform ? $total++ : $total;
-                    // }, 0);
 
-                    if ($o['stock'] === null) continue;
-
-                    $marketPlace = strtolower($o['marketPlace']);
-                    if ($marketPlace !== $col_platform) continue;
-
-                    if (array_key_exists($sku, $toCollect[$col_platform]) === false)
-                        $toCollect[$col_platform][$sku] = [];
-
-                    $toCollect[$col_platform][$sku][] = $o;
-                }
-            }
-        }
 
         $itemToRestock = [];
         $itemToCollect = [];
@@ -182,6 +159,36 @@ class BigSellerOrderProcess
 
         $Tbl->setBody($itemToRestock);
         $this->Data['toRestock'] = $Tbl->getTable();
+
+
+        $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
+
+        $Tbl->setBody($notFoundItems);
+        $this->Data['notFound'] = $Tbl->getTable();
+    }
+
+    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
+    {
+        $toCollect = [
+            'lazada' => [],
+            'shopee' => [],
+            'tiktok' => [],
+        ];
+        foreach ($toCollect as $col_platform => $items) {
+            foreach ($keyedSku as $sku => $orders) {
+                foreach ($orders as $o) {
+                    if ($o['stock'] === null) continue; // skip not found sku item
+
+                    $marketPlace = strtolower($o['marketPlace']);
+                    if ($marketPlace !== $col_platform) continue;
+
+                    if (array_key_exists($sku, $toCollect[$col_platform]) === false)
+                        $toCollect[$col_platform][$sku] = [];
+
+                    $toCollect[$col_platform][$sku][] = $o;
+                }
+            }
+        }
 
         foreach ($toCollect as $col_platform => $items) {
             foreach ($itemToCollect as &$r) {
@@ -203,10 +210,7 @@ class BigSellerOrderProcess
             'tiktok' => 'TikTok',
         ], true);
         $tblPackList->setBody($itemToCollect);
-        $this->Data['toCollect'] = $tblPackList->getTable();
-
-        $Tbl->setBody($notFoundItems);
-        $this->Data['notFound'] = $Tbl->getTable();
+        return $tblPackList->getTable();
     }
 
     private function setShippingFeeByWeight(array &$orders): void
