@@ -133,7 +133,7 @@ class BigSellerOrderProcess
                 $foundItems[] = $order;
             }
         }
-        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
+        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems);
 
 
         $itemToRestock = array_filter($foundItems, function ($r) {
@@ -170,7 +170,7 @@ class BigSellerOrderProcess
             'tiktok' => [],
         ];
         // group items by platform marketplace
-        foreach ($platforms as $col_platform => $itemList) {
+        foreach ($platforms as $col_platform => $dbItems) {
             foreach ($keyedSku as $sku => $orders) {
                 foreach ($orders as $o) {
                     if ($o['stock'] === null) continue; // skip not found sku item
@@ -187,10 +187,10 @@ class BigSellerOrderProcess
         }
 
         // count by each column (platforms)
-        foreach ($platforms as $col_platform => $itemList) {
+        foreach ($platforms as $col_platform => $dbItems) {
             foreach ($items as &$r) {
-                if (array_key_exists($r['sku'], $itemList) === true) {
-                    $r[$col_platform] = count($itemList[$r['sku']]);
+                if (array_key_exists($r['sku'], $dbItems) === true) {
+                    $r[$col_platform] = count($dbItems[$r['sku']]);
                 } else {
                     $r[$col_platform] = 0;
                 }
@@ -212,7 +212,7 @@ class BigSellerOrderProcess
             'tiktok' => [],
         ];
         // group items by platform marketplace
-        foreach ($platforms as $col_platform => $itemList) {
+        foreach ($platforms as $col_platform => $dbItems) {
             foreach ($keyedSku as $sku => $orders) {
                 foreach ($orders as $o) {
                     if ($o['stock'] === null) continue; // skip not found sku item
@@ -229,10 +229,10 @@ class BigSellerOrderProcess
         }
 
         // count by each column (platforms)
-        foreach ($platforms as $col_platform => $itemList) {
+        foreach ($platforms as $col_platform => $dbItems) {
             foreach ($itemToCollect as &$r) {
-                if (array_key_exists($r['sku'], $itemList) === true) {
-                    $r[$col_platform] = count($itemList[$r['sku']]);
+                if (array_key_exists($r['sku'], $dbItems) === true) {
+                    $r[$col_platform] = count($dbItems[$r['sku']]);
                 } else {
                     $r[$col_platform] = 0;
                 }
@@ -245,7 +245,7 @@ class BigSellerOrderProcess
         return $tblPackList->getTable();
     }
 
-    public function getNotFoundHTML(array $items, array $keyedSku): string
+    public function getNotFoundHTML(array $items): string
     {
         $platforms = [
             'lazada' => [],
@@ -253,27 +253,12 @@ class BigSellerOrderProcess
             'tiktok' => [],
         ];
         // group items by platform marketplace
-        foreach ($platforms as $col_platform => $itemList) {
-            foreach ($keyedSku as $sku => $orders) {
-                foreach ($orders as $o) {
-                    if ($o['stock'] === null) continue; // skip not found sku item
-
-                    $marketPlace = strtolower($o['marketPlace']);
-                    if ($marketPlace !== $col_platform) continue;
-
-                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
-                        $platforms[$col_platform][$sku] = [];
-
-                    $platforms[$col_platform][$sku][] = $o;
-                }
-            }
-        }
-
-        // count by each column (platforms)
+        // add columns counts; count by each column (marketplace platforms)
         foreach ($platforms as $col_platform => $itemList) {
             foreach ($items as &$r) {
-                if (array_key_exists($r['sku'], $itemList) === true) {
-                    $r[$col_platform] = count($itemList[$r['sku']]);
+                $marketPlace = strtolower($r['marketPlace']);
+                if ($marketPlace === $col_platform) {
+                    $r[$col_platform] = $r['quantity'];
                 } else {
                     $r[$col_platform] = 0;
                 }
