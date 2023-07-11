@@ -183,8 +183,8 @@ class BigSellerOrderProcess
         // count by each column (platforms)
         foreach ($platforms as $col_platform => $itemList) {
             foreach ($items as &$r) {
-                if (array_key_exists($r['sku'], $items) === true) {
-                    $r[$col_platform] = count($items[$r['sku']]);
+                if (array_key_exists($r['sku'], $itemList) === true) {
+                    $r[$col_platform] = count($itemList[$r['sku']]);
                 } else {
                     $r[$col_platform] = 0;
                 }
@@ -209,13 +209,13 @@ class BigSellerOrderProcess
 
     public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
     {
-        $toCollect = [
+        $platforms = [
             'lazada' => [],
             'shopee' => [],
             'tiktok' => [],
         ];
         // group items by platform marketplace
-        foreach ($toCollect as $col_platform => $items) {
+        foreach ($platforms as $col_platform => $items) {
             foreach ($keyedSku as $sku => $orders) {
                 foreach ($orders as $o) {
                     if ($o['stock'] === null) continue; // skip not found sku item
@@ -223,16 +223,16 @@ class BigSellerOrderProcess
                     $marketPlace = strtolower($o['marketPlace']);
                     if ($marketPlace !== $col_platform) continue;
 
-                    if (array_key_exists($sku, $toCollect[$col_platform]) === false)
-                        $toCollect[$col_platform][$sku] = [];
+                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
+                        $platforms[$col_platform][$sku] = [];
 
-                    $toCollect[$col_platform][$sku][] = $o;
+                    $platforms[$col_platform][$sku][] = $o;
                 }
             }
         }
 
         // count by each column (platforms)
-        foreach ($toCollect as $col_platform => $items) {
+        foreach ($platforms as $col_platform => $items) {
             foreach ($itemToCollect as &$r) {
                 if (array_key_exists($r['sku'], $items) === true) {
                     $r[$col_platform] = count($items[$r['sku']]);
@@ -284,8 +284,8 @@ class BigSellerOrderProcess
         // count by each column (platforms)
         foreach ($platforms as $col_platform => $itemList) {
             foreach ($items as &$r) {
-                if (array_key_exists($r['sku'], $items) === true) {
-                    $r[$col_platform] = count($items[$r['sku']]);
+                if (array_key_exists($r['sku'], $itemList) === true) {
+                    $r[$col_platform] = count($itemList[$r['sku']]);
                 } else {
                     $r[$col_platform] = 0;
                 }
