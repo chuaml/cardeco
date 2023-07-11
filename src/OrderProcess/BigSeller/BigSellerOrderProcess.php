@@ -121,6 +121,7 @@ class BigSellerOrderProcess
 
     private function setItemsToData(array &$keyedSku): void
     {
+        // split items to found and notFound group
         $foundItems = [];
         $notFoundItems = [];
         foreach ($keyedSku as $r) {
@@ -132,24 +133,33 @@ class BigSellerOrderProcess
                 $foundItems[] = $order;
             }
         }
+        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
 
-        $itemToRestock = [];
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] >= $r['stock']) {
-                $itemToRestock[] = $r;
-            }
-        }
+
+        $itemToRestock = array_filter($foundItems, function ($r) {
+            return $r['quantity'] >= $r['stock'];
+        });
         $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
 
-        $itemToCollect = [];
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] <= $r['stock']) {
-                $itemToCollect[] = $r;
-            }
-        }
+        $itemToCollect = $itemToRestock = array_filter($foundItems, function ($r) {
+            return $r['quantity'] <= $r['stock'];
+        });
         $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
+    }
 
-        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
+    private function newTablePackList_HTML_Maker(): TableDisplayer
+    {
+        $tblPackList = new TableDisplayer();
+        $tblPackList->setHead([
+            'sku' => 'Item Code',
+            'description' => 'Description',
+            'quantity' => 'Total Q.',
+            'stock' => 'Stock',
+            'lazada' => 'Lazada',
+            'shopee' => 'Shopee',
+            'tiktok' => 'TikTok',
+        ], true);
+        return $tblPackList;
     }
 
     public function getToRestockHTML(array $items, array $keyedSku): string
@@ -188,16 +198,7 @@ class BigSellerOrderProcess
         }
 
         // output as HTML
-        $tblPackList = new TableDisplayer();
-        $tblPackList->setHead([
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Total Q.',
-            'stock' => 'Stock',
-            'lazada' => 'Lazada',
-            'shopee' => 'Shopee',
-            'tiktok' => 'TikTok',
-        ], true);
+        $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($items);
 
         return $tblPackList->getTable();
@@ -239,16 +240,7 @@ class BigSellerOrderProcess
         }
 
         // out put as HTML
-        $tblPackList = new TableDisplayer();
-        $tblPackList->setHead([
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Total Q.',
-            'stock' => 'Stock',
-            'lazada' => 'Lazada',
-            'shopee' => 'Shopee',
-            'tiktok' => 'TikTok',
-        ], true);
+        $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($itemToCollect);
         return $tblPackList->getTable();
     }
@@ -289,16 +281,7 @@ class BigSellerOrderProcess
         }
 
         // output as HTML
-        $tblPackList = new TableDisplayer();
-        $tblPackList->setHead([
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Total Q.',
-            'stock' => 'Stock',
-            'lazada' => 'Lazada',
-            'shopee' => 'Shopee',
-            'tiktok' => 'TikTok',
-        ], true);
+        $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($items);
 
         return $tblPackList->getTable();
