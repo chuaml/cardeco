@@ -35,7 +35,7 @@ class BigSellerOrderProcess
         $this->setItemsToData($keyedSku);
 
         $this->setShippingFeeByWeight($orders);
-        $this->setOrdersToData($orders);
+        $this->Data['orders'] = $this->getOrdersToData($orders);
 
         return $this->Data;
     }
@@ -121,7 +121,6 @@ class BigSellerOrderProcess
 
     private function setItemsToData(array &$keyedSku): void
     {
-
         $foundItems = [];
         $notFoundItems = [];
         foreach ($keyedSku as $r) {
@@ -134,23 +133,20 @@ class BigSellerOrderProcess
             }
         }
 
-
-
         $itemToRestock = [];
-        $itemToCollect = [];
         foreach ($foundItems as $r) {
             if ($r['quantity'] >= $r['stock']) {
                 $itemToRestock[] = $r;
             }
         }
+        $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
+
+        $itemToCollect = [];
         foreach ($foundItems as $r) {
             if ($r['quantity'] <= $r['stock']) {
                 $itemToCollect[] = $r;
             }
         }
-
-        $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
-
         $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
 
         $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems, $keyedSku);
@@ -337,7 +333,7 @@ class BigSellerOrderProcess
         }
     }
 
-    private function setOrdersToData(array &$orders): void
+    public function getOrdersToData(array &$orders): string
     {
         $Tbl = new TableDisplayer();
 
@@ -359,6 +355,6 @@ class BigSellerOrderProcess
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
         $Tbl->setAttributes('id="orders-table"');
-        $this->Data['orders'] = $Tbl->getTable();
+        return $Tbl->getTable();
     }
 }
