@@ -11,6 +11,9 @@ define('_CURRENT_BRANCH_NAME', exec('git branch --show-current', $_output, $_res
 if($_result === 0 && _CURRENT_BRANCH_NAME === 'main'){
     // $_dbName .= '_' . _CURRENT_BRANCH_NAME;
     $_isProduction = true;
+} else {
+    $_dbName = 'cardeco_dev';
+    $_isProduction = false;
 }
 
 define('IS_PRODUCTION', $_isProduction);

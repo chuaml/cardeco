@@ -335,6 +335,7 @@ nav div{
 	visibility: hidden;
 	opacity: .6;
 	transition: visibility 0s, opacity 0.1s linear;
+	transition-delay: .25s;
 	position: absolute;
 	background-color: white;
 }
