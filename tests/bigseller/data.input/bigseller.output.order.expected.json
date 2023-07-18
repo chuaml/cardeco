@@ -12,6 +12,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -27,6 +28,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -42,6 +44,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -57,6 +60,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -72,6 +76,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -87,6 +92,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Car Deco",
+        "voucher": 0.79,
         "stock": null
     },
     {
@@ -102,6 +108,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Lazada",
         "storeName_BigSeller": "Lazada Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -117,6 +124,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -132,6 +140,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -147,6 +156,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -162,6 +172,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -177,6 +188,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Car Deco",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -192,6 +204,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Car Deco",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -207,6 +220,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 10,
         "stock": null
     },
     {
@@ -222,6 +236,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -237,6 +252,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -252,6 +268,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -267,6 +284,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -282,6 +300,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -297,6 +316,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -312,6 +332,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "Shopee",
         "storeName_BigSeller": "Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -327,6 +348,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
         "storeName_BigSeller": "Tiktok Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -342,6 +364,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
         "storeName_BigSeller": "Tiktok Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -357,6 +380,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
         "storeName_BigSeller": "Tiktok Eplusauto",
+        "voucher": 3.73,
         "stock": null
     },
     {
@@ -372,6 +396,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
         "storeName_BigSeller": "Tiktok Eplusauto",
+        "voucher": 0,
         "stock": null
     },
     {
@@ -387,6 +412,7 @@
         "shippingState": "Earth **** example",
         "marketPlace": "TikTok",
         "storeName_BigSeller": "Tiktok Eplusauto",
+        "voucher": 5,
         "stock": null
     }
 ]
