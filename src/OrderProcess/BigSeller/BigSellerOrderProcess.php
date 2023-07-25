@@ -58,6 +58,7 @@ class BigSellerOrderProcess
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => $sellingPrice,
                     'shippingFee' => $shippingFee,
+                    'voucher' =>  $voucher,
                     'trackingNum' => trim($r[44]),
 
                     'paidPrice' => trim($r[36]),
@@ -66,8 +67,6 @@ class BigSellerOrderProcess
 
                     'marketPlace' => trim($r[4]), // necessary for computation; grouping item counts
                     'storeName_BigSeller' => trim($r[5]),
-
-                    'voucher' =>  $voucher,
 
                     'stock' => null
                 ];
@@ -316,6 +315,7 @@ class BigSellerOrderProcess
             'description' => 'Description',
             'sellingPrice' => 'Selling Price',
             'shippingFee' => 'Shipping Fee',
+            'voucher' => 'Voucher',
             // 'shippingFeeByWeight' => 'Shipping Fee2',
             // 'shippingWeight' => 'Weight',
 
@@ -324,7 +324,6 @@ class BigSellerOrderProcess
             'trackingNum' => 'Tracking Number',
             // 'marketPlace' => 'Marketplace', // for computation only; use storeName_BigSeller to display instead
             'storeName_BigSeller' => 'Store Nickname',
-            'voucher' => 'Voucher'
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
