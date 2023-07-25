@@ -64,7 +64,7 @@ class TikTokOrder
                 );
 
                 $x->setOrderNum(trim($r[0]));
-                $x->setDate(trim($r[24]));
+                $x->setDate(trim($r[23]));
                 $x->setVoucher($voucher);
                 $x->setSellingPrice($sellingPrice);
                 $x->setShippingFee((float) preg_replace('/[^0-9\.]+/', '', $r[16]));
