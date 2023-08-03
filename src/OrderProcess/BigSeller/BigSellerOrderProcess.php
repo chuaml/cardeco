@@ -49,7 +49,7 @@ class BigSellerOrderProcess
             $quantity = intval($r[34]);
             $sellingPrice = floatval(preg_replace('/[^0-9\.]+/', '', $r[33]));
             $shippingFee = floatval(preg_replace('/[^0-9\.]+/', '', $r[53]));
-            $voucher = floatval(preg_replace('/[^0-9\.]+/', '', $r[48]));
+            $storeVoucher = floatval(preg_replace('/[^0-9\.]+/', '', $r[49]));
             for ($i = 0; $i < $quantity; ++$i) {
                 $list[] = [
                     'orderNum' => trim($r[0]),
@@ -58,7 +58,7 @@ class BigSellerOrderProcess
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => $sellingPrice,
                     'shippingFee' => $shippingFee,
-                    'voucher' =>  $voucher,
+                    'voucher' =>  $storeVoucher,
                     'trackingNum' => trim($r[44]),
 
                     'paidPrice' => trim($r[36]),
