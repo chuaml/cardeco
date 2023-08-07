@@ -1,15 +1,6 @@
 <?php
 namespace Controller;
 
-
-
-
-
-
-
-
-
-
 use Product\Manager\ItemManager;
 use HTML\TableDisplayer;
 use Orders\Factory\Shopee;
@@ -62,11 +53,12 @@ class ShopeeOrdersController
     {
         $orders = (new Shopee($this->file))->generateRecords();
         return array_map(function (\Orders\Record $o) {
+            $item = $o->getItem();
             return [
                 'orderNum' => $o->orderNum,
                 'date' => $o->date,
-                'sku' => $o->getItem()->code,
-                'description' => null,
+                'sku' => $item->code,
+                'description' => $item->description,
                 'sellingPrice' => $o->sellingPrice,
                 'shippingFee' => $o->shippingFee,
                 'voucher' => $o->voucher,

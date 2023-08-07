@@ -68,10 +68,12 @@ class Shopee implements RecordFactory
                 $sku = trim($row[10]);
             }
     
+            $itemName = trim($row[11]);
+
             $Record = new Record(
                 null,
                 trim($row[0]),
-                new Item(null, $sku, null)
+                new Item(null, $sku, $itemName)
             );
     
             $Record->setOrderNum(trim($row[0]));

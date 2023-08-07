@@ -49,6 +49,7 @@ class BigSellerOrderProcess
             $quantity = intval($r[34]);
             $sellingPrice = floatval(preg_replace('/[^0-9\.]+/', '', $r[33]));
             $shippingFee = floatval(preg_replace('/[^0-9\.]+/', '', $r[53]));
+            $storeVoucher = floatval(preg_replace('/[^0-9\.]+/', '', $r[49]));
             for ($i = 0; $i < $quantity; ++$i) {
                 $list[] = [
                     'orderNum' => trim($r[0]),
@@ -57,6 +58,7 @@ class BigSellerOrderProcess
                     'description' => trim($r[29]), //product name
                     'sellingPrice' => $sellingPrice,
                     'shippingFee' => $shippingFee,
+                    'voucher' =>  $storeVoucher,
                     'trackingNum' => trim($r[44]),
 
                     'paidPrice' => trim($r[36]),
@@ -313,6 +315,7 @@ class BigSellerOrderProcess
             'description' => 'Description',
             'sellingPrice' => 'Selling Price',
             'shippingFee' => 'Shipping Fee',
+            'voucher' => 'Voucher',
             // 'shippingFeeByWeight' => 'Shipping Fee2',
             // 'shippingWeight' => 'Weight',
 
@@ -320,7 +323,7 @@ class BigSellerOrderProcess
             'shippingProvider' => 'Shipping Provider',
             'trackingNum' => 'Tracking Number',
             // 'marketPlace' => 'Marketplace', // for computation only; use storeName_BigSeller to display instead
-            'storeName_BigSeller' => 'Store Nickname'
+            'storeName_BigSeller' => 'Store Nickname',
         ];
         $Tbl->setHead($HEADER, true);
         $Tbl->setBody($orders);
