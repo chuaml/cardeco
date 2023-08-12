@@ -1,96 +1,152 @@
-<?php 
+<?php
+
 namespace HTML;
 
-class TableDisplayer{
-    
-    private $attribute = null;
-    private $thead = null;
-    private $tbody = '';
-    private $tfoot = null;
-    private $theadKeys = null;
+use Generator;
 
-    public function getTable():string{
+class TableDisplayer
+{
+    private $attribute = null;
+    private $theadKeys = null;
+    private $isHeadWithId = true;
+
+    private $headData;
+    private $bodyData;
+    private $footData;
+
+    public function getTable(): string
+    {
         $table = '<table';
-        if(strlen($this->attribute) > 0){
-            $table .= ' ' .$this->attribute;
+        if (strlen($this->attribute) > 0) {
+            $table .= ' ' . $this->attribute;
         }
         $table .= '>';
 
-        if(strlen($this->thead) > 0){
-            $table .= $this->thead;
+        foreach ($this->getHead() as $html) {
+            $table .= $html;
         }
 
-        $table .= $this->tbody;
-
-        if(strlen($this->tfoot) > 0){
-            $table .= $this->tfoot;
+        foreach ($this->getBody() as $html) {
+            $table .= $html;
         }
+
+        foreach ($this->getFoot() as $html) {
+            $table .= $html;
+        }
+
         $table .= '</table>';
+
         return $table;
     }
 
-    public function setBody(array &$data):void{
-        $this->tbody = '<tbody>';
-        if($this->theadKeys === null){
-            foreach($data as $row){
-                $this->tbody .= '<tr><td>'
-                .implode('</td><td>', $row)
-                .'</td></tr>';
-            }
-        }else{
-            foreach($data as $row){
-                $this->tbody .= '<tr>';
-                foreach($this->theadKeys as $index){
-                    $value = $row[$index];
-                    if(is_float($value) === true){
-                        $this->tbody .= '<td>' .number_format($value, 2, '.', ',') .'</td>';
-                    } else {
-                        $this->tbody .= '<td>' .$value .'</td>';
-                    }
-                }
-                $this->tbody .= '</tr>';
-            }
+    public function streamHTML(): Generator
+    {
+        yield '<table';
+        if (strlen($this->attribute) > 0) {
+            yield ' ' . $this->attribute;
         }
-        $this->tbody .= '</tbody>';
+        yield '>';
+
+        foreach ($this->getHead() as $html) {
+            yield $html;
+        }
+
+        foreach ($this->getBody() as $html) {
+            yield $html;
+        }
+
+        foreach ($this->getFoot() as $html) {
+            yield $html;
+        }
+
+        yield '</table>';
     }
 
-    public function setHead(?array $data, bool $setId = true):void{
-        if($data === null){
-            $this->thead = null;
-            $this->theadKeys = null;
-            return;
-        }
-        $this->thead = '<thead><tr>';
-        if($setId){
-            foreach($data as $k => $v){
-                $this->thead .= "<th id=\"{$k}\">{$v}</th>";
+    public function setBody(array &$data): void
+    {
+        $this->bodyData = $data;
+    }
+
+    public function getBody(): Generator
+    {
+        yield '<tbody>';
+        if ($this->theadKeys === null) {
+            foreach ($this->bodyData as $row) {
+                yield '<tr><td>'
+                    . implode('</td><td>', $row)
+                    . '</td></tr>';
             }
         } else {
-            foreach($data as $v){
-                $this->thead .= "<th>{$v}</th>";
+            foreach ($this->bodyData as $row) {
+                yield '<tr>';
+                foreach ($this->theadKeys as $index) {
+                    $value = $row[$index];
+                    if (is_float($value) === true) {
+                        yield '<td>' . number_format($value, 2, '.', ',') . '</td>';
+                    } else {
+                        yield '<td>' . $value . '</td>';
+                    }
+                }
+                yield '</tr>';
             }
         }
-        $this->thead .= '</tr></thead>';
-        $this->theadKeys = array_keys($data);
+        yield '</tbody>';
     }
 
-    public function setFoot(?array $data):void{
-        if($data === null){
-            $this->tfoot = null;
-            return;
-        }
-        $this->tfoot = '<tfoot><tr>'; 
-        foreach($data as $v){
-            $this->tfoot .= "<td>{$v}</td>";
-        }
-        $this->tfoot .= '</tr></tfoot>';
+    public function setHead(?array $data, bool $setId = true): void
+    {
+        $this->headData =  $data;
+        $this->theadKeys = array_keys($this->headData);
+        $this->isHeadWithId = $setId;
     }
-    
-    public function setAttributes(?string $htmlAttributes):void{
+
+    public function getHead(): Generator
+    {
+        if ($this->headData === null) {
+            return '<thead></thead>';
+        }
+
+        yield '<thead><tr>';
+
+        if ($this->isHeadWithId === true) {
+            foreach ($this->headData as $k => $v) {
+                yield "<th id=\"{$k}\">{$v}</th>";
+            }
+        } else {
+            foreach ($this->headData as $v) {
+                yield "<th>{$v}</th>";
+            }
+        }
+
+        yield '</tr></thead>';
+    }
+
+    public function setFoot(?array $data): void
+    {
+        $this->footData = $data;
+    }
+
+    public function getFoot(): Generator
+    {
+        if ($this->footData === null) {
+            return '';
+        }
+
+        yield '<tfoot><tr>';
+        foreach ($this->footData as $v) {
+            yield  "<td>{$v}</td>";
+        }
+
+        return  '</tr></tfoot>';
+    }
+
+    public function setAttributes(?string $htmlAttributes): void
+    {
         $this->attribute = $htmlAttributes;
     }
 
-    protected function getReNamedHeader():array{
+    protected function getReNamedHeader(): array
+    {
         //key original fieldName, value as new user friendly field name
         return [];
     }
