@@ -73,9 +73,12 @@ class BigSellerOrderProcess
             }
         }
 
-        // sort by marketPlace
-        $marketPlace = array_column($list, 'marketPlace');
-        array_multisort($marketPlace, SORT_ASC, $list);
+        // sort by storeName_BigSeller
+        $storeName_BigSeller = array_column($list, 'storeName_BigSeller');
+        $storeName_BigSeller = array_map(function ($x) { // for custom sort, Lazada sort_asc higher first
+            return str_replace('Lazada ', '0', $x);
+        }, $storeName_BigSeller);
+        array_multisort($storeName_BigSeller, SORT_ASC, $list);
 
         // exit(json_encode($list));
 
