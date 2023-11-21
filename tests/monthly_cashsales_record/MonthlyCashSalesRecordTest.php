@@ -96,4 +96,31 @@ final class MonthlyCashSalesRecordTest extends TestCase
 
         $this->assertEquals($expectedResult, $output);
     }
+
+    public function testMultipleSameItemSkuButDifferentPrice_MonthlyCashSalesRecord_SameItemSkuButDifferentPriceAreSeparatedUnit(): void
+    {
+        $con = require 'tests/db.connection.php';
+        $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
+        $xlsx = new ExcelReader($testInputFilePath);
+        $paymentType = 'Lazada';
+        $startRowPos = 1;
+        $lastRowPos = -1;
+        $rows = $xlsx->read($paymentType, $startRowPos, $lastRowPos);
+
+        $list = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
+        $output = array_filter($list, function ($r) {
+            return $r['DOCREF1'] === '576559840027641520' && $r['ItemCode(30)'] === 'IN-0806-17';
+        });
+        $output = array_values($output);
+
+        $this->assertEquals(2, count($output));
+
+        $r = $output[0];
+        $this->assertEquals(43.5, $r['UnitPrice']);
+        $this->assertEquals(2, $r['Qty']);
+
+        $r = $output[1];
+        $this->assertEquals(46.9, $r['UnitPrice']);
+        $this->assertEquals(1, $r['Qty']);
+    }
 }
