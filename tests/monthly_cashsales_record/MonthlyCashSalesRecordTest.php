@@ -66,12 +66,14 @@ final class MonthlyCashSalesRecordTest extends TestCase
 
         $list = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
 
+        $count = 0;
         foreach ($list as $x) {
-            $this->assertTrue($x['DocNo(20)'] === '<<NEW>>');
-            $this->assertTrue($x['Agent(10)'] === '----');
-            $this->assertTrue($x['TERMS(10)'] === 'C.O.D.');
-            $this->assertTrue($x['Description_HDR(200)'] === 'Cash Sales');
+            $this->assertEquals('<<NEW>>', $x['DocNo(20)']);
+            $this->assertEquals('----', $x['Agent(10)']);
+            $this->assertEquals('C.O.D.', $x['TERMS(10)']);
+            $this->assertEquals('Cash Sales', $x['Description_HDR(200)']);
+            ++$count;
         }
-        $this->assertTrue(count($list) > 0);
+        $this->assertTrue($count > 0);
     }
 }
