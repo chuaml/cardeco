@@ -76,4 +76,24 @@ final class MonthlyCashSalesRecordTest extends TestCase
         }
         $this->assertTrue($count > 0);
     }
+
+    public function testConvertToSqlImportEntries_MonthlyCashSalesRecord_ExpectedOutput(): void
+    {
+        $con = require 'tests/db.connection.php';
+        $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
+        $xlsx = new ExcelReader($testInputFilePath);
+        $paymentType = 'Lazada';
+        $startRowPos = 1;
+        $lastRowPos = -1;
+        $rows = $xlsx->read($paymentType, $startRowPos, $lastRowPos);
+
+        $output = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
+        $output = json_encode($output, JSON_PRETTY_PRINT);
+
+        $expectedResult = file_get_contents('tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.expected.json');
+        $expectedResult = json_decode($expectedResult);
+        $expectedResult = json_encode($expectedResult, JSON_PRETTY_PRINT);
+
+        $this->assertEquals($expectedResult, $output);
+    }
 }
