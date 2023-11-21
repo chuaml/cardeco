@@ -1,9 +1,6 @@
 <?php
 namespace main;
 
-
-
-
 use Exception;
 use InvalidArgumentException;
 use Orders\Factory\Excel\CashSales;
