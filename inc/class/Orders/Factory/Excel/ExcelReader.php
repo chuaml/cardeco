@@ -71,25 +71,17 @@ class ExcelReader
 
         $worksheet = $spreadsheet->getActiveSheet();
 
-        $count = intval($worksheet->getHighestRow());
-        if ($lastRowPos <= -1 || $lastRowPos > $count) {
-            $lastRowPos = $count;
-        }
-
-        $lastCol = self::ColumnAlphabetToNumber($worksheet->getHighestColumn());
-
-        for ($i = $startRowPos; $i <= $lastRowPos; ++$i) {
+        foreach ($worksheet->getRowIterator($startRowPos) as $row) {
+            $cellIterator = $row->getCellIterator();
+            $cellIterator->setIterateOnlyExistingCells(false);
             $r = [];
-            for ($c = 1; $c <= $lastCol; ++$c) {
-                $cell = $worksheet->getCellByColumnAndRow($c, $i);
-
+            foreach ($cellIterator as $cell) {
                 try {
                     $r[] = trim($cell->getFormattedValue());
                 } catch (\PhpOffice\PhpSpreadsheet\Calculation\Exception $e) {
                     $r[] = trim($cell->getValue());
                 }
             }
-
             yield $r;
         }
     }

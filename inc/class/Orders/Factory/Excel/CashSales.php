@@ -98,8 +98,9 @@ final class CashSales
         $cashSalesWithSumByItemCode = [];
         foreach ($cashSales as $orderNum => $list) {
             $cashSalesWithSumByItemCode[$orderNum] = self::countByKey(
-                'SELLER SKU',
-                'count',
+                function($r) {
+                    return $r['SELLER SKU'] . $r['SELLING PRICE'];
+                },
                 $list,
                 'COURIER PAY BY CUSTOMER',
                 'SELLER VOUCHER',
@@ -115,14 +116,15 @@ final class CashSales
      * inaddition sum the specified $r[keysToSum] of each $r
      * In SQL lang example: SELECT COUNT(key) AS 'count', SUM(subTotal) AS 'subTotal' FROM list
      */
-    private static function countByKey($key, string $countAsKey, array $list, string ...$keysToSum):array
+    private static function countByKey(callable $getItemAsKey, array $list, string ...$keysToSum):array
     {
         $occuredValues = []; //key => index of first occured $r in groupedList
         $groupedList = [];
         $i=0;
         foreach ($list as $r) {
-            if (array_key_exists($r[$key], $occuredValues) === false) {
-                $r[$countAsKey] = 1;
+            $itemKey = $getItemAsKey($r);
+            if (array_key_exists($itemKey, $occuredValues) === false) {
+                $r['count'] = 1;
                 foreach ($keysToSum as $keyToSum) {
                     if (array_key_exists($keyToSum, $r) === false) {
                         throw new \InvalidArgumentException("undifined index key: {$keyToSum}");
@@ -133,12 +135,12 @@ final class CashSales
     
                 $groupedList[$i] = $r;
     
-                $occuredValues[$r[$key]] = $i++;
+                $occuredValues[$itemKey] = $i++;
                 continue;
             }
-            $groupedList[$occuredValues[$r[$key]]][$countAsKey] += 1;
+            $groupedList[$occuredValues[$itemKey]]['count'] += 1;
             foreach ($keysToSum as $keyToSum) {
-                $groupedList[$occuredValues[$r[$key]]][$keyToSum] += doubleval($r[$keyToSum]);
+                $groupedList[$occuredValues[$itemKey]][$keyToSum] += doubleval($r[$keyToSum]);
             }
         }
         return $groupedList;

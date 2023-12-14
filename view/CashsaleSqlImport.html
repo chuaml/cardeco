@@ -95,7 +95,9 @@
                     else {
                         select.selectedIndex = 0;
                     }
-                }, 100);
+                    select.focus();
+                    select.reportValidity();
+                }, 250);
             });
         }, { passive: true });
     </script>
