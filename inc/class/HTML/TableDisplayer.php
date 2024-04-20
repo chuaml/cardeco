@@ -6,13 +6,33 @@ use Generator;
 
 class TableDisplayer
 {
-    private $attribute = null;
+    private $attribute = '';
     private $theadKeys = null;
     private $isHeadWithId = true;
 
     private $headData;
     private $bodyData;
     private $footData;
+
+    public function __construct(array $listOfRows = [], string $tableId = null)
+    {
+        if (array_key_exists(0, $listOfRows) === true) {
+            // use default row keys as table head
+            $head = array_map(function ($c) {
+                return $c;
+            }, $listOfRows[0]);
+            foreach ($head as $k => $v) {
+                $head[$k] = $k;
+            }
+            $this->setHead($head);
+        } else {
+            $this->setHead([]);
+        }
+        if ($tableId !== null) {
+            $this->attribute .= 'id=' . $tableId;
+        }
+        $this->setBody($listOfRows);
+    }
 
     public function getTable(): string
     {
@@ -62,7 +82,7 @@ class TableDisplayer
         yield '</table>';
     }
 
-    public function setBody(array &$data): void
+    public function setBody(array $data): void
     {
         $this->bodyData = $data;
     }
