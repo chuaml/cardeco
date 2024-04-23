@@ -27,6 +27,7 @@ function validateFile(array $file): void
 }
 
 $table = null;
+$outputData_json = null;
 $errmsg = '';
 try {
     if (isset($_POST['fileTab']) && isset($_FILES['dataFile'])) {
@@ -42,6 +43,7 @@ try {
         $list = CashSales::transformToCashSales($con, $fileTab, iterator_to_array($rows));
 
         $table = new TableDisplayer($list, 'tblCashSaleImport');
+        $outputData_json = json_encode($list);
     } else if (isset($_POST['jsonDataToExport'])) {
         $json = $_POST['jsonDataToExport'];
         $list = json_decode($json);

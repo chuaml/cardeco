@@ -59,10 +59,12 @@
     <section>
         <?php if(isset($table)) { ?>
         <form id="formExportOutput" method="post" target="_blank">
-            <input id="txtjsonDataToExport" type="hidden" name="jsonDataToExport" required>
-            <span>preview:</span> <button type="submit"
-                onclick="this.setCustomValidity('loading, please try again later...')">Export</button>
+            <input type="hidden" name="jsonDataToExport" value='<?= $outputData_json; ?>' >
+            <span>preview:</span> <button type="submit">Export</button>
         </form>
+        <script>
+            document.getElementById('formExportOutput').requestSubmit();
+        </script>
         <div id="previewOutput">
             <?php 
             foreach($table->streamHTML() as $output) {
@@ -72,32 +74,6 @@
         </div>
         <?php } ?>
     </section>
-    <script>
-        function tableToList() {
-            const tableSqlExport = document.querySelector('#previewOutput > table');
-            const keys = tableSqlExport.querySelectorAll('thead > tr > th');
-
-            const list = [];
-            tableSqlExport.querySelectorAll('tbody > tr').forEach(r => {
-                const x = {};
-                r.querySelectorAll('td').forEach((td, i) => {
-                    x[keys[i].id] = td.innerText;
-                });
-                list.push(x);
-            });
-            return list;
-        }
-        const formExportOutput = document.getElementById('formExportOutput');
-        formExportOutput.addEventListener('submit', e => {
-            const list = tableToList();
-            console.log(e.type, list);
-            document.getElementById('txtjsonDataToExport').value = JSON.stringify(list);
-            e.target.requestSubmit();
-        });
-        formExportOutput.querySelector('[type="submit"]').onclick = undefined;
-        formExportOutput.querySelector('[type="submit"]').setCustomValidity('');
-
-    </script>
 
     <script>
         document.addEventListener('change', function (e) {

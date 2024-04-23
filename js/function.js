@@ -1,3 +1,19 @@
+function tableToList(domTable) {
+	const keys = domTable.querySelectorAll('thead > tr > th');
+
+	const list = [];
+	domTable.querySelectorAll('tbody > tr').forEach(r => {
+		const x = {};
+		r.querySelectorAll('td').forEach((td, i) => {
+			x[keys[i].id] = td.innerText;
+		});
+		list.push(x);
+	});
+	return list;
+}
+
+
+
 function readURL(input) {
 	if (input.files && input.files[0]){
 		var reader = new FileReader();
