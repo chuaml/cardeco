@@ -90,6 +90,7 @@ final class MonthlyCashSalesRecordTest extends TestCase
         $output = CashSales::transformToCashSales($con, $paymentType, iterator_to_array($rows));
         $output = json_encode($output, JSON_PRETTY_PRINT);
 
+        // expected output is a Lazada payment type
         $expectedResult = file_get_contents('tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.expected.json');
         $expectedResult = json_decode($expectedResult);
         $expectedResult = json_encode($expectedResult, JSON_PRETTY_PRINT);
