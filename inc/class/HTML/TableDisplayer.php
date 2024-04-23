@@ -104,7 +104,7 @@ class TableDisplayer
                     if (is_float($value) === true) {
                         yield '<td>' . number_format($value, 2, '.', ',') . '</td>';
                     } else {
-                        yield '<td>' . $value . '</td>';
+                        yield '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
                     }
                 }
                 yield '</tr>';
