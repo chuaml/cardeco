@@ -42,35 +42,31 @@ try {
         $rows = (new ExcelReader($file['tmp_name']))->read($fileTab, $startRowPos, $lastRowPos);
         $list = CashSales::transformToCashSales($con, $fileTab, iterator_to_array($rows));
 
-        $table = new TableDisplayer($list, 'tblCashSaleImport');
-        $outputData_json = json_encode($list);
-    } else if (isset($_POST['jsonDataToExport'])) {
-        $json = $_POST['jsonDataToExport'];
-        $list = json_decode($json);
-        $list = array_map(function ($x) {
-            return (array) $x;
-        }, $list);
-        $Spreadsheet = SqlImport::loadSpreadsheet($list);
-        if (error_get_last() !== null) {
-            http_response_code(500);
-            throw new Exception('Some Errors have occoured.');
+        if (isset($_POST['doExport']) === true) {
+            $Spreadsheet = SqlImport::loadSpreadsheet($list);
+            if (error_get_last() !== null) {
+                http_response_code(500);
+                throw new Exception('Some Errors have occoured.');
+            }
+
+            // // Redirect output to a client’s web browser (Xlsx)
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment;filename="CashSales for SQL Import.xlsx"');
+            // If you're serving to IE 9, then the following may be needed
+            header('Cache-Control: max-age=1');
+
+            // If you're serving to IE over SSL, then the following may be needed
+            header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
+            header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
+            header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
+            header('Pragma: public'); // HTTP/1.0
+
+            $writer = IOFactory::createWriter($Spreadsheet, 'Xlsx');
+            $writer->save('php://output');
+            exit();
+        } else {
+            $table = new TableDisplayer($list, 'tblCashSaleImport');
         }
-
-        // // Redirect output to a client’s web browser (Xlsx)
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="CashSales for SQL Import.xlsx"');
-        // If you're serving to IE 9, then the following may be needed
-        header('Cache-Control: max-age=1');
-
-        // If you're serving to IE over SSL, then the following may be needed
-        header('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-        header('Last-Modified: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // always modified
-        header('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-        header('Pragma: public'); // HTTP/1.0
-
-        $writer = IOFactory::createWriter($Spreadsheet, 'Xlsx');
-        $writer->save('php://output');
-        exit();
     }
 } catch (Exception $e) {
     $errmsg = $e->getMessage();
