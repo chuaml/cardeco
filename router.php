@@ -27,6 +27,11 @@ try {
     } else {
         throw new HttpException(404, 'page not found: ' . $_requestUri);
     }
+
+    if (error_get_last() !== null) {
+        http_response_code(500);
+        throw new Exception('Some unknown notice/warning/error has occoured.');
+    }
 } catch (HttpException $ex) {
     $_exception = $ex;
     $statusCode = $ex->getStatusCode();

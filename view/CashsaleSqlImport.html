@@ -10,16 +10,25 @@
 <body>
     <div class="paper">
         <h3>Convert To SQL Import</h3>
-        <form method="post" enctype="multipart/form-data" onsubmit="showLoadingIcon()">
+        <form method="post" enctype="multipart/form-data" onsubmit="showLoadingIcon()" target="_blank">
             <label>
                 Submit monthly record .xlsx Excel file<br>
                 <input type="file" name="dataFile" accept=".xlsx" required>
-                <br>
-                <i>*must include header at first row</i>
             </label>
-            <br><br>
+            <button id="btn_doPreview" name="doPreview">Preview</button>
+            <script>
+                document.getElementById('btn_doPreview').addEventListener('click', function (e) {
+                    const behavior = e.target.form.target;
+                    e.target.form.target = '_self';
+                    setTimeout(() => {
+                        e.target.form.target = behavior;
+                    }, 0);
+                });
+            </script> 
 
-            File tab:
+<br><br>
+
+File tab:
             <select name="fileTab" required>
                 <option value="">Please Select...</option>
                 <option value="Lazada">Lazada</option>
@@ -36,8 +45,9 @@
                 start at row:
                 <input type="number" name="startRowPos" value="1" step="1" min="1" max="9999999"
                     placeholder="row start including header..." required />
-
+                    <br><i>*must include header at first row.</i>
             </label>
+
 
             <br><br>
             <label>limit rows <input type="checkbox" onclick="chk(this)" /></label>
@@ -46,13 +56,30 @@
                 placeholder="last row..." disabled />
 
             <br><br>
-            <input type="submit" name="submit"> <span id="loadingIcon"></span>
+            <button name="doExport">Export</button> 
+
+            <span id="loadingIcon"></span>
 
         </form>
         <p class="error">
             <?= $errmsg; ?>
         </p>
     </div>
+
+    <hr>
+
+    <section>
+        <?php if(isset($table)) { ?>
+        <span>preview:</span>
+        <div id="previewOutput">
+            <?php 
+            foreach($table->streamHTML() as $output) {
+                echo $output;
+            }
+            ?>
+        </div>
+        <?php } ?>
+    </section>
 
     <script>
         document.addEventListener('change', function (e) {
@@ -91,7 +118,7 @@
                     else if (fileName.includes('tiktok')) {
                         select.selectedIndex = select.querySelector('option[value="TikTok_Eplus"]')?.index || 0;
 
-                    } 
+                    }
                     else {
                         select.selectedIndex = 0;
                     }
