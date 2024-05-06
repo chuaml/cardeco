@@ -3,6 +3,7 @@ require 'vendor/autoload.php';
 
 use Exception\HttpException;
 
+$_exception = null;
 try {
     require(__DIR__ . '/db/conn_staff.php');
 
@@ -28,7 +29,8 @@ try {
         throw new HttpException(404, 'page not found: ' . $_requestUri);
     }
 
-    if (error_get_last() !== null) {
+    $error_get_last = error_get_last();
+    if ($error_get_last !== null) {
         http_response_code(500);
         throw new Exception('Some unknown notice/warning/error has occoured.');
     }
