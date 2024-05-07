@@ -63,7 +63,7 @@ final class SqlImport
         $i = 2;
         foreach ($list as $r) {
             // set date format for specific columns 
-            $workSheet->getStyle('A' . $i)->getNumberFormat()->setFormatCode(NumberFormat::FORMAT_DATE_DDMMYYYY);
+            $workSheet->getStyle('A' . $i)->getNumberFormat()->setFormatCode('dd-mm-yy');
 
             // write data into cell as plain text
             $c = 'A';
