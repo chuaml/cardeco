@@ -41,6 +41,7 @@ try {
 
         $rows = (new ExcelReader($file['tmp_name']))->read($fileTab, $startRowPos, $lastRowPos);
         $list = CashSales::transformToCashSales($con, $fileTab, iterator_to_array($rows));
+        // \console\dev::dumpjson($list);
 
         if (isset($_POST['doExport']) === true) {
             $Spreadsheet = SqlImport::loadSpreadsheet($list);
@@ -68,10 +69,7 @@ try {
             $table = new TableDisplayer($list, 'tblCashSaleImport');
         }
     }
-} catch (Exception $e) {
-    $errmsg = $e->getMessage();
+    require('view/CashsaleSqlImport.html');
 } finally {
     $con->close();
 }
-
-require('view/CashsaleSqlImport.html');
