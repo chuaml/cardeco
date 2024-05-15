@@ -394,11 +394,22 @@ table#ItemEditor th:nth-child(2){
 	width: 50%;
 }
 
+/* /RecordInserter */
+table > tbody > tr > td > input[type] {
+	width: calc(100% - 1ch);
+}
+table > tbody > tr > td > input[readonly] {
+	cursor: default;
+}
 
+
+/* /ItemManager */
 table > tbody > tr > td[contenteditable]{
 	cursor: cell;
 	font-family: monospace;
 	border: 1px solid #bbb;
 	padding: 0 .25em;
-	/* filter: invert(1); */
+}
+table > tbody > tr > td[contenteditable]:focus{
+	cursor: unset;
 }
