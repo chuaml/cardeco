@@ -17,26 +17,27 @@ class HtmlObject implements IHtml
         return $this->attribute[$name];
     }
 
-    public function getAllAttributes():array
+    public function getAllAttributes(): array
     {
         return $this->attribute;
     }
 
-    final public function getAllAttributesString():string
+    final public function getAllAttributesString(): string
     {
         $attribute = '';
         foreach ($this->attribute as $k => $v) {
-            $attribute .= "{$k}=\"$v\"";
+            $attribute .=
+                htmlspecialchars($k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars($v, ENT_QUOTES, 'UTF-8') . '"';
         }
-        return rtrim($attribute, ';');
+        return $attribute;
     }
 
-    public function toHtmlText():string
+    public function toHtmlText(): string
     {
         return '<Object />';
     }
 
-    public function __toString():string
+    public function __toString(): string
     {
         return $this->toHtmlText();
     }
