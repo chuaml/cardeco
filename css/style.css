@@ -393,3 +393,8 @@ table input:invalid{
 table#ItemEditor th:nth-child(2){
 	width: 50%;
 }
+
+
+table > tbody > tr > td > input{
+	width: calc(100% - 1ch);
+}

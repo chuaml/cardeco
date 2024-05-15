@@ -25,6 +25,16 @@ class ItemEditor extends TableDisplayer{
         $this->setEditorCells();
     }
 
+    protected function formatCell($value, $ofColumnIndex): string
+    {
+        if($ofColumnIndex === 'description'){
+            return '<td>' . $value . '</td>';
+        }
+        else {
+            return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+        }
+    }
+
     private function setEditorCells():void{
         $len = sizeof($this->records);
         //recordId as row array index
