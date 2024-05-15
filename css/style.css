@@ -366,6 +366,7 @@ ul#skuList > li{
 	font-size: 1.2em;
 }
 
+/* /RecordInserter */
 /* /RecordEditor */
 table#RecordEditor input, table#ItemEditor input{
 	cursor: cell;
@@ -387,17 +388,6 @@ table#RecordEditor input[type=number]{
 	width: 5em;
 }
 
-
-
-table input:invalid{
-	border-color: red;
-}
-
-table#ItemEditor th:nth-child(2){
-	width: 50%;
-}
-
-/* /RecordInserter */
 table > tbody > tr > td > input[type] {
 	width: calc(100% - 1ch);
 }
@@ -406,7 +396,16 @@ table > tbody > tr > td > input[readonly] {
 }
 
 
+
+table input:invalid{
+	border-color: red;
+}
+
 /* /ItemManager */
+table#ItemEditor th:nth-child(2){
+	width: 50%;
+}
+
 table > tbody > tr > td[contenteditable]{
 	cursor: cell;
 	font-family: monospace;
@@ -415,4 +414,5 @@ table > tbody > tr > td[contenteditable]{
 }
 table > tbody > tr > td[contenteditable]:focus{
 	cursor: unset;
+	outline: 2px solid green;
 }
