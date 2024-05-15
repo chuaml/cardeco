@@ -1,64 +1,47 @@
-<?php 
+<?php
+
 namespace Product;
 
-require_once(__DIR__ .'/../HTML/TableDisplayer.php');
+require_once(__DIR__ . '/../HTML/TableDisplayer.php');
 
-use \HTML\TableDisplayer;
+use HTML\HtmlTable;
+use HTML\HtmlTableRow;
+use HTML\HtmlTableCell;
+// use \HTML\TableDisplayer;
 
-class ItemEditor extends TableDisplayer{
-
-    private $records = [];
+class ItemEditor
+{
     private $numFloorPage;
+    private $htmlTable;
 
-    public function setItems(array $Items, int $numPage):void{
-        $this->records = [];
-        if(sizeof($Items) === 0){return;}
+    public function __construct(array $Item_list, int $numPage)
+    {
+        $this->htmlTable = new HtmlTable();
 
+        $this->htmlTable->setHeader(0, new HtmlTableCell('Item Code'));
+        $this->htmlTable->setHeader(1, new HtmlTableCell('Description'));
+        $this->htmlTable->setHeader(2, new HtmlTableCell('UOM'));
+        $this->htmlTable->setHeader(3, new HtmlTableCell('Group'));
+
+        foreach ($Item_list as $Item) {
+            $x = $Item->getAll();
+            $r = new HtmlTableRow();
+
+            $r->addCell(new HtmlTableCell($x['code']));
+            $r->addCell(new HtmlTableCell($x['description']))
+                ->setAttribute('contenteditable', 'plaintext-only')
+                ->setAttribute('data-max-length', '255')
+                ->setAttribute('data-name', 'r[' . $x['itemId'] . ']');
+            $r->addCell(new HtmlTableCell($x['uom']));
+            $r->addCell(new HtmlTableCell($x['group']));
+
+            $this->htmlTable->addRow($r);
+        }
         $this->numFloorPage = $numPage;
-
-        foreach($Items as $Item){
-            $this->records[] = array_map(function($v){
-                return \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-            }, $Item->getAll());
-        }
-
-        $this->setEditorCells();
     }
 
-    private function setEditorCells():void{
-        $len = sizeof($this->records);
-        //recordId as row array index
-        $recordId; $r;
-
-        for($i=0;$i<$len;++$i){
-            $itemId = $this->records[$i]['itemId'];
-            $r = &$this->records[$i];
-
-            $r['description'] = 
-            '<input type="text" name="r['.$itemId.'][description]" value="'
-            .$r['description'].'" maxlength="255" placeholder="description..." readonly required />';
-
-        }
+    public function getTable(): string
+    {
+        return $this->htmlTable->toHtmlText();
     }
-
-    protected function getReNamedHeader():array{
-        $fieldName = [];
-
-        //$fieldName['itemId'] = 'ID';
-        $fieldName ['code'] = 'Item Code';
-        $fieldName['description'] = 'Description';
-        $fieldName['uom'] = 'UOM';
-        $fieldName['group'] = 'Group';
-        return $fieldName;
-    }
-
-    public function getTable():string{
-        $header = $this->getReNamedHeader();
-        parent::setHead($header, true);
-        parent::setBody($this->records);
-        parent::setAttributes('id="ItemEditor" border="1"');
-        
-        return parent::getTable();
-    }
-
 }

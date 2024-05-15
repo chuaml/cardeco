@@ -1,51 +1,43 @@
-$(document).ready(function () {
+const confirmUnsaveChanges = function (e) {
+    e.preventDefault();
+    return 'Are you sure to leave unsaved changes?';
+};
 
-    const tblRecord = "table#ItemEditor";
-    const th = tblRecord + ">thead>tr>th";
-    const rows = tblRecord + ">tbody>tr";
-    const tr = $(rows);
+// on 1st edit action, init
+document.querySelector('form#ItemEditorForm').addEventListener('input', function (e) {
+    if (e.target.matches('[contenteditable]') === false) return;
+    window.addEventListener('beforeunload', confirmUnsaveChanges);
+}, { once: true });
 
-    let col;
-    let cell;
-    const targetColId = [
-        "description"
-    ];
+let lastForcusedInput = null;
+document.querySelector('form#ItemEditorForm').addEventListener('input', function (e) {
+    if (e.target.matches('[contenteditable]') === false) return;
+    lastForcusedInput = e.target;
+});
 
-    let cellEnterAction = function (e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            $(e.target).focusout();
-        }
-    };
+document.querySelector('form#ItemEditorForm').addEventListener('submit', function (e) {
+    if (lastForcusedInput !== null && confirm("Confirm save changes?") === true) {
+        window.removeEventListener('beforeunload', confirmUnsaveChanges);
+    } else {
+        lastForcusedInput.focus();
+        e.preventDefault();
+        return false;
+    }
 
-    targetColId.forEach(function (colId) {
-        col = $(th + "#" + colId).index() + 1;
-        for (i = 1; i <= tr.length; ++i) {
-            cell = $(rows + ":nth-child(" + i + ")>td:nth-child(" + col + ")");
-            cell.dblclick(function () {
-                $(this).children("input").attr("readonly", false)
-                    .focus()
-                    .select();
-            });
-            cell.focusout(function () {
-                $(this).children("input").attr("readonly", true);
-            });
-            cell.keypress(cellEnterAction);
-            cell.children("input").change(function () {
-                //leaving confirmation
-                $(window).bind("beforeunload", function () {
-                    return "gg";
-                });
-            })
-        }
+    e.target.querySelectorAll('table > tbody > tr > td[contenteditable]').forEach(function (td) {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = td.dataset.name;
+        input.length = td.dataset.maxLength || 255;
+        input.value = td.innerText;
+
+        td.append(input);
     });
+});
 
-    $("form#ItemEditorForm").submit(function () {
-        if (confirm("confirm save changes?")) {
-            $(window).unbind("beforeunload");
-        } else {
-            return false;
-        }
-    });
-
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey === true && e.code === 'KeyS') {
+        e.preventDefault();
+        document.querySelector('form#ItemEditorForm').requestSubmit();
+    }
 });

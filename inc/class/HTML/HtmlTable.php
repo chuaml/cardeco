@@ -52,9 +52,9 @@ class HtmlTable extends HtmlObject
         if (empty($this->header) === false) {
             $output .= '<thead><tr>';
 
-            $output .= \array_reduce($this->body, function (string $cells, HtmlTableCell $Cell) {
+            $output .= \array_reduce($this->header, function (string $cells, HtmlTableCell $Cell) {
                 return $cells . '<th>' . $Cell->getFormattedValue() . '</th>';
-            });
+            }, '');
 
             $output .= '</tr></thead>';
         }
@@ -62,9 +62,9 @@ class HtmlTable extends HtmlObject
         if (empty($this->body) === false) {
             $output .= '<tbody>';
 
-            $output .= \array_reduce($this->body, function (?string $rows, HtmlTableRow $Row) {
+            $output .= \array_reduce($this->body, function (string $rows, HtmlTableRow $Row) {
                 return $rows . $Row->toHtmlText();
-            });
+            }, '');
 
             $output .= '</tbody>';
         }
@@ -72,9 +72,9 @@ class HtmlTable extends HtmlObject
         if (empty($this->footer) === false) {
             $output .= '<tfoot><tr>'
 
-             . \array_reduce($this->body, function (?string $cells, HtmlTableCell $Cell) {
+             . \array_reduce($this->body, function (string $cells, HtmlTableCell $Cell) {
                  return $cells . '<td>' . $Cell->getFormattedValue() . '</td>';
-             })
+             }, '')
 
              . '</tr></tfoot>';
         }

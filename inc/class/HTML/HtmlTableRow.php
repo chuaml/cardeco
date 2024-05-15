@@ -11,9 +11,10 @@ class HtmlTableRow extends HtmlObject
         $this->Cell = $HtmlTableCells;
     }
 
-    public function addCell(HtmlTableCell $Cell):void
+    public function addCell(HtmlTableCell $Cell):HtmlTableCell
     {
         $this->Cell[] = $Cell;
+        return $Cell;
     }
 
     public function setCell(int $colIndex, HtmlTableCell $Cell)

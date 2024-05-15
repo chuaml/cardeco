@@ -393,3 +393,12 @@ table input:invalid{
 table#ItemEditor th:nth-child(2){
 	width: 50%;
 }
+
+
+table > tbody > tr > td[contenteditable]{
+	cursor: cell;
+	font-family: monospace;
+	border: 1px solid #bbb;
+	padding: 0 .25em;
+	/* filter: invert(1); */
+}

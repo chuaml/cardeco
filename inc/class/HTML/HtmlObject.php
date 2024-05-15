@@ -6,9 +6,10 @@ class HtmlObject implements IHtml
 {
     private $attribute = [];
 
-    public function setAttribute(string $name, ?string $value):void
+    public function setAttribute(string $name, ?string $value): HtmlObject
     {
         $this->attribute[$name] = $value;
+        return $this;
     }
 
     public function getAttribute(string $name)
@@ -25,7 +26,7 @@ class HtmlObject implements IHtml
     {
         $attribute = '';
         foreach ($this->attribute as $k => $v) {
-            $attribute .= "{$k}=\"$v\";";
+            $attribute .= "{$k}=\"$v\"";
         }
         return rtrim($attribute, ';');
     }
