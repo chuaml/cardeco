@@ -6,7 +6,7 @@ require_once(__DIR__ . '/../HTML/TableDisplayer.php');
 
 use HTML\HtmlTable;
 use HTML\HtmlTableRow;
-use HTML\HtmlTableCell;
+use HTML\HtmlTableCell as Cell;
 // use \HTML\TableDisplayer;
 
 class ItemEditor
@@ -18,22 +18,22 @@ class ItemEditor
     {
         $this->htmlTable = new HtmlTable();
 
-        $this->htmlTable->setHeader(0, new HtmlTableCell('Item Code'));
-        $this->htmlTable->setHeader(1, new HtmlTableCell('Description'));
-        $this->htmlTable->setHeader(2, new HtmlTableCell('UOM'));
-        $this->htmlTable->setHeader(3, new HtmlTableCell('Group'));
+        $this->htmlTable->setHeader(0, new Cell('Item Code'));
+        $this->htmlTable->setHeader(1, new Cell('Description'));
+        $this->htmlTable->setHeader(2, new Cell('UOM'));
+        $this->htmlTable->setHeader(3, new Cell('Group'));
 
         foreach ($Item_list as $Item) {
             $x = $Item->getAll();
             $r = new HtmlTableRow();
 
-            $r->addCell(new HtmlTableCell($x['code']));
-            $r->addCell(new HtmlTableCell($x['description']))
+            $r->addCell(new Cell($x['code']));
+            $r->addCell(new Cell($x['description']))
                 ->setAttribute('contenteditable', 'plaintext-only')
                 ->setAttribute('data-max-length', '255')
                 ->setAttribute('data-name', 'r[' . $x['itemId'] . ']');
-            $r->addCell(new HtmlTableCell($x['uom']));
-            $r->addCell(new HtmlTableCell($x['group']));
+            $r->addCell(new Cell($x['uom']));
+            $r->addCell(new Cell($x['group']));
 
             $this->htmlTable->addRow($r);
         }
