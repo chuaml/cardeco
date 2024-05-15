@@ -4,6 +4,7 @@ namespace Product;
 
 require_once(__DIR__ . '/../HTML/TableDisplayer.php');
 
+use Generator;
 use HTML\HtmlTable;
 use HTML\HtmlTableRow;
 use HTML\HtmlTableCell as Cell;
@@ -40,8 +41,8 @@ class ItemEditor
         $this->numFloorPage = $numPage;
     }
 
-    public function getTable(): string
+    public function getTable(): Generator
     {
-        return $this->htmlTable->toHtmlText();
+        return $this->htmlTable->streamHtmlText();
     }
 }

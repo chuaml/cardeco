@@ -38,49 +38,53 @@ class HtmlTable extends HtmlObject
         $this->footer[$index] = $Cell;
     }
 
-    public function toHtmlText(): string
+    public function streamHtmlText(): \Generator
     {
-        $output = '<table';
-
+        yield '<table';
         $attr = parent::getAllAttributesString();
         if ($attr !== '') {
-            $output .= ' ' . $attr;
+            yield ' ' . $attr;
         }
-        $output .= '>';
+        yield '>';
         unset($attr);
 
         if (empty($this->header) === false) {
-            $output .= '<thead><tr>';
+            yield '<thead><tr>';
 
-            $output .= \array_reduce($this->header, function (string $cells, HtmlTableCell $Cell) {
-                return $cells . '<th>' . $Cell->getFormattedValue() . '</th>';
-            }, '');
+            foreach ($this->header as $th) {
+                yield '<th>' . $th->getFormattedValue() . '</th>';
+            }
 
-            $output .= '</tr></thead>';
+            yield '</tr></thead>';
         }
 
         if (empty($this->body) === false) {
-            $output .= '<tbody>';
+            yield '<tbody>';
 
-            $output .= \array_reduce($this->body, function (string $rows, HtmlTableRow $Row) {
-                return $rows . $Row->toHtmlText();
-            }, '');
+            foreach ($this->body as $tr) {
+                yield $tr->toHtmlText();
+            }
 
-            $output .= '</tbody>';
+            yield '</tbody>';
         }
 
         if (empty($this->footer) === false) {
-            $output .= '<tfoot><tr>'
-
-                . \array_reduce($this->body, function (string $cells, HtmlTableCell $Cell) {
-                    return $cells . '<td>' . $Cell->getFormattedValue() . '</td>';
-                }, '')
-
-                . '</tr></tfoot>';
+            yield '<tfoot><tr>';
+            foreach ($this->header as $td) {
+                yield '<td>' . $td->getFormattedValue() . '</td>';
+            }
+            yield '</tr></tfoot>';
         }
 
-        $output .= '</table>';
+        return '</table>';
+    }
 
-        return $output;
+    public function toHtmlText(): string
+    {
+        $outputText = '';
+        foreach ($this->streamHtmlText() as $html) {
+            $outputText .= $html;
+        }
+        return $outputText;
     }
 }

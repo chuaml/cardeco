@@ -6,7 +6,8 @@ use \Product\ItemEditor;
 use \Product\ItemManager;
 use \Product\Item;
 
-$itemEditor = '';
+$itemEditor = null;
+$itemEditorHtml = null;
 $error = '';
 
 try {
@@ -28,7 +29,7 @@ try {
                 0
             );
 
-            $itemEditor = $ItemEditor->getTable();
+            $itemEditorHtml = $ItemEditor->getTable();
         }
     } finally {
         $con->close();

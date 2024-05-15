@@ -16,10 +16,14 @@
     </form>
     <hr>
     <form method="POST" id="ItemEditorForm">
-        <?php if(!empty($itemEditor)){ ?>
+    <?php if(isset($itemEditorHtml) === true) { ?>
         <input type="submit" value="save">
-        <?= $itemEditor;?>
-        <?php };?>
+        <?php 
+        foreach($itemEditorHtml as $html) {
+            echo $html;
+        }
+        ?>
+    <?php };?>
     </form>
 
     <p class="error">
