@@ -366,11 +366,12 @@ ul#skuList > li{
 	font-size: 1.2em;
 }
 
-table#RecordEditor input:hover, table#ItemEditor input:hover{
+/* /RecordEditor */
+table#RecordEditor input, table#ItemEditor input{
 	cursor: cell;
 }
 
-table#RecordEditor input:focus, table#ItemEditor input:focus{
+table#RecordEditor input:focus:not([readonly]), table#ItemEditor input:focus:not([readonly]){
 	cursor: text;
 }
 
@@ -385,6 +386,8 @@ table#RecordEditor tr.object2{
 table#RecordEditor input[type=number]{
 	width: 5em;
 }
+
+
 
 table input:invalid{
 	border-color: red;
