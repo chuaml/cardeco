@@ -87,6 +87,15 @@ class TableDisplayer
         $this->bodyData = $data;
     }
 
+    protected function formatCell($value, $ofColumnIndex): string
+    {
+        if (is_float($value) === true) {
+            return '<td>' . number_format($value, 2, '.', ',') . '</td>';
+        } else {
+            return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+        }
+    }
+
     public function getBody(): Generator
     {
         yield '<tbody>';
@@ -100,12 +109,7 @@ class TableDisplayer
             foreach ($this->bodyData as $row) {
                 yield '<tr>';
                 foreach ($this->theadKeys as $index) {
-                    $value = $row[$index];
-                    if (is_float($value) === true) {
-                        yield '<td>' . number_format($value, 2, '.', ',') . '</td>';
-                    } else {
-                        yield '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-                    }
+                    yield $this->formatCell($row[$index], $index);
                 }
                 yield '</tr>';
             }
