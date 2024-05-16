@@ -396,10 +396,11 @@ table#RecordEditor > tbody > tr > td:has(input){
 }
 table#RecordEditor > tbody > tr > td > input{
 	height: calc(100% - 2px);
-	width: 100%;
+	width: min-content;
 	background-color: transparent;
 	border: 0;
 	padding: 0;
+	font-size: 1rem;
 }
 table#RecordEditor > tbody > tr > td > input:focus{
 	outline: 2px solid green;
