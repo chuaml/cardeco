@@ -7,18 +7,15 @@ class HtmlTable extends HtmlObject
     private $header = [];
     private $body = [];
     private $footer = [];
-
     public function addHeader(string $displayName): HtmlTableCell
     {
         $Cell = new HtmlTableCell($displayName);
         $this->header[] = $Cell;
         return $Cell;
     }
-
-    public function setHeader(int $index, HtmlTableCell $Cell): HtmlTableCell
+    public function setHeader(int $index, HtmlTableCell $Cell): void
     {
         $this->header[$index] = $Cell;
-        return $Cell;
     }
 
     public function setBody(int $index, array $RowList): void
@@ -46,49 +43,55 @@ class HtmlTable extends HtmlObject
         $this->footer[$index] = $Cell;
     }
 
-    public function toHtmlText(): string
+    public function streamHtmlText(): \Generator
     {
-        $output = '<table';
-
-        $attr = parent::getAllAttributesString();
-        if ($attr !== '') {
-            $output .= ' ' . $attr;
-        }
-        $output .= '>';
-        unset($attr);
+        yield '<table ';
+        yield parent::getAllAttributesString();
+        yield '>';
 
         if (empty($this->header) === false) {
-            $output .= '<thead><tr>';
+            yield '<thead><tr>';
 
-            $output .= \array_reduce($this->body, function (string $cells, HtmlTableCell $Cell) {
-                return $cells . '<th>' . $Cell->getFormattedValue() . '</th>';
-            });
+            foreach ($this->header as $th) {
+                yield '<th ';
+                yield $th->getAllAttributesString();
+                yield '>';
+                yield $th->getFormattedValue();
+                yield '</th>';
+            }
 
-            $output .= '</tr></thead>';
+            yield '</tr></thead>';
         }
 
         if (empty($this->body) === false) {
-            $output .= '<tbody>';
+            yield '<tbody>';
 
-            $output .= \array_reduce($this->body, function (?string $rows, HtmlTableRow $Row) {
-                return $rows . $Row->toHtmlText();
-            });
+            foreach ($this->body as $tr) {
+                yield $tr->toHtmlText();
+            }
 
-            $output .= '</tbody>';
+            yield '</tbody>';
         }
 
         if (empty($this->footer) === false) {
-            $output .= '<tfoot><tr>'
+            yield '<tfoot>';
 
-                . \array_reduce($this->body, function (?string $cells, HtmlTableCell $Cell) {
-                    return $cells . '<td>' . $Cell->getFormattedValue() . '</td>';
-                })
+            foreach ($this->footer as $tr) {
+                yield $tr->toHtmlText();
+            }
 
-                . '</tr></tfoot>';
+            yield '</tfoot>';
         }
 
-        $output .= '</table>';
+        return '</table>';
+    }
 
-        return $output;
+    public function toHtmlText(): string
+    {
+        $outputText = '';
+        foreach ($this->streamHtmlText() as $html) {
+            $outputText .= $html;
+        }
+        return $outputText;
     }
 }

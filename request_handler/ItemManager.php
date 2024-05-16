@@ -6,15 +6,17 @@ use \Product\ItemEditor;
 use \Product\ItemManager;
 use \Product\Item;
 
-$itemEditor = '';
+$itemEditor = null;
+$itemEditorHtml = null;
 $error = '';
+
 try {
     try {
         if (isset($_POST['r']) === true) {
             $ItemM = new ItemManager($con);
             $Items = [];
-            foreach ($_POST['r'] as $itemId => $r) {
-                $Items[] = new Item($itemId, null, $r['description']);
+            foreach ($_POST['r'] as $itemId => $description) {
+                $Items[] = new Item($itemId, null, $description);
             }
             $ItemM->update($Items);
             // header('HTTP/1.1 205');
@@ -22,14 +24,12 @@ try {
 
         if (isset($_GET['itemCode'])) {
             $ItemM = new ItemManager($con);
-            $ItemEditor = new ItemEditor();
-
-            $ItemEditor->setItems(
+            $ItemEditor = new ItemEditor(
                 $ItemM->getItemLikeItemCode($_GET['itemCode']),
                 0
             );
 
-            $itemEditor = $ItemEditor->getTable();
+            $itemEditorHtml = $ItemEditor->getTable();
         }
     } finally {
         $con->close();
