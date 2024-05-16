@@ -7,7 +7,12 @@ class HtmlTable extends HtmlObject
     private $header = [];
     private $body = [];
     private $footer = [];
-
+    public function addHeader(string $displayName): HtmlTableCell
+    {
+        $Cell = new HtmlTableCell($displayName);
+        $this->header[] = $Cell;
+        return $Cell;
+    }
     public function setHeader(int $index, HtmlTableCell $Cell): void
     {
         $this->header[$index] = $Cell;
@@ -40,19 +45,19 @@ class HtmlTable extends HtmlObject
 
     public function streamHtmlText(): \Generator
     {
-        yield '<table';
-        $attr = parent::getAllAttributesString();
-        if ($attr !== '') {
-            yield ' ' . $attr;
-        }
+        yield '<table ';
+        yield parent::getAllAttributesString();
         yield '>';
-        unset($attr);
 
         if (empty($this->header) === false) {
             yield '<thead><tr>';
 
             foreach ($this->header as $th) {
-                yield '<th>' . $th->getFormattedValue() . '</th>';
+                yield '<th ';
+                yield $th->getAllAttributesString();
+                yield '>';
+                yield $th->getFormattedValue();
+                yield '</th>';
             }
 
             yield '</tr></thead>';
@@ -69,11 +74,13 @@ class HtmlTable extends HtmlObject
         }
 
         if (empty($this->footer) === false) {
-            yield '<tfoot><tr>';
-            foreach ($this->header as $td) {
-                yield '<td>' . $td->getFormattedValue() . '</td>';
+            yield '<tfoot>';
+
+            foreach ($this->footer as $tr) {
+                yield $tr->toHtmlText();
             }
-            yield '</tr></tfoot>';
+
+            yield '</tfoot>';
         }
 
         return '</table>';
