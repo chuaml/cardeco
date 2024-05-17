@@ -424,6 +424,10 @@ table#RecordEditor>tbody>tr>td>input:focus {
 	outline: 2px solid green;
 }
 
+table#RecordEditor>tbody>tr>td>input:invalid{
+	outline: 2px solid red;
+}
+
 /* remove input number arrows */
 table#RecordEditor>tbody>tr>td>input[type="number"]::-webkit-inner-spin-button {
 	appearance: none;

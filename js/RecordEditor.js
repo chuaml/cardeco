@@ -18,27 +18,6 @@ const targetColId = [
 ];
 
 
-targetColId.forEach(function (colId) {
-    col = $(th + "#" + colId).index() + 1;
-    for (i = 1; i <= tr.length; ++i) {
-        cell = $(rows + ":nth-child(" + i + ")>td:nth-child(" + col + ")");
-        cell.dblclick(function () {
-            $(this).children("input").attr("readonly", false)
-                .focus()
-                .select();
-        });
-        cell.focusout(function () {
-            $(this).children("input").attr("readonly", true);
-        });
-        cell.children("input").change(function () {
-            //leaving confirmation
-            $(window).bind("beforeunload", function () {
-                return "gg";
-            });
-        })
-    }
-});
-
 $("form#RecordEditorForm").submit(function () {
     if (confirm("confirm save changes?")) {
         $(window).unbind("beforeunload");
@@ -117,6 +96,21 @@ OrderNumList.forEach(function (orderNum) {
     }
 });
 
+
+
+document.querySelector('table > tbody').addEventListener('change', function (e) {
+    if (e.target.matches('input.money') === false) return;
+    const input = e.target;
+    if (input.value === '') return;
+
+    const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
+    if (isNaN(money) === true) return;
+
+    input.value = money.toLocaleString('en-US', {
+        minimumFractionDigits: 2
+    });
+});
+
 document.querySelector('table > tbody').addEventListener('keydown', function (e) {
     if (e.target.matches('input') === false) return;
 
@@ -171,7 +165,6 @@ document.querySelector('table > tbody').addEventListener('keydown', function (e)
         e.preventDefault(); // prevent form submission to save changes
 
         const input = e.target;
-        console.log(input.readOnly);
         if (input.readOnly === false) { // is focus, on edit
             input.setAttribute('readonly', '');
             input.blur();
@@ -207,4 +200,24 @@ document.querySelector('table > tbody').addEventListener('keydown', function (e)
 
     }
 
+});
+
+
+// force double click input only to allow focus and edit
+document.querySelector('table > tbody').addEventListener('dblclick', function (e) {
+    if (e.target.matches('input') === false) return;
+    e.target.removeAttribute('readonly');
+});
+
+document.querySelector('table > tbody').addEventListener('focusout', function (e) {
+    if (e.target.matches('input') === false) return;
+    e.target.setAttribute('readonly', '');
+});
+
+
+// format money number to numeric decimal only
+document.addEventListener('submit', function (e) {
+    e.target.querySelectorAll('input.money').forEach(function (x) {
+        x.value = x.value.replace(/[^0-9\.]+/g, '');
+    });
 });

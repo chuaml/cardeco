@@ -1,13 +1,7 @@
 <?php 
 namespace Orders\Factory;
 
-require_once(__DIR__ .'/../MonthlyRecord.php');
-require_once(__DIR__ .'/RecordFactory.php');
-require_once(__DIR__ . '/../../Product/Item.php');
-require_once(__DIR__ .'/../PaymentCharges/PlatformCharges.php');
-
 use \mysqli;
-use \HTML\EscapableData;
 use \Product\Item;
 use \Orders\PaymentCharges;
 use \Exception;
@@ -131,7 +125,6 @@ class MonthlyRecord implements RecordFactory{
 
         $result = $stmt->get_result();
         $list = [];
-        $M;
         while(($r = $result->fetch_assoc()) !== null){
             $M = new \Orders\MonthlyRecord(
                 $r['id'],
@@ -169,7 +162,6 @@ class MonthlyRecord implements RecordFactory{
         $platformCharges = &$r['platformCharges'];
         if(strlen($platformCharges) === 0){return;}
         $amount = (double)$r['platformChargesAmount'];
-        $PlatformCharges;
         switch($platformCharges){
             case 'Lazada':
                 $PlatformCharges = new PaymentCharges\Lazada($amount);
@@ -253,7 +245,6 @@ class MonthlyRecord implements RecordFactory{
         }
 
         $list = [];
-        $M;
         $result = $stmt->get_result();
         while(($r = $result->fetch_assoc()) !== null){
             $M = new \Orders\MonthlyRecord(
