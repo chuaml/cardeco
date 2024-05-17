@@ -427,3 +427,7 @@ table > tbody > tr > td[contenteditable]:focus{
 	cursor: unset;
 	outline: 2px solid green;
 }
+
+table > tbody > tr > td[contenteditable]:hover{
+	outline: 2px solid green;
+}

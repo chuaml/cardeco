@@ -7,143 +7,120 @@ require_once(__DIR__ . '/../HTML/TableDisplayer.php');
 require_once(__DIR__ . '/../Product/Factory/ItemFactory.php');
 require_once(__DIR__ . '/PaymentCharges/PlatformCharges.php');
 
-use \Orders\Factory\MonthlyRecord;
-use \Product\Factory\ItemFactory;
-use \Orders\PaymentCharges\PlatformCharges;
-use \HTML\TableDisplayer;
+use Generator;
+use HTML\HtmlTable;
+use HTML\HtmlTableRow;
+use HTML\HtmlTableCell as Cell;
 
-class RecordEditor extends TableDisplayer
+class RecordEditor
 {
-
-    private $records = [];
-    private $numFloorPage;
-
-    public function setMonthlyRecords(array $MonthlyRecords, int $numPage): void
+    private $MonthlyRecords = [];
+    public function __construct(array $MonthlyRecords, int $numPage)
     {
-        $this->records = [];
-        if (sizeof($MonthlyRecords) === 0) {
-            return;
-        }
-
         $this->numFloorPage = $numPage;
-
-        $field;
-        $cleanRecord = $MonthlyRecords[0]->getAll();
-        foreach ($MonthlyRecords as $M) {
-            $field = $M->getAll();
-            foreach ($field as $fieldName => $v) {
-                $cleanRecord[$fieldName] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-            }
-            $this->records[] = $cleanRecord;
-        }
-        $this->setEditorCells();
+        $this->numFloorPage = $numPage;
+        $this->MonthlyRecords = $MonthlyRecords;
     }
 
-    private function setEditorCells(): void
+    private function fillTableBody(HtmlTable $htmlTable): array
     {
-        $len = sizeof($this->records);
-        //recordId as row array index
-        $recordId;
-        $r;
-        for ($i = 0; $i < $len; ++$i) {
-            $recordId = $this->records[$i]['recordId'];
-            $r = &$this->records[$i];
+        $x = null;
+        foreach ($this->MonthlyRecords as $Records) {
+            $x = $Records->getAll();
+            $r = new HtmlTableRow();
+            $recordId = $x['recordId'];
+            $r->addCell(new Cell($x['billno']))
+                ->setAttribute('contenteditable', 'plaintext-only')
+                ->setAttribute('data-max-length', '20')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['date']));
+            $r->addCell(new Cell($x['dateStockOut']));
+            $r->addCell(new Cell($x['orderNum']));
+            $r->addCell(new Cell($x['itemName']));
+            $r->addCell(new Cell($x['sku']));
+            $r->addCell(new Cell($x['trackingNum']))
+                ->setAttribute('contenteditable', 'plaintext-only')
+                ->setAttribute('data-max-length', '20')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['sellingPrice']));
+            $r->addCell(new Cell($x['grandTotal']));
+            $r->addCell(new Cell($x['shippingFee']))
+                ->setAttribute('contenteditable', 'plaintext-only')
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['shippingFeeByWeight']));
+            $r->addCell(new Cell($x['shippingFeeByCust']))
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['shippingState']));
+            $r->addCell(new Cell($x['shippingWeight']));
 
-            $r['billno'] =
-                '<input type="text" name="r[' . $recordId . '][billno]" value="'
-                . $r['billno'] . '" maxlength="20" size="5" readonly/>';
+            $r->addCell(new Cell($x['voucher']))
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['transferCharges']));
+            $r->addCell(new Cell($x['platformCharges']));
+            $r->addCell(new Cell($x['platformChargesAmount']))
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['bankIn']))
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
+            $r->addCell(new Cell($x['cash']))
+                ->setAttribute('data-max', '1000')
+                ->setAttribute('data-max', '0')
+                ->setAttribute('data-step', '.1')
+                ->setAttribute('data-name', "r[$recordId]");
 
-            $r['trackingNum'] =
-                '<input type="text" name="r[' . $recordId . '][trackingNum]" value="'
-                . $r['trackingNum'] . '" maxlength="20" readonly/>';
-
-            $r['shippingFee'] =
-                '<input type="number" name="r[' . $recordId . '][shippingFee]" value="'
-                . $r['shippingFee'] . '" min="0" max="1000" step="0.01" readonly/>';
-
-            $r['shippingFeeByCust'] =
-                '<input type="number" name="r[' . $recordId . '][shippingFeeByCust]" value="'
-                . $r['shippingFeeByCust'] . '" min="0" max="1000" step="0.01" readonly/>';
-
-            $r['voucher'] =
-                '<input type="number" name="r[' . $recordId . '][voucher]" value="'
-                . $r['voucher'] . '" min="0" max="1000" step="0.01" readonly/>';
-
-            $r['platformChargesAmount'] =
-                '<input type="number" name="r[' . $recordId . '][platformChargesAmount]" value="'
-                . $r['platformChargesAmount'] . '" min="0" max="1000" step="0.01" readonly/>';
-
-            $r['cash'] =
-                '<input type="number" name="r[' . $recordId . '][cash]" value="'
-                . $r['cash'] . '" min="0" max="1000" step="0.01" readonly/>';
-
-            $r['bankIn'] =
-                '<input type="number" name="r[' . $recordId . '][bankIn]" value="'
-                . $r['bankIn'] . '" min="0" max="1000" step="0.01" readonly/>';
+            $htmlTable->addRow($r);
         }
+        return $x;
     }
-
-    protected function formatCell($value, $ofColumnIndex): string
+    private function fillTableHeader(HtmlTable $tbl, array $row)
     {
-        if (is_float($value) === true) {
-            return '<td>' . number_format($value, 2, '.', ',') . '</td>';
-        }
+        $tbl->addHeader('Bill No.')->setAttribute('id', 'billno');
+        $tbl->addHeader('Date')->setAttribute('id', 'date');
+        $tbl->addHeader('Date Stock Out')->setAttribute('id', 'dateStockOut');
+        $tbl->addHeader('Order Number')->setAttribute('id', 'orderNum');
+        $tbl->addHeader('Description')->setAttribute('id', 'itemName');
+        $tbl->addHeader('Seller SKU')->setAttribute('id', 'sku');
+        $tbl->addHeader('Tracking Number')->setAttribute('id', 'trackingNum');
+        $tbl->addHeader('Selling Price')->setAttribute('id', 'sellingPrice');
+        $tbl->addHeader('Grand Total')->setAttribute('id', 'grandTotal');
+        $tbl->addHeader('Courier')->setAttribute('id', 'shippingFee');
+        $tbl->addHeader('Courier 2')->setAttribute('id', 'shippingFeeByWeight');
+        $tbl->addHeader('Courier By Customer')->setAttribute('id', 'shippingFeeByCust');
+        $tbl->addHeader('State')->setAttribute('id', 'shippingState');
+        $tbl->addHeader('Weight')->setAttribute('id', 'shippingWeight');
+        $tbl->addHeader('Voucher')->setAttribute('id', 'voucher');
 
-        switch ($ofColumnIndex) {
-            case 'billno':
-            case 'trackingNum':
-            case 'shippingFee':
-            case 'shippingFeeByCust':
-            case 'shippingFee':
-            case 'voucher':
-            case 'platformChargesAmount':
-            case 'bankIn':
-            case 'cash':
-                return '<td>' . $value . '</td>';
-            default:
-                return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-        }
+        $tbl->addHeader('Transfer Charges')->setAttribute('id', 'transferCharges');
+        $tbl->addHeader('Platform Charges')->setAttribute('id', 'platformCharges');
+        $tbl->addHeader('Platform Charges Amount')->setAttribute('id', 'platformChargesAmount');
+        $tbl->addHeader('Bank In')->setAttribute('id', 'bankIn');
+        $tbl->addHeader('Cash')->setAttribute('id', 'cash');
     }
 
-    protected function getReNamedHeader(): array
+    public function getTable(): Generator
     {
-        //key original fieldName, value as new user friendly field name
-        $fieldName = [];
-
-        // $fieldName['recordId'] = 'Record ID';
-        $fieldName['billno'] = 'Bill No.';
-        $fieldName['date'] = 'Date';
-        $fieldName['dateStockOut'] = 'Date Stock Out';
-        $fieldName['orderNum'] = 'Order Number';
-        $fieldName['itemName'] = 'Description';
-        $fieldName['sku'] = 'Seller SKU';
-        $fieldName['trackingNum'] = 'Tracking Number';
-        $fieldName['sellingPrice'] = 'Selling Price';
-        $fieldName['grandTotal'] = 'Grand Total';
-        $fieldName['shippingFee'] = 'Courier';
-        $fieldName['shippingFeeByWeight'] = 'Courier 2';
-        $fieldName['shippingFeeByCust'] = 'Courier By Customer';
-        $fieldName['shippingState'] = 'State';
-        $fieldName['shippingWeight'] = 'Weight';
-        $fieldName['voucher'] = 'Voucher';
-
-        $fieldName['transferCharges'] = 'Transfer Charges';
-        $fieldName['platformCharges'] = 'Platform Charges';
-        $fieldName['platformChargesAmount'] = 'Platform Charges Amount';
-        $fieldName['bankIn'] = 'Bank In';
-        $fieldName['cash'] = 'Cash';
-        return $fieldName;
+        $htmlTable = new HtmlTable();
+        $htmlTable->setAttribute('id', 'RecordEditor');
+        $lastRecord = $this->fillTableBody($htmlTable);
+        $this->fillTableHeader($htmlTable, $lastRecord);
+        return $htmlTable->streamHtmlText();
     }
 
-    public function getTable(): string
-    {
-        $header = $this->getReNamedHeader();
-        parent::setHead($header, true);
-        parent::setBody($this->records);
-        parent::setAttributes('id="RecordEditor"');
-
-        return parent::getTable();
-    }
+    private $numFloorPage;
 
     public function getFloorPage(): string
     {

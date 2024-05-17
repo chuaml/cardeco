@@ -17,7 +17,6 @@ const targetColId = [
     "cash"
 ];
 
-
 targetColId.forEach(function (colId) {
     col = $(th + "#" + colId).index() + 1;
     for (i = 1; i <= tr.length; ++i) {

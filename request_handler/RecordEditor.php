@@ -1,4 +1,5 @@
 <?php
+
 namespace main;
 
 
@@ -57,14 +58,14 @@ function deleteAllRecords(\mysqli $con):void{
     // insertRecord($con,'ready2ship5.csv');
 */
 
-function setShippingFeeByWeightToLzd(\mysqli $con, array &$MRecords):void
+function setShippingFeeByWeightToLzd(\mysqli $con, array &$MRecords): void
 {
     $list = AutoFilling::getLzdRecords($MRecords);
     AutoFilling::setShippingWeightByLzdProduct($con, $list);
     AutoFilling::setShippingFeeByWeight($list);
 }
 
-function groupSameItemTogetherInOrderNum(array $MRecords):array
+function groupSameItemTogetherInOrderNum(array $MRecords): array
 {
     $list = [];
     foreach ($MRecords as $MR) {
@@ -77,7 +78,7 @@ function groupSameItemTogetherInOrderNum(array $MRecords):array
         }
 
         if (array_key_exists($item->code, $list[$MR->orderNum]) === false) {
-            $list[$MR->orderNum][$item->code] = ['monthlyRecord'=>$MR, 'count'=> 1];
+            $list[$MR->orderNum][$item->code] = ['monthlyRecord' => $MR, 'count' => 1];
             continue;
         }
         $list[$MR->orderNum][$item->code]['count'] += 1;
@@ -86,7 +87,7 @@ function groupSameItemTogetherInOrderNum(array $MRecords):array
     return $list;
 }
 
-function getAllItemCode(array $MRecords):array
+function getAllItemCode(array $MRecords): array
 {
     $itemCodeSet = [];
     foreach ($MRecords as $MR) {
@@ -118,7 +119,7 @@ function getItemUOM(\mysqli $con, array $list)
     }
     $stmt->free_result();
     $stmt->close();
-    
+
     return $itemUom;
 }
 
@@ -141,11 +142,11 @@ function createSQLImport(\mysqli $con, array $MRecords)
                 $itemUOM[$itemCode] = null;
                 //throw new \Exception("no uom for item code: {$itemCode}");
             }
-            
+
             $PaymentCharges = getEitherOnePaymentCharges($MR);
             $billno = $MR->billno === '' ? '<<NEW>>' : $MR->billno;
             $docDate = date_format(date_create($MR->date), 'm/d/Y');
-            $r['DocDate'] =$docDate;
+            $r['DocDate'] = $docDate;
             $r['DocNo(20)'] = $billno;
             $r['Code(10)'] = $PaymentCharges->getCustId(); //
             $r['CompanyName(100)'] = $PaymentCharges->getCompanyName(); //
@@ -209,7 +210,7 @@ function createSQLImport(\mysqli $con, array $MRecords)
     $outputList[$anOrderIndex]['P_AMOUNT'] = $totalAmountOfOrder;
 
     $count = count($outputList);
-    for ($i=1;$i<$count;++$i) {
+    for ($i = 1; $i < $count; ++$i) {
         if ($outputList[$i]['DOCREF1'] !== $outputList[$anOrderIndex]['DOCREF1']) {
             $outputList[$anOrderIndex]['P_AMOUNT'] = $totalAmountOfOrder;
             $anOrderIndex = $i;
@@ -225,22 +226,26 @@ function createSQLImport(\mysqli $con, array $MRecords)
     return $outputList;
 }
 
-function getEitherOnePaymentCharges(MonthlyRecord $MR):PaymentCharges
+function getEitherOnePaymentCharges(MonthlyRecord $MR): PaymentCharges
 {
     if ($MR->DirectCharges !== null) {
-        if (array_key_exists('BankIn', $MR->DirectCharges) === true
-        && $MR->DirectCharges['BankIn']->getAmount() > 0.00) {
+        if (
+            array_key_exists('BankIn', $MR->DirectCharges) === true
+            && $MR->DirectCharges['BankIn']->getAmount() > 0.00
+        ) {
             return $MR->DirectCharges['BankIn'];
         }
-        if (array_key_exists('Cash', $MR->DirectCharges) === true &&
-        $MR->DirectCharges['Cash']->getAmount() > 0.00) {
+        if (
+            array_key_exists('Cash', $MR->DirectCharges) === true &&
+            $MR->DirectCharges['Cash']->getAmount() > 0.00
+        ) {
             return $MR->DirectCharges['Cash'];
         }
     }
     if ($MR->PlatformCharges !== null) {
         return $MR->PlatformCharges;
     }
-    throw new \Exception('No Payment Charges for record orderNum: ' .$MR->orderNum);
+    throw new \Exception('No Payment Charges for record orderNum: ' . $MR->orderNum);
 }
 
 
@@ -257,21 +262,20 @@ try {
 
         //setup RecordEditor;
         $LIMIT_ROWS = 50;
-    
+
         $page = $_GET['floorPage'] ?? 0;
         $searchField = $_GET['searchField'] ?? 'id';
         $searchValue = $_GET['searchValue'] ?? '';
-    
+
         $MF = new Factory\MonthlyRecord($con);
         $MF->setRecordLimit($LIMIT_ROWS);
         $MF->setOffset($page * $LIMIT_ROWS); //$ground 0 = page of latest record list
         $MF->setSearch($searchField, $searchValue);
-    
-        $Tbl = new RecordEditor();
+
         $MRecords = null;
         $platformType = isset($_GET['platformCharges']) ? $_GET['platformCharges'] : null;
         $platformType = $platformType === 'ALL' ? null : $platformType;
-        
+
         if (isset($_GET['RecordMonth'])) {
             $MRecords = $MF->getMonthlyRecordsByDate($_GET['RecordMonth'], $platformType);
             if (isset($_GET['exportCSV']['default'])) {
@@ -289,8 +293,8 @@ try {
 
         setShippingFeeByWeightToLzd($con, $MRecords);
 
-        $Tbl->setMonthlyRecords($MRecords, $MF->getNumPage());
-        
+        $Tbl = new RecordEditor($MRecords, $MF->getNumPage());
+
         $pageFloor = $Tbl->getFloorPage();
         $recordEditor = $Tbl->getTable();
     } finally {

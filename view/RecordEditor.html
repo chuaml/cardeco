@@ -44,7 +44,11 @@
     <span style="float: right;"><button id="btnHideShowCol">Info</button></span>
     <form method="POST" id="RecordEditorForm">
         <input type="submit" value="Save" tabindex="1" />
-        <?php echo $recordEditor; ?>
+        <?php
+        foreach($recordEditor as $html) {
+            echo $html;
+        } 
+        ?>
     </form>
 </body>
 
