@@ -2,14 +2,6 @@
 
 namespace Orders;
 
-require_once(__DIR__ . '/Factory/MonthlyRecord.php');
-require_once(__DIR__ . '/../HTML/TableDisplayer.php');
-require_once(__DIR__ . '/../Product/Factory/ItemFactory.php');
-require_once(__DIR__ . '/PaymentCharges/PlatformCharges.php');
-
-use \Orders\Factory\MonthlyRecord;
-use \Product\Factory\ItemFactory;
-use \Orders\PaymentCharges\PlatformCharges;
 use \HTML\TableDisplayer;
 
 class RecordEditor extends TableDisplayer
@@ -27,7 +19,6 @@ class RecordEditor extends TableDisplayer
 
         $this->numFloorPage = $numPage;
 
-        $field;
         $cleanRecord = $MonthlyRecords[0]->getAll();
         foreach ($MonthlyRecords as $M) {
             $field = $M->getAll();
@@ -42,9 +33,6 @@ class RecordEditor extends TableDisplayer
     private function setEditorCells(): void
     {
         $len = sizeof($this->records);
-        //recordId as row array index
-        $recordId;
-        $r;
         for ($i = 0; $i < $len; ++$i) {
             $recordId = $this->records[$i]['recordId'];
             $r = &$this->records[$i];
