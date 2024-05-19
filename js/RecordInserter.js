@@ -110,32 +110,71 @@ $("form#RecordInserterForm").submit(function () {
 
 
 
-// auto add new line, new row on last input
+// auto advanced to next input cell when press Enter key
 document.body.addEventListener('keydown', function (e) {
     if (e.code !== 'Enter') return;
-    if (e.target.matches('tr:last-child > td:last-child > input') === true) {
+    if (e.target.matches('tr:last-child > td:last-child > input') === true) { // 1. auto add new line, new row on last input
         document.getElementById('btnAddNew').click();
         setTimeout(() => {
             e.target.closest('tr').nextElementSibling.querySelector('input').focus();
         }, 0);
     }
     else if (e.target.matches('td > input') === true) {
-        for (
-            let td = e.target.closest('td').nextElementSibling; ; td = td.nextElementSibling
-        ) {
-            if(td === null){
-                const tr = e.target.closest('tr').nextElementSibling;
-                if(tr === null){
-                    break;
+        if (e.shiftKey === true) { // 2.a go to previous input cell
+            for (
+                let td = e.target.closest('td').previousElementSibling; ; td = td.previousElementSibling
+            ) {
+                if (td === null) {
+                    const tr = e.target.closest('tr').previousElementSibling;
+                    if (tr === null) {
+                        break;
+                    }
+                    else {
+                        td = tr.children[tr.children.length - 1];
+                    }
                 }
-                else {
-                    td = tr.children[0];
-                }
+                const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
+                if (nextInput === null) continue;
+                nextInput.focus();
+                break;
             }
-            const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
-            if (nextInput === null) continue;
-            nextInput.focus();
-            break;
+        }
+        else { // 2.b go to next input cell
+            for (
+                let td = e.target.closest('td').nextElementSibling; ; td = td.nextElementSibling
+            ) {
+                if (td === null) {
+                    const tr = e.target.closest('tr').nextElementSibling;
+                    if (tr === null) {
+                        break;
+                    }
+                    else {
+                        td = tr.children[0];
+                    }
+                }
+                const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
+                if (nextInput === null) continue;
+                nextInput.focus();
+                break;
+            }
         }
     }
 });
+
+
+setTimeout(_ => {
+    // auto add few new line
+    const btnAddNew = document.getElementById('btnAddNew');
+    btnAddNew.click();
+    btnAddNew.click();
+    btnAddNew.click();
+    btnAddNew.click();
+
+
+    // auto focus 1st input
+    requestAnimationFrame(_ => {
+        setTimeout(_ => {
+            document.querySelector('table#RecordInserter > tbody > tr input').focus();
+        }, 200);
+    });
+}, 0);
