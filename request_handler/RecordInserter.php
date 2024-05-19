@@ -1,13 +1,6 @@
 <?php 
 namespace main;
 
-
-
-
-
-
-
-
 use \Orders\Factory\Record;
 use \Orders\RecordInserter;
 use \Orders\PaymentCharges\PlatformCharges;
@@ -68,4 +61,3 @@ if(isset($_POST['r'])){
 }
 
 require('view/RecordInserter.html');
-?>

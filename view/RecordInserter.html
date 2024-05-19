@@ -47,11 +47,11 @@
             <?php echo $error->getMessage();?>
         </div>
     </form>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/RecordInserter.js"></script>
+
+    <?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
 </body>
-
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/RecordInserter.js"></script>
-
-<?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
 
 </html>
