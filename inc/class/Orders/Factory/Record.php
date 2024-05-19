@@ -27,8 +27,10 @@ class Record implements RecordFactory{
         if($len > RecordFactory::MAX_RECORD){
             $len = RecordFactory::MAX_RECORD;
         }
-        for($i=0;$i<$len;++$i){
-            $list[] = $this->getRecord($this->List[$i]);
+        $count = 0;
+        foreach($this->List as $r){
+            if($count++ > $len) break;
+            $list[] = $this->getRecord($r);
         }
         
         return $list;
@@ -47,6 +49,7 @@ class Record implements RecordFactory{
         $Record->setSellingPrice(doubleval($row['sellingPrice']));
         $Record->setShippingFee(doubleval($row['shippingFee']));
         $Record->setShippingFeeByCust(doubleval($row['shippingFeeByCust']));
+        $Record->setStatus(trim($row['status']));
         
         return $Record;
     }

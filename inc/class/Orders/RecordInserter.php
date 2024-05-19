@@ -19,6 +19,7 @@ class RecordInserter implements Insertable, Updatable
         'sku' => 's',
         'trackingNum' => 's',
         'sellingPrice' => 'd',
+        'status' => 's',
         'voucher' => 'd',
         'shippingFee' => 'd',
         'shippingFeeByCust' => 'd',
@@ -53,9 +54,10 @@ class RecordInserter implements Insertable, Updatable
         $placeholder = \implode(',', \array_fill(0, count($this->COL), '?'));
         $dataType = \implode('', $this->COL);
 
+        $sql = "INSERT INTO orders_temp(insertLogId, {$col}, platformCharges) VALUES"
+        . "(?, {$placeholder}, ?);";
         $stmt = $con->prepare(
-            "INSERT INTO orders_temp(insertLogId, {$col}, platformCharges) VALUES"
-                . "(?, {$placeholder}, ?);"
+            $sql
         );
         if (!$stmt) {
             throw new \Exception($con->errno . ' ' . $con->error);
@@ -91,7 +93,7 @@ class RecordInserter implements Insertable, Updatable
             $voucher = $r->voucher;
             $shippingFee = $r->shippingFee;
             $shippingFeeByCust = $r->shippingFeeByCust;
-            $shippingState = $r->shippingState;
+            $shippingState = $r->shippingState . '-';
             $shippingWeight = $r->shippingWeight;
             if (!($stmt->execute())) {
                 throw new \Exception($stmt->errno . ' ' . $stmt->error);
