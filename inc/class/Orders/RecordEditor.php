@@ -77,8 +77,15 @@ class RecordEditor extends TableDisplayer
 
     protected function formatCell($value, $ofColumnIndex): string
     {
-        if (is_float($value) === true) {
-            return '<td>' . number_format($value, 2, '.', ',') . '</td>';
+        if ($value !== null) {
+            if (is_float($value) === true) {
+                return '<td>' . number_format($value, 2, '.', ',') . '</td>';
+            }
+
+            if ($value !== "" && ($date = date_create($value)) !== false) {
+                $date = date_format($date, 'Y-m-d'); // yyyy-MM-dd ISO date for custom sorting
+                return "<td data-value=\"$date\">" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+            }
         }
 
         switch ($ofColumnIndex) {
