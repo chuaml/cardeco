@@ -19,6 +19,10 @@ body{
 	padding: 16px;
 }
 
+body.submitting-form{
+	cursor: progress;
+}
+
 div{
 	padding: 16px;
 }
