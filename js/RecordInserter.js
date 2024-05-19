@@ -107,3 +107,35 @@ $("form#RecordInserterForm").submit(function () {
         return false;
     }
 });
+
+
+
+// auto add new line, new row on last input
+document.body.addEventListener('keydown', function (e) {
+    if (e.code !== 'Enter') return;
+    if (e.target.matches('tr:last-child > td:last-child > input') === true) {
+        document.getElementById('btnAddNew').click();
+        setTimeout(() => {
+            e.target.closest('tr').nextElementSibling.querySelector('input').focus();
+        }, 0);
+    }
+    else if (e.target.matches('td > input') === true) {
+        for (
+            let td = e.target.closest('td').nextElementSibling; ; td = td.nextElementSibling
+        ) {
+            if(td === null){
+                const tr = e.target.closest('tr').nextElementSibling;
+                if(tr === null){
+                    break;
+                }
+                else {
+                    td = tr.children[0];
+                }
+            }
+            const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
+            if (nextInput === null) continue;
+            nextInput.focus();
+            break;
+        }
+    }
+});
