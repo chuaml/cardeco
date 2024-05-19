@@ -55,7 +55,7 @@ class RecordInserter implements Insertable, Updatable
         $dataType = \implode('', $this->COL);
 
         $sql = "INSERT INTO orders_temp(insertLogId, {$col}, platformCharges) VALUES"
-        . "(?, {$placeholder}, ?);";
+            . "(?, {$placeholder}, ?);";
         $stmt = $con->prepare(
             $sql
         );
