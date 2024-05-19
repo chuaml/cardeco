@@ -404,8 +404,10 @@ table#RecordEditor tr.object2 {
 	background-color: rgb(240, 240, 255);
 }
 
-table#RecordEditor input[type=number] {
-	width: 5em;
+table#RecordEditor input[type=number],
+table#RecordEditor input[inputmode="numeric"]  {
+	width: 8ch;
+	font-variant-numeric: tabular-nums;
 }
 
 table#RecordEditor>tbody>tr>td:has(input) {
