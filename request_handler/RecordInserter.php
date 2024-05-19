@@ -39,12 +39,18 @@ if (isset($_POST['r'])) {
                 fwrite($tmpFile, implode('', $row));
             }
 
-            $Inserter->insertLog(
-                $con,
-                $file,
-                end($listPath)
-            );
-            $Inserter->insert($con, $list);
+            $con->begin_transaction(MYSQLI_TRANS_START_READ_WRITE);
+            try {
+                $Inserter->insertLog(
+                    $con,
+                    $file,
+                    end($listPath)
+                );
+                $Inserter->insert($con, $list);
+            } catch (Exception $e) {
+                $con->rollback();
+                throw $e;
+            }
         } finally {
             fclose($tmpFile);
         }
