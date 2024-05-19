@@ -6,34 +6,41 @@
 
 
 
-<?php if(isset($_isProduction) === true && $_isProduction !== true) { ?>
+<?php if (isset($_isProduction) === true && $_isProduction !== true) { ?>
 	<script>
 		window.dataLayer = window.dataLayer || [];
-		function gtag(){ console.log(arguments); dataLayer.push(arguments);}
+
+		function gtag() {
+			console.log(arguments);
+			dataLayer.push(arguments);
+		}
 		gtag('js', new Date());
 	</script>
 
-	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>	
+	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>
 <?php } else { ?>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-139719LGJQ"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-139719LGJQ"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
 
-  gtag('config', 'G-139719LGJQ');
-</script>
+		function gtag() {
+			dataLayer.push(arguments);
+		}
+		gtag('js', new Date());
+
+		gtag('config', 'G-139719LGJQ');
+	</script>
 
 
-<link rel="shortcut icon" href="view/icon.png" type="image/png" />
+	<link rel="shortcut icon" href="view/icon.png" type="image/png" />
 
 
 <?php } ?>
 
 <script>
-    window.app = {}; // global placeholder
+	window.app = {}; // global placeholder
 	window.app.hasError = '<?= error_get_last() === null ?>' === '1';
 </script>
 
@@ -76,9 +83,9 @@
 	<p><i>loading...</i></p>
 </div>
 <script>
-	
 	// toggle show loading
-	window.addEventListener('beforeunload', _ => {
+	window.addEventListener('beforeunload', e => {
+		console.log(e.type);
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'flex';
@@ -89,7 +96,8 @@
 	});
 
 	// hide loading when returning current loading page
-	window.addEventListener('pageshow', function (e) {
+	window.addEventListener('pageshow', function(e) {
+		console.log(e.type);
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'none';
@@ -100,3 +108,55 @@
 	});
 </script>
 <!-- smooth page loading transition -->
+
+
+<script>
+	// override form submission, listen network response of form submit and retrigger customer event of resposne result
+	document.body.addEventListener('submit', async e => {
+		// exclude form with file
+		if (e.target.matches('form:not([enctype])') === false) return;
+		e.preventDefault();
+		const form = e.target;
+		const formData = new FormData(form);
+
+		return await fetch(form.action, {
+				method: form.method,
+				body: formData
+			})
+			.then(response => {
+				console.log({
+					form,
+					response
+				});
+				form.dispatchEvent(new CustomEvent('submitted', {
+					bubbles: true,
+					detail: response
+				}));
+				return true;
+				// if (response.ok) {
+				// } else {
+				// }
+			})
+			.catch(error => {
+				form.dispatchEvent(new CustomEvent('not-submitted', {
+					bubbles: true
+				}));
+				return false;
+			});
+	});
+	document.body.addEventListener('submit', e => {
+		requestAnimationFrame(_ => {
+			document.body.classList.add('submitting-form');
+		});
+	});
+	document.body.addEventListener('submitted', e => {
+		requestAnimationFrame(_ => {
+			document.body.classList.remove('submitting-form');
+		});
+	});
+	document.body.addEventListener('not-submitted', e => {
+		requestAnimationFrame(_ => {
+			document.body.classList.remove('submitting-form');
+		});
+	});
+</script>

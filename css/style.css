@@ -18,7 +18,11 @@ body {
 	padding: 16px;
 }
 
-div {
+body.submitting-form{
+	cursor: progress;
+}
+
+div{
 	padding: 16px;
 }
 
