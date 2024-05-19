@@ -221,3 +221,11 @@ document.addEventListener('submit', function (e) {
         x.value = x.value.replace(/[^0-9\.]+/g, '');
     });
 });
+
+// Ctrl S to save
+document.addEventListener('keydown', e => {
+    if (e.ctrlKey === true && e.code === 'KeyS') {
+        document.getElementById('RecordEditorForm').requestSubmit();
+        e.preventDefault();
+    }
+});
