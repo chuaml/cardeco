@@ -35,6 +35,7 @@ define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
 define('DB_NAME', $_dbName);
 
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 if ($con = mysqli_connect(DB_ADDRESS, DB_USERNAME, DB_PASSWORD, DB_NAME)) { //connection to database, phpmyadmin.
     //check connection
     if (mysqli_connect_errno()) { //If(!$conn)

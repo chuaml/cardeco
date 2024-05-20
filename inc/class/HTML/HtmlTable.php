@@ -8,37 +8,45 @@ class HtmlTable extends HtmlObject
     private $body = [];
     private $footer = [];
 
-    public function setHeader(int $index, HtmlTableCell $Cell):void
+    public function addHeader(string $displayName): HtmlTableCell
     {
-        $this->header[$index] = $Cell;
+        $Cell = new HtmlTableCell($displayName);
+        $this->header[] = $Cell;
+        return $Cell;
     }
 
-    public function setBody(int $index, array $RowList):void
+    public function setHeader(int $index, HtmlTableCell $Cell): HtmlTableCell
+    {
+        $this->header[$index] = $Cell;
+        return $Cell;
+    }
+
+    public function setBody(int $index, array $RowList): void
     {
         $this->body = $RowList;
     }
 
-    public function setRow(int $index, HtmlTableRow $Row):void
+    public function setRow(int $index, HtmlTableRow $Row): void
     {
         $this->body[$index] = $Row;
     }
 
-    public function addRow(HtmlTableRow $Row):void
+    public function addRow(HtmlTableRow $Row): void
     {
         $this->body[] = $Row;
     }
 
-    public function getRow(int $index):HtmlTableRow
+    public function getRow(int $index): HtmlTableRow
     {
         return $this->body[$index];
     }
 
-    public function setFooter(int $index, HtmlTableCell $Cell):void
+    public function setFooter(int $index, HtmlTableCell $Cell): void
     {
         $this->footer[$index] = $Cell;
     }
 
-    public function toHtmlText():string
+    public function toHtmlText(): string
     {
         $output = '<table';
 
@@ -72,11 +80,11 @@ class HtmlTable extends HtmlObject
         if (empty($this->footer) === false) {
             $output .= '<tfoot><tr>'
 
-             . \array_reduce($this->body, function (?string $cells, HtmlTableCell $Cell) {
-                 return $cells . '<td>' . $Cell->getFormattedValue() . '</td>';
-             })
+                . \array_reduce($this->body, function (?string $cells, HtmlTableCell $Cell) {
+                    return $cells . '<td>' . $Cell->getFormattedValue() . '</td>';
+                })
 
-             . '</tr></tfoot>';
+                . '</tr></tfoot>';
         }
 
         $output .= '</table>';

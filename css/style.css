@@ -19,6 +19,10 @@ body{
 	padding: 16px;
 }
 
+body.submitting-form{
+	cursor: progress;
+}
+
 div{
 	padding: 16px;
 }
@@ -385,6 +389,23 @@ table#RecordEditor tr.object2{
 
 table#RecordEditor input[type=number]{
 	width: 5em;
+}
+
+table#RecordEditor > tbody > tr > td:has(input){
+	/* allow input in inside may use 100% max size */
+	height: 0px;
+	border: 1px solid #bbb;
+	padding: 0;
+}
+table#RecordEditor > tbody > tr > td > input{
+	height: calc(100% - 2px);
+	width: 100%;
+	background-color: transparent;
+	border: 0;
+	padding: 0;
+}
+table#RecordEditor > tbody > tr > td > input:focus{
+	outline: 2px solid green;
 }
 
 

@@ -140,7 +140,7 @@ class RecordEditor extends TableDisplayer
         $header = $this->getReNamedHeader();
         parent::setHead($header, true);
         parent::setBody($this->records);
-        parent::setAttributes('id="RecordEditor" border="1"');
+        parent::setAttributes('id="RecordEditor"');
 
         return parent::getTable();
     }
