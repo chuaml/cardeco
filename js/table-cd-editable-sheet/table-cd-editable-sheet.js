@@ -165,3 +165,58 @@ body.addEventListener('submit', function (e) {
         x.value = x.value.replace(/[^0-9\.]+/g, '');
     });
 });
+
+// maybe needed feature
+// if (changeEnterKeyTo_MoveAdjecnt) {
+//     document.body.addEventListener('keydown', function (e) {
+//         if (e.code !== 'Enter') return;
+//         if (e.target.matches('td > input:focus') === true) {
+//             e.preventDefault();
+//             if (e.shiftKey === true) { // 2.a go to previous input cell
+//                 for (
+//                     let td = e.target.closest('td').previousElementSibling, step; step < 10000; ++step
+//                 ) {
+//                     if (td.previousElementSibling === null) {
+//                         const tr = td.closest('tr').previousElementSibling;
+//                         if (tr === null) {
+//                             break;
+//                         }
+//                         else {
+//                             td = tr.children[tr.children.length - 1];
+//                         }
+//                     }
+//                     else {
+//                         td = td.previousElementSibling;
+//                     }
+
+//                     const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
+//                     if (nextInput === null) continue;
+//                     nextInput.focus();
+//                     break;
+//                 }
+//             }
+//             else { // 2.b go to next input cell
+//                 for (
+//                     let td = e.target.closest('td').nextElementSibling, step = 0; step < 10000; ++step
+//                 ) {
+//                     if (td.nextElementSibling === null) {
+//                         const tr = nextElementSibling.closest('tr').nextElementSibling;
+//                         if (tr === null) {
+//                             break;
+//                         }
+//                         else {
+//                             td = tr.children[0];
+//                         }
+//                     }
+//                     else {
+//                         td = td.nextElementSibling;
+//                     }
+//                     const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
+//                     if (nextInput === null) continue;
+//                     nextInput.focus();
+//                     break;
+//                 }
+//             }
+//         }
+//     });
+// }

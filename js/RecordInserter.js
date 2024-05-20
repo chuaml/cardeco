@@ -113,58 +113,11 @@ $("form#RecordInserterForm").submit(function () {
 // auto advanced to next input cell when press Enter key
 document.body.addEventListener('keydown', function (e) {
     if (e.code !== 'Enter') return;
-    if (e.target.matches('tr:last-child > td:last-child > input:focus') === true) { // 1. auto add new line, new row on last input
+    if (e.target.matches('tr:last-child > td > input:focus') === true) { // 1. auto add new line, new row on last input
         document.getElementById('btnAddNew').click();
         setTimeout(() => {
             e.target.closest('tr').nextElementSibling.querySelector('input').focus();
         }, 0);
-    }
-    else if (e.target.matches('td > input:focus') === true) {
-        if (e.shiftKey === true) { // 2.a go to previous input cell
-            for (
-                let td = e.target.closest('td').previousElementSibling, step; step < 10000; ++step
-            ) {
-                if (td.previousElementSibling === null) {
-                    const tr = td.closest('tr').previousElementSibling;
-                    if (tr === null) {
-                        break;
-                    }
-                    else {
-                        td = tr.children[tr.children.length - 1];
-                    }
-                }
-                else {
-                    td = td.previousElementSibling;
-                }
-
-                const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
-                if (nextInput === null) continue;
-                nextInput.focus();
-                break;
-            }
-        }
-        else { // 2.b go to next input cell
-            for (
-                let td = e.target.closest('td').nextElementSibling, step = 0; step < 10000; ++step
-            ) {
-                if (td.nextElementSibling === null) {
-                    const tr = nextElementSibling.closest('tr').nextElementSibling;
-                    if (tr === null) {
-                        break;
-                    }
-                    else {
-                        td = tr.children[0];
-                    }
-                }
-                else {
-                    td = td.nextElementSibling;
-                }
-                const nextInput = td.querySelector('input:not(:read-only):not(:disabled)');
-                if (nextInput === null) continue;
-                nextInput.focus();
-                break;
-            }
-        }
     }
 });
 
