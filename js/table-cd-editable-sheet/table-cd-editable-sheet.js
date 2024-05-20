@@ -1,5 +1,10 @@
+//  WARNING
+// code below assume the page has 1 and only 1 table[cd-editable-sheet]
+const body = document.body;
+const tbody = body.querySelector('table[cd-editable-sheet] > tbody');
 
-document.querySelector('table > tbody').addEventListener('change', function (e) {
+// auto format currency on input, when currency is entered
+tbody.addEventListener('change', function (e) {
     if (e.target.matches('input.money') === false) return;
     const input = e.target;
     if (input.value === '') return;
@@ -7,12 +12,14 @@ document.querySelector('table > tbody').addEventListener('change', function (e) 
     const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
     if (isNaN(money) === true) return;
 
+    // e.g. 123,456,789.00
     input.value = money.toLocaleString('en-US', {
         minimumFractionDigits: 2
     });
 });
 
-document.querySelector('table > tbody').addEventListener('keydown', function (e) {
+// movement key for cell focus 
+tbody.addEventListener('keydown', function (e) {
     if (e.target.matches('input') === false) return;
 
     const td = e.target.closest('td');
@@ -105,28 +112,36 @@ document.querySelector('table > tbody').addEventListener('keydown', function (e)
 
 
 // force double click input only to allow focus and edit
-document.querySelector('table > tbody').addEventListener('dblclick', function (e) {
+tbody.addEventListener('dblclick', function (e) {
     if (e.target.matches('input') === false) return;
     e.target.removeAttribute('readonly');
 });
-
-document.querySelector('table > tbody').addEventListener('focusout', function (e) {
+tbody.addEventListener('focusout', function (e) {
     if (e.target.matches('input') === false) return;
     e.target.setAttribute('readonly', '');
 });
 
 
-// format money number to numeric decimal only
-document.addEventListener('submit', function (e) {
+// format money number to well format numeric decimal only before submitting to server
+body.addEventListener('submit', function (e) {
+    if (e.target.closest('table[cd-editable-sheet] > tbody') === null) return;
+
     e.target.querySelectorAll('input.money').forEach(function (x) {
         x.value = x.value.replace(/[^0-9\.]+/g, '');
     });
 });
 
+
 // Ctrl S to save
-document.addEventListener('keydown', e => {
+body.addEventListener('keydown', e => {
     if (e.ctrlKey === true && e.code === 'KeyS') {
-        document.getElementById('RecordEditorForm').requestSubmit();
+        const table = e.target.closest('table[cd-editable-sheet]');
+        if (table === null) return;
+
+        const form = table.closest('form');
+        if (form === null) return;
+
+        form.requestSubmit();
         e.preventDefault();
     }
 });
