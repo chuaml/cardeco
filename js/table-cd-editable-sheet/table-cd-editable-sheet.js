@@ -13,7 +13,7 @@ const gotoRowCell = (tr, td_cellIndex) => {
 tbody.addEventListener('keydown', function (e) {
     if (e.ctrlKey === true) {
         if (e.shiftKey === false) {  // ctrl + delete
-            if (code === 'Delete') {
+            if (e.code === 'Delete') {
                 e.target.value = '';
             }
         }
