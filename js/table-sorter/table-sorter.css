@@ -8,4 +8,5 @@ table>thead>tr>th[data-sort-asc="1"]:after {
 
 table>thead>tr>th[data-sort-asc="0"]::after {
     content: ' \\/';
+    font-size: .7em;
 }
