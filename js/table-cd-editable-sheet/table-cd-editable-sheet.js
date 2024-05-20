@@ -3,21 +3,6 @@
 const body = document.body;
 const tbody = body.querySelector('table[cd-editable-sheet] > tbody');
 
-// auto format currency on input, when currency is entered
-tbody.addEventListener('change', function (e) {
-    if (e.target.matches('input.money') === false) return;
-    const input = e.target;
-    if (input.value === '') return;
-
-    const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
-    if (isNaN(money) === true) return;
-
-    // e.g. 123,456,789.00
-    input.value = money.toLocaleString('en-US', {
-        minimumFractionDigits: 2
-    });
-});
-
 // movement key for cell focus 
 tbody.addEventListener('keydown', function (e) {
     if (e.target.matches('input') === false) return;
@@ -110,28 +95,6 @@ tbody.addEventListener('keydown', function (e) {
 
 });
 
-
-// force double click input only to allow focus and edit
-tbody.addEventListener('dblclick', function (e) {
-    if (e.target.matches('input') === false) return;
-    e.target.removeAttribute('readonly');
-});
-tbody.addEventListener('focusout', function (e) {
-    if (e.target.matches('input') === false) return;
-    e.target.setAttribute('readonly', '');
-});
-
-
-// format money number to well format numeric decimal only before submitting to server
-body.addEventListener('submit', function (e) {
-    if (e.target.closest('table[cd-editable-sheet] > tbody') === null) return;
-
-    e.target.querySelectorAll('input.money').forEach(function (x) {
-        x.value = x.value.replace(/[^0-9\.]+/g, '');
-    });
-});
-
-
 // Ctrl S to save
 body.addEventListener('keydown', e => {
     if (e.ctrlKey === true && e.code === 'KeyS') {
@@ -144,4 +107,47 @@ body.addEventListener('keydown', e => {
         form.requestSubmit();
         e.preventDefault();
     }
+});
+
+
+
+// force double click input only to allow focus and edit
+tbody.addEventListener('dblclick', function (e) {
+    if (e.target.matches('input') === false) return;
+    e.target.removeAttribute('readonly');
+});
+tbody.addEventListener('focusout', function (e) {
+    if (e.target.matches('input') === false) return;
+    e.target.setAttribute('readonly', '');
+});
+
+// and auto change all input to readonly, only allow double clicking to focus and edit it
+tbody.querySelectorAll('td > input').forEach(function (x) {
+    x.readOnly = true;
+});
+
+
+// money number formatting
+// 1. auto format currency on input, when currency is entered
+tbody.addEventListener('change', function (e) {
+    if (e.target.matches('input.money') === false) return;
+    const input = e.target;
+    if (input.value === '') return;
+
+    const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
+    if (isNaN(money) === true) return;
+
+    // e.g. 123,456,789.00
+    input.value = money.toLocaleString('en-US', {
+        minimumFractionDigits: 2
+    });
+});
+
+// 2. then format money number to well format numeric decimal only before submitting to server
+body.addEventListener('submit', function (e) {
+    if (e.target.closest('table[cd-editable-sheet] > tbody') === null) return;
+
+    e.target.querySelectorAll('input.money').forEach(function (x) {
+        x.value = x.value.replace(/[^0-9\.]+/g, '');
+    });
 });
