@@ -109,6 +109,9 @@
 </script>
 <!-- smooth page loading transition -->
 
+<!-- custom table sorter -->
+<link rel="stylesheet" href="js/table-sorter/table-sorter.css">
+<script src="js/table-sorter/table-sorter-init.js"></script>
 
 <script>
 	// override form submission, listen network response of form submit and retrigger customer event of resposne result
