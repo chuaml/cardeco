@@ -2,14 +2,6 @@
 
 namespace Orders;
 
-require_once(__DIR__ . '/Factory/MonthlyRecord.php');
-require_once(__DIR__ . '/../HTML/TableDisplayer.php');
-require_once(__DIR__ . '/../Product/Factory/ItemFactory.php');
-require_once(__DIR__ . '/PaymentCharges/PlatformCharges.php');
-
-use \Orders\Factory\MonthlyRecord;
-use \Product\Factory\ItemFactory;
-use \Orders\PaymentCharges\PlatformCharges;
 use \HTML\TableDisplayer;
 
 class RecordEditor extends TableDisplayer
@@ -27,12 +19,15 @@ class RecordEditor extends TableDisplayer
 
         $this->numFloorPage = $numPage;
 
-        $field;
         $cleanRecord = $MonthlyRecords[0]->getAll();
         foreach ($MonthlyRecords as $M) {
             $field = $M->getAll();
             foreach ($field as $fieldName => $v) {
-                $cleanRecord[$fieldName] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                if (is_float($v) === true) {
+                    $cleanRecord[$fieldName] = $v;
+                } else {
+                    $cleanRecord[$fieldName] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                }
             }
             $this->records[] = $cleanRecord;
         }
@@ -42,9 +37,6 @@ class RecordEditor extends TableDisplayer
     private function setEditorCells(): void
     {
         $len = sizeof($this->records);
-        //recordId as row array index
-        $recordId;
-        $r;
         for ($i = 0; $i < $len; ++$i) {
             $recordId = $this->records[$i]['recordId'];
             $r = &$this->records[$i];
@@ -58,35 +50,42 @@ class RecordEditor extends TableDisplayer
                 . $r['trackingNum'] . '" maxlength="20" readonly/>';
 
             $r['shippingFee'] =
-                '<input type="number" name="r[' . $recordId . '][shippingFee]" value="'
-                . $r['shippingFee'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][shippingFee]" value="'
+                . number_format($r['shippingFee'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['shippingFeeByCust'] =
-                '<input type="number" name="r[' . $recordId . '][shippingFeeByCust]" value="'
-                . $r['shippingFeeByCust'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][shippingFeeByCust]" value="'
+                . number_format($r['shippingFeeByCust'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['voucher'] =
-                '<input type="number" name="r[' . $recordId . '][voucher]" value="'
-                . $r['voucher'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][voucher]" value="'
+                . number_format($r['voucher'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['platformChargesAmount'] =
-                '<input type="number" name="r[' . $recordId . '][platformChargesAmount]" value="'
-                . $r['platformChargesAmount'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][platformChargesAmount]" value="'
+                . number_format($r['platformChargesAmount'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['cash'] =
-                '<input type="number" name="r[' . $recordId . '][cash]" value="'
-                . $r['cash'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][cash]" value="'
+                . number_format($r['cash'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['bankIn'] =
-                '<input type="number" name="r[' . $recordId . '][bankIn]" value="'
-                . $r['bankIn'] . '" min="0" max="1000" step="0.01" readonly/>';
+                '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][bankIn]" value="'
+                . number_format($r['bankIn'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
         }
     }
 
     protected function formatCell($value, $ofColumnIndex): string
     {
-        if (is_float($value) === true) {
-            return '<td>' . number_format($value, 2, '.', ',') . '</td>';
+        if ($value !== null) {
+            if (is_float($value) === true) {
+                return '<td>' . number_format($value, 2, '.', ',') . '</td>';
+            }
+
+            if ($value !== "" && ($date = date_create($value)) !== false) {
+                $date = date_format($date, 'Y-m-d'); // yyyy-MM-dd ISO date for custom sorting
+                return "<td data-value=\"$date\">" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+            }
         }
 
         switch ($ofColumnIndex) {

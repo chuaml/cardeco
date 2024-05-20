@@ -11,7 +11,7 @@ class HtmlTableCell extends HtmlObject
         $this->setValue($Object);
     }
 
-    public function setValue($Object):void
+    public function setValue($Object): void
     {
         $this->Value = $Object;
     }
@@ -21,10 +21,10 @@ class HtmlTableCell extends HtmlObject
         return $this->Value;
     }
 
-    public function getFormattedValue():string
+    public function getFormattedValue(): string
     {
         if ($this->Value === null) {
-            return '<i>null</i>';
+            return '<i data-type="null"></i>';
         } elseif (\is_object($this->Value) === true) {
             return (string) $this->Value;
         }
@@ -32,7 +32,7 @@ class HtmlTableCell extends HtmlObject
         return \htmlspecialchars(trim((string) $this->Value), \ENT_QUOTES, 'UTF-8');
     }
 
-    public function toHtmlText():string
+    public function toHtmlText(): string
     {
         $attr = parent::getAllAttributesString();
         if ($attr === '') {
