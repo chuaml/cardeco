@@ -113,11 +113,12 @@
 <link rel="stylesheet" href="js/table-sorter/table-sorter.css">
 <script src="js/table-sorter/table-sorter-init.js"></script>
 
+<!-- custom ajax form handling [cd-ajax] -->
 <script>
 	// override form submission, listen network response of form submit and retrigger customer event of resposne result
 	document.body.addEventListener('submit', async e => {
 		// exclude form with file
-		if (e.target.matches('form.ajax') === false) return;
+		if (e.target.matches('form[cd-ajax]') === false) return;
 		e.preventDefault();
 		const form = e.target;
 		const formData = new FormData(form);
@@ -127,10 +128,10 @@
 				body: formData
 			})
 			.then(response => {
-				console.log({
-					form,
-					response
-				});
+				// console.log({
+				// 	form,
+				// 	response
+				// });
 				form.dispatchEvent(new CustomEvent('submitted', {
 					bubbles: true,
 					detail: response
