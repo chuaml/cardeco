@@ -23,6 +23,7 @@ tbody.addEventListener('keydown', function (e) {
         }
     };
 
+    const code = e.code;
     if (e.code === 'ArrowUp') {
         e.target.blur();
         goUp();
@@ -83,14 +84,21 @@ tbody.addEventListener('keydown', function (e) {
             }
         }
     }
-    else if (e.code.startsWith('key') && e.code.length === 4) { // any other key, focus and start editing cell, start typing
+    else if (e.ctrlKey === false) {
 
-        if (e.target.readOnly === true) {
-            e.target.removeAttribute('readonly');
-            e.target.focus();
-            e.target.select();
+        if (
+            e.code.startsWith('Key')
+            || e.code.startsWith('Digit')
+            || e.code.startsWith('Numpad')
+        ) { // alphanumeric keys, focus and start editing cell, start typing
+
+            if (e.target.readOnly === true) {
+                e.target.removeAttribute('readonly');
+                e.target.focus();
+                e.target.select();
+            }
+
         }
-
     }
 
 });
