@@ -384,18 +384,7 @@ ul#skuList>li {
 	font-size: 1.2em;
 }
 
-/* /RecordInserter */
 /* /RecordEditor */
-table#RecordEditor input,
-table#ItemEditor input {
-	cursor: cell;
-}
-
-table#RecordEditor input:focus:not([readonly]),
-table#ItemEditor input:focus:not([readonly]) {
-	cursor: text;
-}
-
 table#RecordEditor tr.object {
 	background-color: rgb(250, 250, 230);
 }
@@ -404,20 +393,36 @@ table#RecordEditor tr.object2 {
 	background-color: rgb(240, 240, 255);
 }
 
-table#RecordEditor input[type=number],
-table#RecordEditor input[inputmode="numeric"]  {
+
+
+/* table[cd-editable-sheet] for:  */
+/* /RecordInserter */
+/* /RecordEditor */
+/* etc... */
+
+table[cd-editable-sheet] input {
+	cursor: cell;
+}
+
+table[cd-editable-sheet] input:focus:not([readonly]){
+	cursor: text;
+}
+
+
+table[cd-editable-sheet] input[type=number],
+table[cd-editable-sheet] input[inputmode="numeric"]  {
 	width: 8ch;
 	font-variant-numeric: tabular-nums;
 }
 
-table#RecordEditor>tbody>tr>td:has(input) {
+table[cd-editable-sheet]>tbody>tr>td:has(input) {
 	/* allow input in inside may use 100% max size */
 	height: 0px;
 	border: 1px solid #bbb;
 	padding: 0;
 }
 
-table#RecordEditor>tbody>tr>td>input {
+table[cd-editable-sheet]>tbody>tr>td>input {
 	height: calc(100% - 2px);
 	width: min-content;
 	background-color: transparent;
@@ -426,24 +431,21 @@ table#RecordEditor>tbody>tr>td>input {
 	font-size: 1rem;
 }
 
-table#RecordEditor>tbody>tr>td>input:focus {
+table[cd-editable-sheet]>tbody>tr>td>input:focus {
 	outline: 2px solid green;
 }
 
-table#RecordEditor>tbody>tr>td>input:invalid{
+table[cd-editable-sheet]>tbody>tr>td>input:invalid{
 	outline: 2px solid red;
 }
 
 /* remove input number arrows */
-table#RecordEditor>tbody>tr>td>input[type="number"]::-webkit-inner-spin-button {
+table[cd-editable-sheet]>tbody>tr>td>input[type="number"]::-webkit-inner-spin-button {
 	appearance: none;
 }
 
 
 
-table input:invalid {
-	border-color: red;
-}
 
 /* /ItemManager */
 table#ItemEditor th:nth-child(2) {

@@ -139,7 +139,7 @@ class RecordEditor extends TableDisplayer
         $header = $this->getReNamedHeader();
         parent::setHead($header, true);
         parent::setBody($this->records);
-        parent::setAttributes('id="RecordEditor"');
+        parent::setAttributes('id="RecordEditor" cd-editable-sheet');
 
         return parent::getTable();
     }
