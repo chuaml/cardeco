@@ -113,12 +113,18 @@ $("form#RecordInserterForm").submit(function () {
 // auto advanced to next input cell when press Enter key
 document.body.addEventListener('keydown', function (e) {
     if (e.code !== 'Enter') return;
-    if (e.target.matches('tr:last-child > td > input:focus') === true) { // 1. auto add new line, new row on last input
-        document.getElementById('btnAddNew').click();
-        setTimeout(() => {
-            e.target.closest('tr').nextElementSibling.querySelector('input').focus();
-        }, 0);
-    }
+
+    const td = e.target.closest('td');
+    if (td === null) return;
+    const tr = td.closest('tr:last-child');
+    if (tr === null) return;
+
+    // 1. auto add new line, new row on last input
+    document.getElementById('btnAddNew').click();
+    setTimeout(() => {
+        tr.nextElementSibling.children[td.cellIndex].querySelector('input').focus();
+    }, 0);
+
 });
 
 
