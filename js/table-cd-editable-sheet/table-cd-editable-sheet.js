@@ -4,92 +4,92 @@ const body = document.body;
 const tbody = body.querySelector('table[cd-editable-sheet] > tbody');
 
 // movement key for cell focus 
+const gotoRowCell = (tr, td_cellIndex) => {
+    if (tr !== null) {
+        tr.children[td_cellIndex].querySelector('input').focus();
+    }
+};
+
 tbody.addEventListener('keydown', function (e) {
-    if (e.target.matches('input') === false) return;
-
-    const td = e.target.closest('td');
-    const tr = td.parentElement;
-
-    const goUp = _ => {
-        const tr_above = tr.previousElementSibling;
-        if (tr_above !== null) {
-            tr_above.children[td.cellIndex].querySelector('input').focus();
-        }
-    };
-    const goDown = _ => {
-        const tr_below = tr.nextElementSibling;
-        if (tr_below !== null) {
-            tr_below.children[td.cellIndex].querySelector('input').focus();
-        }
-    };
-
-    const code = e.code;
-    if (e.code === 'ArrowUp') {
-        e.target.blur();
-        goUp();
-    }
-    else if (e.code === 'ArrowDown') {
-        e.target.blur();
-        goDown();
-    }
-    else if (e.code === 'ArrowLeft') {
-        e.target.blur();
-        let cellIndex = td.cellIndex;
-        while (cellIndex-- > 0) {
-            const input = tr.children[cellIndex].querySelector('input');
-            if (input !== null) {
-                input.focus();
-                break;
+    if (e.ctrlKey === true) {
+        if (e.shiftKey === false) {  // ctrl + delete
+            if (code === 'Delete') {
+                e.target.value = '';
             }
         }
     }
-    else if (e.code === 'ArrowRight') {
-        e.target.blur();
-        const len = tr.children.length - 1;
-        let cellIndex = td.cellIndex;
-        while (cellIndex++ < len) {
-            const input = tr.children[cellIndex].querySelector('input');
-            if (input !== null) {
-                input.focus();
-                break;
-            }
-        }
-    }
-    else if (e.code === 'Enter') {
-        e.preventDefault(); // prevent form submission to save changes
+    else { // ctrlKey === false
 
-        const input = e.target;
-        if (input.readOnly === false) { // is focus, on edit
-            input.setAttribute('readonly', '');
-            input.blur();
-            if (e.shiftKey === true) { // move cell cursor
-                goUp()
-            }
-            else {
-                goDown();
+        if (e.target.matches('input') === false) return;
+
+        const td = e.target.closest('td');
+        const tr = td.parentElement;
+
+        const code = e.code;
+        if (code === 'ArrowUp') {
+            e.target.blur();
+            gotoRowCell(tr.previousElementSibling, td.cellIndex);
+        }
+        else if (code === 'ArrowDown') {
+            e.target.blur();
+            gotoRowCell(tr.nextElementSibling, td.cellIndex);
+        }
+        else if (code === 'ArrowLeft') {
+            e.target.blur();
+            let cellIndex = td.cellIndex;
+            while (cellIndex-- > 0) {
+                const input = tr.children[cellIndex].querySelector('input');
+                if (input !== null) {
+                    input.focus();
+                    break;
+                }
             }
         }
-        else {
-            if (e.ctrlKey === true) { // focus and start editing cell
-                input.removeAttribute('readonly');
-                input.focus();
+        else if (code === 'ArrowRight') {
+            e.target.blur();
+            const len = tr.children.length - 1;
+            let cellIndex = td.cellIndex;
+            while (cellIndex++ < len) {
+                const input = tr.children[cellIndex].querySelector('input');
+                if (input !== null) {
+                    input.focus();
+                    break;
+                }
             }
-            else { // move cell cursor
-                if (e.shiftKey === true) {
-                    goUp()
+        }
+        else if (code === 'Enter') {
+            e.preventDefault(); // prevent form submission to save changes
+
+            const input = e.target;
+            if (input.readOnly === false) { // is focus, on edit
+                input.setAttribute('readonly', '');
+                input.blur();
+                if (e.shiftKey === true) { // move cell cursor
+                    gotoRowCell(tr.previousElementSibling, td.cellIndex)
                 }
                 else {
-                    goDown();
+                    gotoRowCell(tr.nextElementSibling, td.cellIndex);
+                }
+            }
+            else {
+                if (e.ctrlKey === true) { // focus and start editing cell
+                    input.removeAttribute('readonly');
+                    input.focus();
+                }
+                else { // move cell cursor
+                    if (e.shiftKey === true) {
+                        gotoRowCell(tr.previousElementSibling, td.cellIndex)
+                    }
+                    else {
+                        gotoRowCell(tr.nextElementSibling, td.cellIndex);
+                    }
                 }
             }
         }
-    }
-    else if (e.ctrlKey === false) {
-
-        if (
-            e.code.startsWith('Key')
-            || e.code.startsWith('Digit')
-            || e.code.startsWith('Numpad')
+        else if (
+            code.startsWith('Key')
+            || code.startsWith('Digit')
+            || code.startsWith('Numpad')
         ) { // alphanumeric keys, focus and start editing cell, start typing
 
             if (e.target.readOnly === true) {
@@ -99,14 +99,12 @@ tbody.addEventListener('keydown', function (e) {
             }
 
         }
-    }
 
-    if (e.shiftKey === false) {
-
-        if (e.code === 'Delete') {
-            e.target.value = '';
+        if (e.shiftKey === false) { // no ctrl, delete
+            if (code === 'Delete') {
+                e.target.value = '';
+            }
         }
-
     }
 
 });
