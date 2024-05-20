@@ -101,6 +101,14 @@ tbody.addEventListener('keydown', function (e) {
         }
     }
 
+    if (e.shiftKey === false) {
+
+        if (e.code === 'Delete') {
+            e.target.value = '';
+        }
+
+    }
+
 });
 
 // Ctrl S to save
