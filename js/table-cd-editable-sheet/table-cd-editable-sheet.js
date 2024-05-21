@@ -21,6 +21,18 @@ const gotoRowCell = (tr, td_cellIndex) => {
     }
 };
 
+let inputValueBeforeEditing = '';
+const startEditing = (input) => {
+    inputValueBeforeEditing = input.value;
+    input.removeAttribute('readonly');
+    input.focus();
+    input.select();
+};
+const stopEditing = (input) => {
+    input.blur();
+    input.setAttribute('readonly', '');
+};
+
 tbody.addEventListener('keydown', function (e) {
     if (e.ctrlKey === true) {
         if (e.shiftKey === false) {  // ctrl + delete
@@ -69,8 +81,9 @@ tbody.addEventListener('keydown', function (e) {
             return;
         }
         else if (code === 'Escape') {
-            input.setAttribute('readonly', '');
-            input.blur();
+            input.value = inputValueBeforeEditing;
+            stopEditing(input);
+            input.focus();
         }
         else if (
             code.startsWith('Key')
@@ -79,9 +92,7 @@ tbody.addEventListener('keydown', function (e) {
         ) { // alphanumeric keys, focus and start editing cell, start typing
 
             if (e.target.readOnly === true) {
-                e.target.removeAttribute('readonly');
-                e.target.focus();
-                e.target.select();
+                startEditing(e.target);
             }
             return;
         }
@@ -143,16 +154,14 @@ body.addEventListener('keydown', e => {
     }
 });
 
-
-
 // force double click input only to allow focus and edit
 tbody.addEventListener('dblclick', function (e) {
     if (e.target.matches('input') === false) return;
-    e.target.removeAttribute('readonly');
+    startEditing(e.target);
 });
 tbody.addEventListener('focusout', function (e) {
     if (e.target.matches('input') === false) return;
-    e.target.setAttribute('readonly', '');
+    stopEditing(e.target);
 });
 
 // and auto change all input to readonly, only allow double clicking to focus and edit it
