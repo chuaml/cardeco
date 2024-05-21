@@ -37,41 +37,11 @@ tbody.addEventListener('keydown', function (e) {
         const tr = td.parentElement;
 
         const code = e.code;
-        if (code === 'ArrowUp') {
-            e.target.blur();
-            gotoRowCell(tr.previousElementSibling, td.cellIndex);
-        }
-        else if (code === 'ArrowDown') {
-            e.target.blur();
-            gotoRowCell(tr.nextElementSibling, td.cellIndex);
-        }
-        else if (code === 'ArrowLeft') {
-            e.target.blur();
-            let cellIndex = td.cellIndex;
-            while (cellIndex-- > 0) {
-                const input = tr.children[cellIndex].querySelector('input');
-                if (input !== null) {
-                    input.focus();
-                    break;
-                }
-            }
-        }
-        else if (code === 'ArrowRight') {
-            e.target.blur();
-            const len = tr.children.length - 1;
-            let cellIndex = td.cellIndex;
-            while (cellIndex++ < len) {
-                const input = tr.children[cellIndex].querySelector('input');
-                if (input !== null) {
-                    input.focus();
-                    break;
-                }
-            }
-        }
-        else if (code === 'Enter') {
+
+        const input = e.target;
+        if (code === 'Enter') {
             e.preventDefault(); // prevent form submission to save changes
 
-            const input = e.target;
             if (input.readOnly === false) { // is focus, on edit
                 input.setAttribute('readonly', '');
                 input.blur();
@@ -96,6 +66,11 @@ tbody.addEventListener('keydown', function (e) {
                     }
                 }
             }
+            return;
+        }
+        else if (code === 'Escape') {
+            input.setAttribute('readonly', '');
+            input.blur();
         }
         else if (
             code.startsWith('Key')
@@ -108,7 +83,41 @@ tbody.addEventListener('keydown', function (e) {
                 e.target.focus();
                 e.target.select();
             }
+            return;
+        }
 
+        if (e.target.readOnly === true) {
+            if (code === 'ArrowUp') {
+                e.target.blur();
+                gotoRowCell(tr.previousElementSibling, td.cellIndex);
+            }
+            else if (code === 'ArrowDown') {
+                e.target.blur();
+                gotoRowCell(tr.nextElementSibling, td.cellIndex);
+            }
+            else if (code === 'ArrowLeft') {
+                e.target.blur();
+                let cellIndex = td.cellIndex;
+                while (cellIndex-- > 0) {
+                    const input = tr.children[cellIndex].querySelector('input');
+                    if (input !== null) {
+                        input.focus();
+                        break;
+                    }
+                }
+            }
+            else if (code === 'ArrowRight') {
+                e.target.blur();
+                const len = tr.children.length - 1;
+                let cellIndex = td.cellIndex;
+                while (cellIndex++ < len) {
+                    const input = tr.children[cellIndex].querySelector('input');
+                    if (input !== null) {
+                        input.focus();
+                        break;
+                    }
+                }
+            }
         }
 
         if (e.shiftKey === false) { // no ctrl, delete
