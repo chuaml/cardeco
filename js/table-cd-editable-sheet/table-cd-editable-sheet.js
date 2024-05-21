@@ -3,6 +3,17 @@
 const body = document.body;
 const tbody = body.querySelector('table[cd-editable-sheet] > tbody');
 
+// auto adjust column size if too small
+tbody.querySelectorAll('tr>td>input').forEach(function (input) {
+    if (input.value) {
+        input.style['min-width'] = input.value.length + 'ch';
+    }
+});
+tbody.addEventListener('change', function (e) {
+    if (e.target.matches('input') === false) return;
+    e.target.style['min-width'] = e.target.value.length + 'ch';
+});
+
 // movement key for cell focus 
 const gotoRowCell = (tr, td_cellIndex) => {
     if (tr !== null) {
