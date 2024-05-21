@@ -164,3 +164,20 @@
 		});
 	});
 </script>
+
+
+<script src="js/vendor/quicklink.umd.js" async></script>
+<script>
+	window.addEventListener('load', function(e) {
+		quicklink.listen({
+			prerender: true,
+			delay: 250,
+			limit: 16,
+			throttle: 4,
+			origins: [
+				location.origin // prefetch self origin only
+			],
+			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
+		});
+	});
+</script>
