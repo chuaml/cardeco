@@ -11,13 +11,6 @@ table[cd-editable-sheet] input:focus:not([readonly]) {
     cursor: text;
 }
 
-
-table[cd-editable-sheet] input[type=number],
-table[cd-editable-sheet] input[inputmode="numeric"] {
-    width: 8ch;
-    font-variant-numeric: tabular-nums;
-}
-
 table[cd-editable-sheet]>tbody>tr>td:has(input) {
     /* allow input in inside may use 100% max size */
     height: 0px;
@@ -26,12 +19,18 @@ table[cd-editable-sheet]>tbody>tr>td:has(input) {
 }
 
 table[cd-editable-sheet]>tbody>tr>td>input {
+    min-height: 1.5em;
+    width: 100%;
     height: calc(100% - 2px);
-    width: min-content;
     background-color: transparent;
     border: 0;
     padding: 0;
     font-size: 1rem;
+}
+
+table[cd-editable-sheet]>tbody>tr>td>input[type=number],
+table[cd-editable-sheet]>tbody>tr>td>input[inputmode="numeric"] {
+    font-variant-numeric: tabular-nums;
 }
 
 table[cd-editable-sheet]>tbody>tr>td>input:focus {
