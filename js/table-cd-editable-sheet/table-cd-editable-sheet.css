@@ -27,6 +27,13 @@ table[cd-editable-sheet]>tbody>tr>td>input {
     border: 0;
     padding: 0;
     font-size: 1em;
+
+}
+
+/* focus double click to show full width */
+table[cd-editable-sheet]>tbody>tr>td>input:active:focus:not([readonly]){
+    width: unset;
+    overflow: visible;
 }
 
 table[cd-editable-sheet]>tbody>tr>td>input[type=number],
