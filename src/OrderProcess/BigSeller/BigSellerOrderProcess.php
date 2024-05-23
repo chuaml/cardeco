@@ -46,24 +46,21 @@ class BigSellerOrderProcess
 
         $list = [];
         foreach ($orders as $r) {
-            $quantity = intval($r[34]);
-            $sellingPrice = floatval(preg_replace('/[^0-9\.]+/', '', $r[33]));
-            $shippingFee = floatval(preg_replace('/[^0-9\.]+/', '', $r[53]));
-            $storeVoucher = floatval(preg_replace('/[^0-9\.]+/', '', $r[49]));
+            $quantity = intval($r[35]);
             for ($i = 0; $i < $quantity; ++$i) {
                 $list[] = [
                     'orderNum' => trim($r[0]),
-                    'date' => trim($r[11]),
-                    'sku' => trim($r[30]),
-                    'description' => trim($r[29]), //product name
-                    'sellingPrice' => $sellingPrice,
-                    'shippingFee' => $shippingFee,
-                    'voucher' =>  $storeVoucher,
-                    'trackingNum' => trim($r[44]),
+                    'date' => trim($r[12]), // `Order Time`
+                    'sku' => trim($r[31]),
+                    'description' => trim($r[30]), // `Product Name`
+                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[34])),
+                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[54])),
+                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[50])), // `Store Voucher`
+                    'trackingNum' => trim($r[45]),
 
-                    'paidPrice' => trim($r[36]),
-                    'shippingProvider' => trim($r[42]),
-                    'shippingState' => trim($r[26]),
+                    'paidPrice' => trim($r[37]), // `Product Subtotal`
+                    'shippingProvider' => trim($r[43]), // `Shipping Option`
+                    'shippingState' => trim($r[27]), // `Province (State)`
 
                     'marketPlace' => trim($r[4]), // necessary for computation; grouping item counts
                     'storeName_BigSeller' => trim($r[5]),
