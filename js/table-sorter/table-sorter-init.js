@@ -82,3 +82,42 @@ document.body.addEventListener('click', async function (e) {
     });
 
 }, { passive: true });
+
+
+// draggable column
+document.addEventListener('readystatechange', function (ev) {
+    if (ev.target.readyState !== 'interactive') return;
+
+    let dragged_th_index;
+    const handle_dragstart = e => {
+        dragged_th_index = e.target.closest('th').cellIndex;
+    };
+    const handle_dragover = e => { e.preventDefault(); };
+    const handle_drop = e => {
+        const dropped_th_index = e.target.cellIndex;
+        const moveColumn = (_ => {
+            if (dragged_th_index < dropped_th_index) { // move to right
+                return (tr, td, td2) => tr.insertBefore(td, td2.nextSibling);
+            }
+            else { // move to left
+                return (tr, td, td2) => tr.insertBefore(td, td2);
+            }
+        })();
+        const dropAt_th = e.target;
+        const dragged_th = dropAt_th.parentElement.children[dragged_th_index];
+
+        moveColumn(dropAt_th.parentElement, dragged_th, dropAt_th);
+
+        dropAt_th.closest('table').querySelectorAll('tbody > tr').forEach(tr => {
+            const td_from = tr.children[dragged_th_index];
+            const td_to = tr.children[dropped_th_index];
+            moveColumn(tr, td_from, td_to);
+        });
+    };
+    document.body.querySelectorAll('table > thead > tr > th').forEach(th => {
+        th.draggable = true;
+        th.addEventListener('dragstart', handle_dragstart);
+        th.addEventListener('dragover', handle_dragover);
+        th.addEventListener('drop', handle_drop);
+    });
+});
