@@ -170,7 +170,6 @@
 <script>
 	window.addEventListener('load', function(e) {
 		quicklink.listen({
-			prerender: true,
 			delay: 250,
 			limit: 16,
 			throttle: 4,
