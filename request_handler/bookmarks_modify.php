@@ -7,11 +7,7 @@
 <html>
 <title>CarDeco sys</title>
 <head>
-	<link rel="stylesheet" href="css/style.css">
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/table-sorter.min"></script>
-	<script src="js/myscript.js"></script>
-	<script src="js/function.js"></script>
+<?php require('view/template/head.php') ?>
 </head>
 <?php include('inc/html/nav.html');?>
 
