@@ -88,13 +88,27 @@ document.body.addEventListener('click', async function (e) {
 document.addEventListener('readystatechange', function (ev) {
     if (ev.target.readyState !== 'interactive') return;
 
-    let dragged_th_index;
+    let dragged_th = null;
     const handle_dragstart = e => {
-        dragged_th_index = e.target.closest('th').cellIndex;
+        if (('closest' in e.target) === false) return;
+        dragged_th = e.target.closest('th');
+        dragged_th.classList.add('dragstart');
     };
+    const handle_dragend = e => {
+        if (dragged_th === null) return;
+        dragged_th.classList.remove('dragstart');
+        dragged_th = null;
+    };
+
     const handle_dragover = e => { e.preventDefault(); };
+
+    let dragenter_pid = 0;
     const handle_drop = e => {
-        const dropped_th_index = e.target.cellIndex;
+        if (dragged_th === e.target || dragged_th === null) return;
+        clearTimeout(dragenter_pid);
+        const dropAt_th = e.target;
+        const dropped_th_index = dropAt_th.cellIndex;
+        const dragged_th_index = dragged_th.cellIndex;
         const moveColumn = (_ => {
             if (dragged_th_index < dropped_th_index) { // move to right
                 return (tr, td, td2) => tr.insertBefore(td, td2.nextSibling);
@@ -103,8 +117,6 @@ document.addEventListener('readystatechange', function (ev) {
                 return (tr, td, td2) => tr.insertBefore(td, td2);
             }
         })();
-        const dropAt_th = e.target;
-        const dragged_th = dropAt_th.parentElement.children[dragged_th_index];
 
         moveColumn(dropAt_th.parentElement, dragged_th, dropAt_th);
 
@@ -113,11 +125,23 @@ document.addEventListener('readystatechange', function (ev) {
             const td_to = tr.children[dropped_th_index];
             moveColumn(tr, td_from, td_to);
         });
+
+    };
+
+    const handle_dragenter = e => {
+        if (dragged_th === e.target || dragged_th === null) return;
+        clearTimeout(dragenter_pid);
+        dragenter_pid = setTimeout(_ => {
+            handle_drop(e);
+        }, 200);
     };
     document.body.querySelectorAll('table > thead > tr > th').forEach(th => {
         th.draggable = true;
         th.addEventListener('dragstart', handle_dragstart);
+        th.addEventListener('dragend', handle_dragend);
+
         th.addEventListener('dragover', handle_dragover);
-        th.addEventListener('drop', handle_drop);
+        // th.addEventListener('drop', handle_drop);
+        th.addEventListener('dragenter', handle_dragenter);
     });
 });

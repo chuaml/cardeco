@@ -2,6 +2,11 @@ table>thead>tr>th {
     cursor: pointer;
 }
 
+table>thead>tr>th.dragstart {
+    cursor: grabbing;
+    outline: 2px solid green;
+}
+
 table>thead>tr>th[data-sort-asc="1"]:after {
     content: ' ^';
 }
