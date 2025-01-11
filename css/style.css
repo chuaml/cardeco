@@ -1,5 +1,26 @@
 /* CSS */
 
+::-webkit-scrollbar {
+	width: 1rem;
+	height: .5rem;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+	background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+	background: #888;
+	cursor: pointer;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+	background: #555;
+}
+
 :not(read-only):not(:disabled) select:not(:disabled),
 :not(read-only):not(:disabled) input[type=file]:not(:disabled),
 :not(read-only):not(:disabled) input[type=checkbox]:not(:disabled),
@@ -18,11 +39,11 @@ body {
 	padding: 16px;
 }
 
-body.submitting-form{
+body.submitting-form {
 	cursor: progress;
 }
 
-div{
+div {
 	padding: 16px;
 }
 
@@ -101,6 +122,7 @@ table {
 tbody>tr:nth-child(odd)>td {
 	background-color: rgb(245, 245, 245);
 }
+
 tbody>tr:nth-child(even)>td {
 	background-color: #fff;
 }
@@ -163,6 +185,7 @@ a.ddl-header {
 	margin: 2px;
 	display: inline-block;
 }
+
 a.ddl-header:hover {
 	background-color: lightyellow;
 	border-color: #666;
@@ -291,7 +314,16 @@ div#result_pages {
 	overflow-x: scroll;
 	overflow-y: hidden;
 	white-space: nowrap;
+	border: 1px solid #aaa;
+	padding: .1rem .5rem;
+	padding-bottom: .8rem;
 }
+
+#result_pages > a {
+	padding: 0 .1rem;
+	line-height: 1.5;
+}
+
 
 table#liststock input.checkbox {
 	margin: auto;
@@ -398,11 +430,11 @@ ul#skuList>li {
 }
 
 /* /RecordEditor */
-table#RecordEditor tr.group-1 > td {
+table#RecordEditor tr.group-1>td {
 	background-color: rgb(250, 250, 230);
 }
 
-table#RecordEditor tr.group-2 > td {
+table#RecordEditor tr.group-2>td {
 	background-color: rgb(240, 240, 255);
 }
 
