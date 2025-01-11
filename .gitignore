@@ -19,5 +19,7 @@ _*.*
 *.zip
 [a-zA-Z0-9].php
 
+*.bak.sql
+
 #ignore folder
 /public/*
