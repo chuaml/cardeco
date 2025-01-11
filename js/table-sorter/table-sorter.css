@@ -2,6 +2,10 @@ table>thead>tr>th {
     cursor: pointer;
 }
 
+table>thead>tr>th[draggable=true] {
+    cursor: grab;
+}
+
 table>thead>tr>th.dragstart {
     cursor: grabbing;
     outline: 2px solid green;
@@ -14,4 +18,26 @@ table>thead>tr>th[data-sort-asc="1"]:after {
 table>thead>tr>th[data-sort-asc="0"]::after {
     content: ' \\/';
     font-size: .7em;
+}
+
+table >thead>tr>th:first-child,
+table >tbody>tr>td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    border-right: 1px solid black;
+}
+
+table >thead>tr>th {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    border-bottom: 1px solid black;
+}
+
+table >thead>tr>th:first-child {
+    position: sticky;
+    top: 0;
+    left: 0;
+    z-index: 4;
 }

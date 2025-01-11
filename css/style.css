@@ -93,13 +93,16 @@ div.paper,
 table {
 	width: 100%;
 	color: rgb(0, 0, 0);
-	background-color: white;
+	background-color: #eee;
 	font-size: 18px
 }
 
 
-tbody>tr:nth-child(odd) {
+tbody>tr:nth-child(odd)>td {
 	background-color: rgb(245, 245, 245);
+}
+tbody>tr:nth-child(even)>td {
+	background-color: #fff;
 }
 
 th {

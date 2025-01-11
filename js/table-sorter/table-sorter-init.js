@@ -2,6 +2,7 @@
 // sort row by clicking header
 document.body.addEventListener('click', async function (e) {
     // assert: table > thead > tr
+    if (e.ctrlKey || e.shiftKey) return;
     if (e.target.matches('th:not([onclick])') === false) return;
     const th = e.target;
     const rows = th.closest('table').querySelectorAll('tbody > tr');
@@ -88,6 +89,14 @@ document.body.addEventListener('click', async function (e) {
 document.addEventListener('readystatechange', function (ev) {
     if (ev.target.readyState !== 'interactive') return;
 
+    const enableDrag = e => {
+        // if (e.target.matches('th[draggable]') === false) return;
+        if (e.ctrlKey === false) return;
+        if (e.shiftKey) return;
+        if (e.isTrusted === false) return;
+        e.target.draggable = true;
+    };
+
     let dragged_th = null;
     const handle_dragstart = e => {
         if (('closest' in e.target) === false) return;
@@ -98,6 +107,7 @@ document.addEventListener('readystatechange', function (ev) {
         if (dragged_th === null) return;
         dragged_th.classList.remove('dragstart');
         dragged_th = null;
+        e.target.draggable = false;
     };
 
     const handle_dragover = e => { e.preventDefault(); };
@@ -133,10 +143,11 @@ document.addEventListener('readystatechange', function (ev) {
         clearTimeout(dragenter_pid);
         dragenter_pid = setTimeout(_ => {
             handle_drop(e);
-        }, 200);
+        }, 160);
     };
     document.body.querySelectorAll('table > thead > tr > th').forEach(th => {
-        th.draggable = true;
+        th.draggable = false;
+        th.addEventListener('mousedown', enableDrag);
         th.addEventListener('dragstart', handle_dragstart);
         th.addEventListener('dragend', handle_dragend);
 
@@ -144,4 +155,5 @@ document.addEventListener('readystatechange', function (ev) {
         // th.addEventListener('drop', handle_drop);
         th.addEventListener('dragenter', handle_dragenter);
     });
+
 });
