@@ -406,6 +406,11 @@ table#RecordEditor tr.group-2 > td {
 	background-color: rgb(240, 240, 255);
 }
 
+#floorPage [name="floorPage"].active {
+	background-color: lightyellow;
+	font-weight: bold;
+}
+
 
 
 /* /ItemManager */

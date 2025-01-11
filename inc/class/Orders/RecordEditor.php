@@ -144,7 +144,7 @@ class RecordEditor extends TableDisplayer
         return parent::getTable();
     }
 
-    public function getFloorPage(): string
+    public function getFloorPage(int $currentPage): string
     {
         $searchField = $_GET['searchField'] ?? '';
         $searchValue = $_GET['searchValue'] ?? '';
@@ -153,12 +153,16 @@ class RecordEditor extends TableDisplayer
         $pg .= '<input type="hidden" name="searchField" value="' . $searchField . '">';
         $pg .= '<input type="hidden" name="searchValue" value="' . $searchValue . '">';
         if($this->numFloorPage === 0) {
-            $pg .= "<input type=\"submit\" name=\"floorPage\" value=\"0\"> ";
+            $pg .= "<input class='active' type=\"submit\" name=\"floorPage\" value=\"0\"> ";
         }
         else {
             for ($i = 0; $i < $this->numFloorPage; ++$i) {
-                $pg .=
-                    "<input type=\"submit\" name=\"floorPage\" value=\"{$i}\"> ";
+                if($i === $currentPage){
+                    $pg .= "<input class='active' type=\"submit\" name=\"floorPage\" value=\"{$i}\"> ";
+                }
+                else {
+                    $pg .= "<input type=\"submit\" name=\"floorPage\" value=\"{$i}\"> ";
+                }
             }
         }
         $pg .= '</form>';

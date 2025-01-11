@@ -291,7 +291,7 @@ try {
 
         $Tbl->setMonthlyRecords($MRecords, $MF->getNumPage());
         
-        $pageFloor = $Tbl->getFloorPage();
+        $pageFloor = $Tbl->getFloorPage($page);
         $recordEditor = $Tbl->getTable();
     } finally {
         $con->close();
