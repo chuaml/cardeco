@@ -195,6 +195,57 @@ body.addEventListener('submit', function (e) {
     });
 });
 
+{
+    class ChangeStack {
+        #history = [];
+        #head = 0;
+        add(input, oldValue) {
+            this.#history[this.#head] = {
+                input: input,
+                oldValue: oldValue,
+                newValue: input.value,
+            };
+            ++this.#head;
+            this.#history.length = this.#head; // remove previous redo
+            // console.log(this.#head);
+        }
+        undo() {
+            const lastChange = this.#history[this.#head - 1];
+            if (lastChange === undefined) return;
+            --this.#head;
+            lastChange.input.focus();
+            lastChange.input.value = lastChange.oldValue;
+            console.log(this);
+        }
+
+        redo() {
+            const lastChange = this.#history[this.#head];
+            if (lastChange === undefined) return;
+            this.#head++;
+            lastChange.input.focus();
+            lastChange.input.value = lastChange.newValue;
+        }
+    }
+    const changeStack = new ChangeStack();
+
+    tbody.addEventListener('change', function (e) {
+        changeStack.add(e.target, inputValueBeforeEditing);
+    });
+
+    document.addEventListener('keydown', function (e) {
+        if (e.ctrlKey === false) return;
+        if (e.isTrusted === false) return;
+        if (e.code === 'KeyZ') {
+            document.activeElement.blur();
+            changeStack.undo();
+        }
+        else if (e.code === 'KeyY') {
+            document.activeElement.blur();
+            changeStack.redo();
+        }
+    });
+}
+
 // maybe needed feature
 // if (changeEnterKeyTo_MoveAdjecnt) {
 //     document.body.addEventListener('keydown', function (e) {
