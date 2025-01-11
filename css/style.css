@@ -149,14 +149,23 @@ a.button {
 	width: max-content;
 }
 
-span>a.button {
-	cursor: default;
-}
-
 a.button:hover {
 	background-color: yellow;
 	color: blue;
 	box-shadow: 0 0 8px black;
+}
+
+a.ddl-header {
+	cursor: default;
+	border: 1px solid #ccc;
+	background-color: #eee;
+	padding: 6px;
+	margin: 2px;
+	display: inline-block;
+}
+a.ddl-header:hover {
+	background-color: lightyellow;
+	border-color: #666;
 }
 
 td.nostock {
@@ -359,6 +368,7 @@ nav div {
 	transition-delay: .25s;
 	position: absolute;
 	background-color: white;
+	z-index: 5;
 }
 
 nav span:hover div {
