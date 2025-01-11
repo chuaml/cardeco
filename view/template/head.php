@@ -180,3 +180,27 @@
 		});
 	});
 </script>
+
+
+<script>
+	window.addEventListener('DOMContentLoaded', function(ev) {
+
+		const doSave = _ => {
+			const form = document.body.querySelector('form[method=post]');
+			console.log(form);
+			if (form !== null) form.requestSubmit();
+		};
+		document.addEventListener('keyup', function(e) {
+			if (e.ctrlKey === false) return;
+			if (e.code !== 'KeyS') return;
+			if (e.isTrusted)
+				setTimeout(doSave, 0);
+		});
+		document.addEventListener('keydown', function(e) {
+			if (e.ctrlKey === false) return;
+			if (e.code !== 'KeyS') return;
+			e.preventDefault();
+		});
+
+	});
+</script>
