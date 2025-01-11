@@ -45,25 +45,28 @@ class BigSellerOrderProcess
         $orders = (new ExcelReader($this->file))->read();
 
         $list = [];
+        $line = 0;
         foreach ($orders as $r) {
-            $quantity = intval($r[35]);
-            for ($i = 0; $i < $quantity; ++$i) {
+            $line++;
+            $quantity = intval($r[30]);
+            if($quantity === 0) throw new Exception("unknown quantity of item, at row: $line");
+            for ($i = 0; $i < $quantity; ++$i) { // spread out 1 line to multiple line item
                 $list[] = [
                     'orderNum' => trim($r[0]),
-                    'date' => trim($r[12]), // `Order Time`
-                    'sku' => trim($r[31]),
-                    'description' => trim($r[30]), // `Product Name`
-                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[34])),
-                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[54])),
-                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[50])), // `Store Voucher`
-                    'trackingNum' => trim($r[45]),
+                    'date' => trim($r[65]), // `Order Time`
+                    'sku' => trim($r[23]),
+                    'description' => trim($r[25]), // `Product Name`
+                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[31])),
+                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[52])),
+                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[63])), // `Store Voucher`
+                    'trackingNum' => trim($r[51]),
 
-                    'paidPrice' => trim($r[37]), // `Product Subtotal`
-                    'shippingProvider' => trim($r[43]), // `Shipping Option`
-                    'shippingState' => trim($r[27]), // `Province (State)`
+                    'paidPrice' => trim($r[32]), // `Product Subtotal`
+                    'shippingProvider' => trim($r[49]), // `Shipping Option`
+                    'shippingState' => trim($r[18]), // `Province (State)`
 
-                    'marketPlace' => trim($r[4]), // necessary for computation; grouping item counts
-                    'storeName_BigSeller' => trim($r[5]),
+                    'marketPlace' => trim($r[9]), // necessary for computation; grouping item counts
+                    'storeName_BigSeller' => trim($r[10]), // swapped to Marketplace Store
 
                     'stock' => null
                 ];
