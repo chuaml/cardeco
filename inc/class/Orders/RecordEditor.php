@@ -152,9 +152,14 @@ class RecordEditor extends TableDisplayer
         $pg = '<form method="GET" id="floorPage">';
         $pg .= '<input type="hidden" name="searchField" value="' . $searchField . '">';
         $pg .= '<input type="hidden" name="searchValue" value="' . $searchValue . '">';
-        for ($i = 0; $i < $this->numFloorPage; ++$i) {
-            $pg .=
-                "<input type=\"submit\" name=\"floorPage\" value=\"{$i}\"> ";
+        if($this->numFloorPage === 0) {
+            $pg .= "<input type=\"submit\" name=\"floorPage\" value=\"0\"> ";
+        }
+        else {
+            for ($i = 0; $i < $this->numFloorPage; ++$i) {
+                $pg .=
+                    "<input type=\"submit\" name=\"floorPage\" value=\"{$i}\"> ";
+            }
         }
         $pg .= '</form>';
 

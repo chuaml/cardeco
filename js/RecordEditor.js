@@ -17,7 +17,7 @@ const targetColId = [
     "cash"
 ];
 
-{ // unsave changes confirmation
+setTimeout(_ => { // unsave changes confirmation
     let hasChanges = false;
     window.addEventListener('beforeunload', function (e) {
         const currentInput = document.activeElement;
@@ -34,14 +34,14 @@ const targetColId = [
         return 'abandon unsaved changes?';
     }, true);
 
-    document.addEventListener('change', function (e) {
+    document.querySelector('#RecordEditor').addEventListener('change', function (e) {
         hasChanges = true;
     }, { passive: true });
 
     document.addEventListener('submitted', function (e) {
         hasChanges = false;
     }, { passive: true });
-}
+}, 0);
 
 //hideShowCol function
 //bind to btn
@@ -101,13 +101,13 @@ for (i = 1; i <= tr.length; ++i) {
 }
 
 let OrderNumList = Object.keys(orderNumList);
-let sameOrderClass = "object";
+let sameOrderClass = "group-1";
 OrderNumList.forEach(function (orderNum) {
     let r = orderNumList[orderNum];
     if (r.length > 1) {
         r.forEach(function (i) {
             $(rows + ":nth-child(" + i + ")").addClass(sameOrderClass);
         });
-        sameOrderClass = sameOrderClass === 'object' ? 'object2' : 'object';
+        sameOrderClass = sameOrderClass === 'group-1' ? 'group-2' : 'group-1';
     }
 });

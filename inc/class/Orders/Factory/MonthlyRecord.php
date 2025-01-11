@@ -93,9 +93,11 @@ class MonthlyRecord implements RecordFactory{
     }
 
     public function generateRecords(?string $platformCharges = null):array{
+        $PAST_N_MONTH = 3; // by default show upto previos n month
         $PARAM = "{$this->searchField} LIKE ?";
         if($platformCharges !== null){
             $PARAM .= ' AND platformCharges = ?';
+            $PARAM .= " AND (date BETWEEN (DATE_SUB(NOW(),INTERVAL {$PAST_N_MONTH} MONTH)) AND NOW())";
         }
 
         $stmt = $this->con->prepare(
@@ -142,7 +144,6 @@ class MonthlyRecord implements RecordFactory{
         $stmt->close();
 
         //set total for pageNum
-        $PAST_N_MONTH = 3;
         $stmt = $this->con->prepare(
             'SELECT COUNT(id) FROM orders WHERE '
             .$PARAM

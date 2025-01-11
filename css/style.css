@@ -398,11 +398,11 @@ ul#skuList>li {
 }
 
 /* /RecordEditor */
-table#RecordEditor tr.object {
+table#RecordEditor tr.group-1 > td {
 	background-color: rgb(250, 250, 230);
 }
 
-table#RecordEditor tr.object2 {
+table#RecordEditor tr.group-2 > td {
 	background-color: rgb(240, 240, 255);
 }
 
