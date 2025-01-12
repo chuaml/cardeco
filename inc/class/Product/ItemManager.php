@@ -27,13 +27,34 @@ class ItemManager{
     }
 
     public function getItemLikeItemCode(string &$itemCode):array{
-        $LIMIT = 25;
+        $LIMIT = 200;
         $stmt = $this->con->prepare(
             'SELECT id, item_code, description, uom, item_group FROM stock_items '
             ."WHERE item_code LIKE ? LIMIT {$LIMIT}"
         );
         $item_code = '%' . trim($itemCode) . '%';
         $stmt->bind_param('s', $item_code);
+        if(!($stmt->execute())){
+            throw new \Exception($stmt->error);
+        }
+        $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $stmt->close();
+
+        $list = [];
+        foreach($result as $r){
+            $list[] = new Item(
+                $r['id'], $r['item_code'], $r['description'], $r['uom'], $r['item_group']
+            );
+        }
+        return $list;
+    }
+
+    public function getItem():array{
+        $LIMIT = 200;
+        $stmt = $this->con->prepare(
+            'SELECT id, item_code, description, uom, item_group FROM stock_items '
+            ."LIMIT {$LIMIT}"
+        );
         if(!($stmt->execute())){
             throw new \Exception($stmt->error);
         }

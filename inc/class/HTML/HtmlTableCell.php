@@ -23,10 +23,20 @@ class HtmlTableCell extends HtmlObject
 
     public function getFormattedValue(): string
     {
-        if ($this->Value === null) {
-            return '<i data-type="null"></i>';
-        } elseif (\is_object($this->Value) === true) {
-            return (string) $this->Value;
+        $nodes = $this->getChildNodes();
+        $count = count($nodes);
+        if ($count > 0) {
+            $output = '';
+            for ($i = 0; $i < $count; $i++) {
+                $output .= $nodes[$i]->toHtmlText();
+            }
+            return $output;
+        } else {
+            if ($this->Value === null) {
+                return '<i data-type="null"></i>';
+            } elseif (\is_object($this->Value) === true) {
+                return (string) $this->Value;
+            }
         }
 
         return \htmlspecialchars(trim((string) $this->Value), \ENT_QUOTES, 'UTF-8');
