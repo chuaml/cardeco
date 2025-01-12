@@ -3,6 +3,8 @@
 
 <head>
     <?php require('view/template/head.php') ?>
+    <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
+    <script type="module" src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" async defer></script>
 </head>
 
 <?php include('inc/html/nav.html'); ?>
@@ -11,11 +13,11 @@
     <h3>Item Manager</h3>
     <form method="GET">
         <input type="text" name="itemCode" id="itemCode" list="itemCodeList" maxlength="255" placeholder="Item Code..."
-            required>
+            >
         <input type="submit" value="search">
     </form>
     <hr>
-    <form method="POST" id="ItemEditorForm">
+    <form method="POST" id="ItemEditorForm" cd-ajax>
     <?php if(isset($itemEditorHtml) === true) { ?>
         <input type="submit" value="save">
         <?php 

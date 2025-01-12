@@ -20,12 +20,19 @@ try {
             }
             $ItemM->update($Items);
             // header('HTTP/1.1 205');
-        }
-
+        } else
         if (isset($_GET['itemCode'])) {
             $ItemM = new ItemManager($con);
             $ItemEditor = new ItemEditor(
                 $ItemM->getItemLikeItemCode($_GET['itemCode']),
+                0
+            );
+
+            $itemEditorHtml = $ItemEditor->getTable();
+        } else {
+            $ItemM = new ItemManager($con);
+            $ItemEditor = new ItemEditor(
+                $ItemM->getItem(),
                 0
             );
 
