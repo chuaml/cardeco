@@ -43,16 +43,16 @@
         </datalist>
         <hr>
         <p>inserted history: </p>
-        <input type="text" list="insertLogIdList" id="insertLogId" name="insertLogId" maxlength="9" placeholder="inserted"
-            required />
+        <input type="text" list="insertLogIdList" id="insertLogId" name="insertLogId" maxlength="9"
+            placeholder="inserted" required />
         <input type="submit" name="submit" value="delete" />
     </form>
     <p id="ordersMonthlyRecord"></p>
+
+    <?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/RecordDeleter.js"></script>
 </body>
-
-<?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
-
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/RecordDeleter.js"></script>
 
 </html>

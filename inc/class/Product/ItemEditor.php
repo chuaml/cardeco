@@ -1,74 +1,48 @@
-<?php 
+<?php
+
 namespace Product;
 
-require_once(__DIR__ .'/../HTML/TableDisplayer.php');
+require_once(__DIR__ . '/../HTML/TableDisplayer.php');
 
-use \HTML\TableDisplayer;
+use Generator;
+use HTML\HtmlTable;
+use HTML\HtmlTableRow;
+use HTML\HtmlTableCell as Cell;
+// use \HTML\TableDisplayer;
 
-class ItemEditor extends TableDisplayer{
-
-    private $records = [];
+class ItemEditor
+{
     private $numFloorPage;
+    private $htmlTable;
 
-    public function setItems(array $Items, int $numPage):void{
-        $this->records = [];
-        if(sizeof($Items) === 0){return;}
-
-        $this->numFloorPage = $numPage;
-
-        foreach($Items as $Item){
-            $this->records[] = array_map(function($v){
-                return \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
-            }, $Item->getAll());
-        }
-
-        $this->setEditorCells();
-    }
-
-    protected function formatCell($value, $ofColumnIndex): string
+    public function __construct(array $Item_list, int $numPage)
     {
-        if($ofColumnIndex === 'description'){
-            return '<td>' . $value . '</td>';
+        $this->htmlTable = new HtmlTable();
+
+        $this->htmlTable->setHeader(0, new Cell('Item Code'));
+        $this->htmlTable->setHeader(1, new Cell('Description'));
+        $this->htmlTable->setHeader(2, new Cell('UOM'));
+        $this->htmlTable->setHeader(3, new Cell('Group'));
+
+        foreach ($Item_list as $Item) {
+            $x = $Item->getAll();
+            $r = new HtmlTableRow();
+
+            $r->addCell(new Cell($x['code']));
+            $r->addCell(new Cell($x['description']))
+                ->setAttribute('contenteditable', 'plaintext-only')
+                ->setAttribute('data-max-length', '255')
+                ->setAttribute('data-name', 'r[' . $x['itemId'] . ']');
+            $r->addCell(new Cell($x['uom']));
+            $r->addCell(new Cell($x['group']));
+
+            $this->htmlTable->addRow($r);
         }
-        else {
-            return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
-        }
+        $this->numFloorPage = $numPage;
     }
 
-    private function setEditorCells():void{
-        $len = sizeof($this->records);
-        //recordId as row array index
-        $recordId; $r;
-
-        for($i=0;$i<$len;++$i){
-            $itemId = $this->records[$i]['itemId'];
-            $r = &$this->records[$i];
-
-            $r['description'] = 
-            '<input type="text" name="r['.$itemId.'][description]" value="'
-            .$r['description'].'" maxlength="255" placeholder="description..." readonly required />';
-
-        }
+    public function getTable(): Generator
+    {
+        return $this->htmlTable->streamHtmlText();
     }
-
-    protected function getReNamedHeader():array{
-        $fieldName = [];
-
-        //$fieldName['itemId'] = 'ID';
-        $fieldName ['code'] = 'Item Code';
-        $fieldName['description'] = 'Description';
-        $fieldName['uom'] = 'UOM';
-        $fieldName['group'] = 'Group';
-        return $fieldName;
-    }
-
-    public function getTable():string{
-        $header = $this->getReNamedHeader();
-        parent::setHead($header, true);
-        parent::setBody($this->records);
-        parent::setAttributes('id="ItemEditor" border="1"');
-        
-        return parent::getTable();
-    }
-
 }

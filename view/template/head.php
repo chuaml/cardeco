@@ -109,12 +109,16 @@
 </script>
 <!-- smooth page loading transition -->
 
+<!-- custom table sorter -->
+<link rel="stylesheet" href="js/table-sorter/table-sorter.css">
+<script src="js/table-sorter/table-sorter-init.js"></script>
 
+<!-- custom ajax form handling [cd-ajax] -->
 <script>
 	// override form submission, listen network response of form submit and retrigger customer event of resposne result
 	document.body.addEventListener('submit', async e => {
 		// exclude form with file
-		if (e.target.matches('form.ajax') === false) return;
+		if (e.target.matches('form[cd-ajax]') === false) return;
 		e.preventDefault();
 		const form = e.target;
 		const formData = new FormData(form);
@@ -124,10 +128,10 @@
 				body: formData
 			})
 			.then(response => {
-				console.log({
-					form,
-					response
-				});
+				// console.log({
+				// 	form,
+				// 	response
+				// });
 				form.dispatchEvent(new CustomEvent('submitted', {
 					bubbles: true,
 					detail: response
@@ -158,5 +162,45 @@
 		requestAnimationFrame(_ => {
 			document.body.classList.remove('submitting-form');
 		});
+	});
+</script>
+
+
+<script src="js/vendor/quicklink.umd.js" async></script>
+<script>
+	window.addEventListener('load', function(e) {
+		quicklink.listen({
+			delay: 250,
+			limit: 16,
+			throttle: 4,
+			origins: [
+				location.origin // prefetch self origin only
+			],
+			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
+		});
+	});
+</script>
+
+
+<script>
+	window.addEventListener('DOMContentLoaded', function(ev) {
+
+		const doSave = _ => {
+			const form = document.body.querySelector('form[method=post]');
+			console.log(form);
+			if (form !== null) form.requestSubmit();
+		};
+		document.addEventListener('keyup', function(e) {
+			if (e.ctrlKey === false) return;
+			if (e.code !== 'KeyS') return;
+			if (e.isTrusted)
+				setTimeout(doSave, 0);
+		});
+		document.addEventListener('keydown', function(e) {
+			if (e.ctrlKey === false) return;
+			if (e.code !== 'KeyS') return;
+			e.preventDefault();
+		});
+
 	});
 </script>

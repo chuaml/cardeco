@@ -272,7 +272,7 @@ try {
         $platformType = isset($_GET['platformCharges']) ? $_GET['platformCharges'] : null;
         $platformType = $platformType === 'ALL' ? null : $platformType;
         
-        if (isset($_GET['RecordMonth'])) {
+        if (isset($_GET['RecordMonth']) && $_GET['RecordMonth'] !== '') {
             $MRecords = $MF->getMonthlyRecordsByDate($_GET['RecordMonth'], $platformType);
             if (isset($_GET['exportCSV']['default'])) {
                 $csvData = &$MRecords;
@@ -291,7 +291,7 @@ try {
 
         $Tbl->setMonthlyRecords($MRecords, $MF->getNumPage());
         
-        $pageFloor = $Tbl->getFloorPage();
+        $pageFloor = $Tbl->getFloorPage($page);
         $recordEditor = $Tbl->getTable();
     } finally {
         $con->close();

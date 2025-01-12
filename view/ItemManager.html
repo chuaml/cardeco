@@ -16,19 +16,23 @@
     </form>
     <hr>
     <form method="POST" id="ItemEditorForm">
-        <?php if(!empty($itemEditor)){ ?>
+    <?php if(isset($itemEditorHtml) === true) { ?>
         <input type="submit" value="save">
-        <?= $itemEditor;?>
-        <?php };?>
+        <?php 
+        foreach($itemEditorHtml as $html) {
+            echo $html;
+        }
+        ?>
+    <?php };?>
     </form>
 
     <p class="error">
         <?= $error;?>
     </p>
+    
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/ItemManager.js"></script>
 </body>
-
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/ItemManager.js"></script>
 
 
 </html>

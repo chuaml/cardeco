@@ -1,13 +1,7 @@
 <?php 
 namespace Orders\Factory;
 
-require_once(__DIR__ .'/../MonthlyRecord.php');
-require_once(__DIR__ .'/RecordFactory.php');
-require_once(__DIR__ . '/../../Product/Item.php');
-require_once(__DIR__ .'/../PaymentCharges/PlatformCharges.php');
-
 use \mysqli;
-use \HTML\EscapableData;
 use \Product\Item;
 use \Orders\PaymentCharges;
 use \Exception;
@@ -99,9 +93,11 @@ class MonthlyRecord implements RecordFactory{
     }
 
     public function generateRecords(?string $platformCharges = null):array{
+        $PAST_N_MONTH = 3; // by default show upto previos n month
         $PARAM = "{$this->searchField} LIKE ?";
         if($platformCharges !== null){
             $PARAM .= ' AND platformCharges = ?';
+            $PARAM .= " AND (date BETWEEN (DATE_SUB(NOW(),INTERVAL {$PAST_N_MONTH} MONTH)) AND NOW())";
         }
 
         $stmt = $this->con->prepare(
@@ -131,7 +127,6 @@ class MonthlyRecord implements RecordFactory{
 
         $result = $stmt->get_result();
         $list = [];
-        $M;
         while(($r = $result->fetch_assoc()) !== null){
             $M = new \Orders\MonthlyRecord(
                 $r['id'],
@@ -149,7 +144,6 @@ class MonthlyRecord implements RecordFactory{
         $stmt->close();
 
         //set total for pageNum
-        $PAST_N_MONTH = 3;
         $stmt = $this->con->prepare(
             'SELECT COUNT(id) FROM orders WHERE '
             .$PARAM
@@ -169,7 +163,6 @@ class MonthlyRecord implements RecordFactory{
         $platformCharges = &$r['platformCharges'];
         if(strlen($platformCharges) === 0){return;}
         $amount = (double)$r['platformChargesAmount'];
-        $PlatformCharges;
         switch($platformCharges){
             case 'Lazada':
                 $PlatformCharges = new PaymentCharges\Lazada($amount);
@@ -253,7 +246,6 @@ class MonthlyRecord implements RecordFactory{
         }
 
         $list = [];
-        $M;
         $result = $stmt->get_result();
         while(($r = $result->fetch_assoc()) !== null){
             $M = new \Orders\MonthlyRecord(

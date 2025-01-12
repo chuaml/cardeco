@@ -1,0 +1,55 @@
+/* table[cd-editable-sheet] for:  */
+/* /RecordInserter */
+/* /RecordEditor */
+/* etc... */
+
+table[cd-editable-sheet] input {
+    cursor: cell;
+}
+
+table[cd-editable-sheet] input:focus:not([readonly]) {
+    cursor: text;
+}
+
+table[cd-editable-sheet]>tbody>tr>td:has(input) {
+    /* allow input in inside may use 100% max size */
+    height: 0px;
+    border: 1px solid #bbb;
+    padding: 0;
+}
+
+table[cd-editable-sheet]>tbody>tr>td>input {
+    min-height: 1.5em;
+    width: 100%;
+    font-family: monospace;
+    height: calc(100% - 2px);
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    font-size: 1em;
+
+}
+
+/* focus double click to show full width */
+table[cd-editable-sheet]>tbody>tr>td>input:active:focus:not([readonly]){
+    width: unset;
+    overflow: visible;
+}
+
+table[cd-editable-sheet]>tbody>tr>td>input[type=number],
+table[cd-editable-sheet]>tbody>tr>td>input[inputmode="numeric"] {
+    font-variant-numeric: tabular-nums;
+}
+
+table[cd-editable-sheet]>tbody>tr>td>input:focus {
+    outline: 2px solid green;
+}
+
+table[cd-editable-sheet]>tbody>tr>td>input:invalid {
+    outline: 2px solid red;
+}
+
+/* remove input number arrows */
+table[cd-editable-sheet]>tbody>tr>td>input[type="number"]::-webkit-inner-spin-button {
+    appearance: none;
+}
