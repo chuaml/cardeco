@@ -26,6 +26,9 @@ const startEditing = (input) => {
     inputValueBeforeEditing = input.value;
     input.removeAttribute('readonly');
     input.focus();
+};
+const startEditing_overwrite = (input) => {
+    startEditing(input);
     input.select();
 };
 const stopEditing = (input) => {
@@ -92,7 +95,7 @@ tbody.addEventListener('keydown', function (e) {
         ) { // alphanumeric keys, focus and start editing cell, start typing
 
             if (e.target.readOnly === true) {
-                startEditing(e.target);
+                startEditing_overwrite(e.target);
             }
             return;
         }
@@ -153,6 +156,7 @@ body.addEventListener('keydown', e => {
         e.preventDefault();
     }
 });
+
 
 // force double click input only to allow focus and edit
 tbody.addEventListener('dblclick', function (e) {

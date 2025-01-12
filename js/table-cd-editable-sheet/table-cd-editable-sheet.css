@@ -32,7 +32,7 @@ table[cd-editable-sheet]>tbody>tr>td>input {
 
 /* focus double click to show full width */
 table[cd-editable-sheet]>tbody>tr>td>input:active:focus:not([readonly]){
-    width: unset;
+    /* width: max-content; */
     overflow: visible;
 }
 
