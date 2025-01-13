@@ -136,10 +136,19 @@
 					bubbles: true,
 					detail: response
 				}));
-				return true;
-				// if (response.ok) {
-				// } else {
-				// }
+				// return true;
+				if (response.ok) {
+					// ok
+					console.log('form submitted success ' + response.status, {
+						form,
+						response
+					});
+				} else {
+					console.error('form submitted but server failed ' + response.status, {
+						form,
+						response
+					});
+				}
 			})
 			.catch(error => {
 				form.dispatchEvent(new CustomEvent('not-submitted', {
