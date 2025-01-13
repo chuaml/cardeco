@@ -7,11 +7,11 @@ use \HTML\EscapableData;
 
 class Item implements EscapableData
 {
-    private $itemId;
-    private $code;
-    private $description;
-    private $uom;
-    private $group;
+    public $itemId;
+    public $code;
+    public $description;
+    public $uom;
+    public $group;
     
     public function __construct(
         ?int $itemId,
