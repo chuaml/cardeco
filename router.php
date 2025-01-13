@@ -29,10 +29,12 @@ try {
         throw new HttpException(404, 'page not found: ' . $_requestUri);
     }
 
-    $error_get_last = error_get_last();
-    if ($error_get_last !== null) {
-        http_response_code(500);
-        throw new Exception('Some unknown notice/warning/error has occoured.');
+    $err = error_get_last();
+    if ($err !== null) {
+        if ($err['file'] !== 'xdebug://debug-eval') {
+            http_response_code(500);
+            throw new RuntimeException('type=' . $err['type'] . "\n" . $err['message'] . "\n" . $err['file'] . "\nline: " . $err['line'] . "\n\n");
+        }
     }
 } catch (HttpException $ex) {
     $_exception = $ex;

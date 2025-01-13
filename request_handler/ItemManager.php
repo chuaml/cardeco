@@ -11,38 +11,33 @@ $itemEditorHtml = null;
 $error = '';
 
 try {
-    try {
-        if (isset($_POST['r']) === true) {
-            $ItemM = new ItemManager($con);
-            $Items = [];
-            foreach ($_POST['r'] as $itemId => $description) {
-                $Items[] = new Item($itemId, null, $description);
-            }
-            $ItemM->update($Items);
-            // header('HTTP/1.1 205');
-        } else
-        if (isset($_GET['itemCode'])) {
-            $ItemM = new ItemManager($con);
-            $ItemEditor = new ItemEditor(
-                $ItemM->getItemLikeItemCode($_GET['itemCode']),
-                0
-            );
-
-            $itemEditorHtml = $ItemEditor->getTable();
-        } else {
-            $ItemM = new ItemManager($con);
-            $ItemEditor = new ItemEditor(
-                $ItemM->getItem(),
-                0
-            );
-
-            $itemEditorHtml = $ItemEditor->getTable();
+    if (isset($_POST['r']) === true) {
+        $ItemM = new ItemManager($con);
+        $Items = [];
+        foreach ($_POST['r'] as $itemId => $description) {
+            $Items[] = new Item($itemId, null, $description);
         }
-    } finally {
-        $con->close();
-    }
-} catch (\Exception $e) {
-    $error = $e->getMessage();
-}
+        $ItemM->update($Items);
+        // header('HTTP/1.1 205');
+    } else
+        if (isset($_GET['itemCode'])) {
+        $ItemM = new ItemManager($con);
+        $ItemEditor = new ItemEditor(
+            $ItemM->getItemLikeItemCode($_GET['itemCode']),
+            0
+        );
 
-require('view/ItemManager.html');
+        $itemEditorHtml = $ItemEditor->getTable();
+    } else {
+        $ItemM = new ItemManager($con);
+        $ItemEditor = new ItemEditor(
+            $ItemM->getItem(),
+            0
+        );
+
+        $itemEditorHtml = $ItemEditor->getTable();
+    }
+    require('view/ItemManager.html');
+} finally {
+    $con->close();
+}
