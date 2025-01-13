@@ -132,13 +132,11 @@
 				// 	form,
 				// 	response
 				// });
-				form.dispatchEvent(new CustomEvent('submitted', {
-					bubbles: true,
-					detail: response
-				}));
-				// return true;
 				if (response.ok) {
-					// ok
+					form.dispatchEvent(new CustomEvent('submitted', {
+						bubbles: true,
+						detail: response
+					}));
 					console.log('form submitted success ' + response.status, {
 						form,
 						response
