@@ -155,20 +155,20 @@
 				return false;
 			});
 	});
-	document.body.addEventListener('submit', e => {
-		requestAnimationFrame(_ => {
+	setTimeout(_ => {
+		document.body.addEventListener('submit', e => {
 			document.body.classList.add('submitting-form');
 		});
-	});
+	}, 0);
 	document.body.addEventListener('submitted', e => {
-		requestAnimationFrame(_ => {
+		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
-		});
+		}, 0);
 	});
 	document.body.addEventListener('not-submitted', e => {
-		requestAnimationFrame(_ => {
+		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
-		});
+		}, 0);
 	});
 </script>
 
