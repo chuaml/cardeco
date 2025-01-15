@@ -8,5 +8,5 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 
 
 <IfModule mod_headers.c>
-    Header set Cache-Control "max-age=23400, public"
+    Header set Cache-Control "max-age=10, public"
 </IfModule>

@@ -173,10 +173,10 @@
 </script>
 
 
-<script src="js/vendor/quicklink.umd.js" async></script>
+<script src="js/vendor/quicklink.umd.js"></script>
 <script>
 	window.addEventListener('load', function(e) {
-		quicklink.listen({
+		const stopPrefetch = quicklink.listen({
 			delay: 250,
 			limit: 16,
 			throttle: 4,
@@ -184,6 +184,13 @@
 				location.origin // prefetch self origin only
 			],
 			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
+			onError: console.warn,
+		});
+
+		// stop prefetching
+		setTimeout(stopPrefetch, 123000); // 2min
+		document.addEventListener('submitted', e => {
+			stopPrefetch();
 		});
 	});
 </script>
