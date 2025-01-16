@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.php') ?>
+
+    <style>
+        tbody>tr[is-empty-item-code="true"]>td {
+            background-color: #ffd7de;
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <h1>Shipped Item Report</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <p>Enter BigSeller all orders to generate Shipped Item Report:</p>
+        <input type="file" name="bigseller_all_status_orders" accept=".xlsx" onchange="this.form.submit()" required>
+    </form>
+
+
+    <!-- stockOut summary-->
+    <?php if(isset($tbl) === true) { ?>
+    <div class="paper">
+        <i>SHIPPED ITEM REPORT: </i>
+        <button id="btnPrint">print</button>
+        <hr>
+        <div id="wrapper-stockoutitem">
+            <?php 
+            foreach($tbl->streamHtmlText() as $html) {
+                echo $html;
+            }
+            ?>
+        </div>
+
+        <script>
+            document.querySelector('#btnPrint').addEventListener('click', e => {
+                const newTab = window.open();
+
+                newTab.document.writeln('<style>table,th,td{ border:1px solid black;} td { padding: 0 1ch; }</style>');
+
+                const table = document.querySelector('#wrapper-stockoutitem');
+                newTab.document.writeln(table.innerHTML);
+                newTab.print();
+            });
+        </script>
+    </div>
+    <?php };?>
+</body>
+
+</html>

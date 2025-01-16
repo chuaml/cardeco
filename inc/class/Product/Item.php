@@ -12,6 +12,7 @@ class Item implements EscapableData
     public $description;
     public $uom;
     public $group;
+    public $bigseller_sku_map = [];
     
     public function __construct(
         ?int $itemId,
@@ -25,12 +26,13 @@ class Item implements EscapableData
         $this->uom = $uom;
         $this->group = $group;
         $this->description = $description;
+        $this->bigseller_sku_map = [];
     }
 
-    public function __get(string $property)
-    {
-        return $this->$property;
-    }
+    // public function __get(string $property)
+    // {
+    //     return $this->$property;
+    // }
 
     public function getEscapedData(string $property):string
     {
@@ -44,7 +46,8 @@ class Item implements EscapableData
             'code' => $this->code,
             'description' => $this->description,
             'uom' => $this->uom,
-            'group' => $this->group
+            'group' => $this->group,
+            'bigseller_sku_map' => $this->bigseller_sku_map
         ];
     }
 }

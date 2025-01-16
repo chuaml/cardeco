@@ -22,15 +22,23 @@ class ItemEditor
         $this->htmlTable->setAttribute('cd-editable-sheet', '');
 
         $this->htmlTable->setHeader(0, new Cell('Item Code'));
-        $this->htmlTable->setHeader(1, new Cell('Description'));
-        $this->htmlTable->setHeader(2, new Cell('UOM'));
-        $this->htmlTable->setHeader(3, new Cell('Group'));
+        $this->htmlTable->setHeader(1, new Cell('Big Seller SKU'));
+        $this->htmlTable->setHeader(2, new Cell('Description'));
+        $this->htmlTable->setHeader(3, new Cell('UOM'));
+        $this->htmlTable->setHeader(4, new Cell('Group'));
 
         foreach ($Item_list as $Item) {
             $x = $Item->getAll();
             $r = new HtmlTableRow();
 
             $r->addCell(new Cell($x['code']));
+
+            $b = $x['bigseller_sku_map'][0]; // only take 1st mapping, might need more in future
+            $r->addCell(new Cell())
+                ->addChild(new HtmlObject('input'))
+                ->setAttribute('name', 'bigseller_sku_map[' . $b['id'] . ']')
+                ->setAttribute('value', $b['bigseller_sku'])
+                ->setAttribute('maxlength', '255');
             $r->addCell(new Cell())
                 ->addChild(new HtmlObject('input'))
                 ->setAttribute('name', 'r[' . $x['itemId'] . ']')

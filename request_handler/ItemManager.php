@@ -15,7 +15,17 @@ try {
         $ItemM = new ItemManager($con);
         $Items = [];
         foreach ($_POST['r'] as $itemId => $description) {
-            $Items[] = new Item($itemId, null, $description);
+            $x = new Item($itemId, null, $description);
+            $Items[] = $x;
+        }
+
+        $i = 0;
+        foreach ($_POST['bigseller_sku_map'] as $id => $value) {
+            $Items[$i]->bigseller_sku_map[] = [
+                'id' => $id,
+                'bigseller_sku' => $value
+            ];
+            ++$i;
         }
         $ItemM->update($Items);
         // header('HTTP/1.1 205');
