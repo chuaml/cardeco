@@ -79,7 +79,7 @@
 		transition-delay: .75s;
 	}
 </style>
-<div id="page-loader" style="display: none;">
+<div id="page-loader" style="display: flex;">
 	<p><i>loading...</i></p>
 </div>
 <script>
@@ -89,11 +89,16 @@
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'flex';
-			setTimeout(() => {
+			setTimeout(loader => {
 				loader.classList.toggle('loading');
-			}, 50);
+			}, 50, loader);
 		});
 	});
+
+	setTimeout(_ => {
+		const loader = document.getElementById('page-loader');
+		loader.classList.toggle('loading');
+	}, 0);
 
 	// hide loading when returning current loading page
 	window.addEventListener('pageshow', function(e) {
@@ -101,9 +106,7 @@
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'none';
-			setTimeout(() => {
-				loader.classList.remove('loading');
-			}, 50);
+			loader.classList.remove('loading');
 		});
 	});
 </script>
@@ -162,7 +165,7 @@
 	}, 0);
 	document.body.addEventListener('submitted', e => {
 		setTimeout(_ => {
-			document.body.classList.remove('submitting-form');
+			document.body.classList.remove('sumitting-fborm');
 		}, 0);
 	});
 	document.body.addEventListener('not-submitted', e => {
