@@ -157,6 +157,20 @@ body.addEventListener('keydown', e => {
     }
 });
 
+tbody.addEventListener('paste', function (e) {
+    if (e.isTrusted === false) return;
+    if (e.target.matches('input:not(:disabled),textarea:not(:disabled)') === false) return;
+    e.target.value = e.clipboardData.getData('text/plain');
+    e.target.dispatchEvent(new Event('change', { bubbles: true }));
+});
+
+// https required
+// tbody.addEventListener('copy', async function (e) {
+//     console.log(e.type, e.clipboardData.getData('text/plain'), e);
+//     if (e.isTrusted === false) return;
+//     if (e.target.matches('input,textarea') === false) return;
+//     await navigator.clipboard.writeText(e.target.value);
+// });
 
 // force double click input only to allow focus and edit
 tbody.addEventListener('dblclick', function (e) {
