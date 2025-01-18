@@ -23,6 +23,9 @@ if (isset($_FILES['bigseller_all_status_orders'])) {
 
 
     // using bigseller info from xlsx row to find its db item info
+    /** 
+     * @var array<DailyStockOutItem>
+     */
     $item_group_by_sku = [];
     foreach ($iterator as $row) {
         $x = DailyStockOutItem_Factory::map($row);
