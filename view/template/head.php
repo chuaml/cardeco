@@ -59,24 +59,31 @@
 		align-items: center;
 		font-size: 16px;
 		cursor: progress;
-
-		background-color: hsl(0deg 0% 50% / 0%);
 	}
 
-	#page-loader * {
+	#page-loader>* {
+		background-color: #eee;
+		box-shadow: 0 0 2px 0 #fff;
+		padding: 0 .5rem;
+	}
+
+	#page-loader>* {
 		opacity: 0;
+	}
+
+	#page-loader.loading-overdue {
+		transition: .25s ease-in;
 	}
 
 	#page-loader.loading {
 		transition: .5s ease;
-		transition-delay: .5s;
 		background-color: hsl(0deg 0% 50% / 25%);
 		display: flex;
 	}
 
-	#page-loader.loading * {
+	#page-loader.loading>* {
 		opacity: 1;
-		transition-delay: .75s;
+		transition-delay: .5s;
 	}
 </style>
 <div id="page-loader" style="display: flex;">
@@ -90,23 +97,38 @@
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'flex';
 			setTimeout(loader => {
-				loader.classList.toggle('loading');
-			}, 50, loader);
+				loader.classList.add('loading');
+			}, 250, loader);
 		});
 	});
 
 	setTimeout(_ => {
 		const loader = document.getElementById('page-loader');
-		loader.classList.toggle('loading');
-	}, 0);
+		if (loader.style['display'] !== 'none')
+			loader.classList.add('loading');
+		setTimeout(loader => {
+			if (loader.style['display'] !== 'none')
+				loader.classList.add('loading-overdue');
+		}, 500, loader);
+	}, 500);
 
 	// hide loading when returning current loading page
 	window.addEventListener('pageshow', function(e) {
 		console.log(e.type);
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
-			loader.style['display'] = 'none';
-			loader.classList.remove('loading');
+
+			if (loader.classList.contains('loading-overdue')) { // slow fade for long loading
+				loader.classList.remove('loading');
+				setTimeout(loader => {
+					loader.classList.remove('loading-overdue');
+					loader.style['display'] = 'none';
+				}, 250, loader);
+			} else { // otherwise stop loading display immediately
+				loader.style['display'] = 'none';
+				loader.classList.remove('loading-overdue');
+				loader.classList.remove('loading');
+			}
 		});
 	});
 </script>
