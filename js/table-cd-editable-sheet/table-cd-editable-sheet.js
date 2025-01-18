@@ -157,6 +157,8 @@ body.addEventListener('keydown', e => {
     }
 });
 
+
+// copy cut paste
 tbody.addEventListener('paste', function (e) {
     if (e.isTrusted === false) return;
     if (e.target.matches('input:not(:disabled),textarea:not(:disabled)') === false) return;
@@ -164,13 +166,45 @@ tbody.addEventListener('paste', function (e) {
     e.target.dispatchEvent(new Event('change', { bubbles: true }));
 });
 
-// https required
-// tbody.addEventListener('copy', async function (e) {
-//     console.log(e.type, e.clipboardData.getData('text/plain'), e);
-//     if (e.isTrusted === false) return;
-//     if (e.target.matches('input,textarea') === false) return;
-//     await navigator.clipboard.writeText(e.target.value);
-// });
+if (navigator.clipboard !== undefined) { // https is required
+    tbody.addEventListener('copy', async function (e) {
+        if (e.isTrusted === false) return;
+        if (e.target.matches('input,textarea') === false) return;
+        if (e.target.disabled)
+            e.preventDefault();
+        await navigator.clipboard.writeText(e.target.value);
+        e.target.select();
+        setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
+    });
+
+}
+else { // otherwise manually select then copy cell content
+    tbody.addEventListener('copy', async function (e) {
+        if (e.isTrusted === false) return;
+        if (e.target.matches('input,textarea') === false) return;
+        if (e.target.disabled === true) return;
+        if (e.target.readOnly === false) return;
+
+        e.target.select();
+        setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
+    });
+}
+
+tbody.addEventListener('cut', async function (e) {
+    if (e.isTrusted === false) return;
+    if (e.target.matches('input,textarea') === false) return;
+    if (e.target.disabled === true) return;
+    if (e.target.readOnly === false) return;
+
+    e.target.readOnly = false;
+    e.target.select();
+    setTimeout(input => {
+        input.readOnly = true;
+        input.blur();
+        input.focus();
+    }, 0, e.target);
+});
+
 
 // force double click input only to allow focus and edit
 tbody.addEventListener('dblclick', function (e) {
