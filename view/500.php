@@ -33,7 +33,7 @@
             data.error = document.getElementById('exception').innerText;
             data.error_message = document.getElementById('exception-msg').innerText;
             data.error_line = document.getElementById('exception-line').innerText;
-
+            console.error(data);
             gtag('event', 'exception', data);
         }, 0);
     </script>

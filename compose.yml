@@ -1,0 +1,40 @@
+services:
+  app:
+    image: cardeco
+    ports:
+      - 127.0.0.1:8080:80
+      - 127.0.0.1:9003:9003  # xdebug
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html  ## for realtime watch on file changes
+      - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD:
+      MYSQL_DB: cardeco
+    develop:
+      watch:
+        - action: sync # Sync changes to the container
+          path: ./ # Path to watch on the host
+          target: /var/www/html # Path inside the container
+          ignore:
+            - ./vendor
+        - action: rebuild # Rebuild the image on changes
+          path: ./composer.json # Path to watch on the host
+          target: /var/www/html/composer.json # Path inside the container
+        - action: rebuild # Rebuild the image on changes
+          path: ./Dockerfile # Path to watch on the host
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  mysql:
+    image: mysql:8.0
+    volumes:
+      - ./db/cardeco.sql:/docker-entrypoint-initdb.d/dump.sql #init db if none exist
+      - cardeco-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  cardeco-data:

@@ -2,7 +2,6 @@
 require 'vendor/autoload.php';
 
 use Exception\HttpException;
-
 $_exception = null;
 try {
     require(__DIR__ . '/db/conn_staff.php');
@@ -49,8 +48,10 @@ try {
         header("HTTP/1.1 500 Internal Server Error");
         include 'view/500.php';
     }
+    throw $ex;
 } catch (Throwable $ex) {
     header("HTTP/1.1 500 Internal Server Error");
     $_exception = $ex;
     include 'view/500.php';
+    throw $ex;
 }
