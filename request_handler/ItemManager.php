@@ -6,6 +6,11 @@ use \Product\ItemEditor;
 use \Product\ItemManager;
 use \Product\Item;
 
+# temporary code, to upgrade db structure
+$sql = file_get_contents('db/upgrade.sql');
+$con->query($sql);
+
+
 $itemEditor = null;
 $itemEditorHtml = null;
 $error = '';
