@@ -1,4 +1,4 @@
-FROM php:7.4-apache AS base-image
+FROM php:7.4-apache AS base_image
 WORKDIR /var/www/html
 
 # install system dependencies
@@ -19,13 +19,8 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
 && php -r "unlink('composer-setup.php');" 
 
 
-
-FROM base-image AS app
-# xdebug
-RUN pecl channel-update pecl.php.net \
-&& pecl install xdebug-3.1.6 \
-&& docker-php-ext-enable xdebug
-EXPOSE 9003
+# production setup
+FROM base_image AS production_app
 
 # COPY composer.lock composer.json ./
 # Copy your application code
@@ -37,8 +32,7 @@ RUN php composer.phar install --ignore-platform-req=ext-zip \
 # Enable Apache mod_rewrite
 && a2enmod rewrite \
 # set php.ini
-# RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
-&& mv "php.ini-development" "$PHP_INI_DIR/php.ini"
+&& mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 
 
@@ -49,3 +43,18 @@ EXPOSE 8080
 
 # Start Apache in the foreground
 CMD ["apache2-foreground"]
+
+
+
+
+# for development setup
+FROM production_app AS dev_app
+RUN mv "php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# xdebug
+RUN pecl channel-update pecl.php.net \
+&& pecl install xdebug-3.1.6 \
+&& docker-php-ext-enable xdebug
+
+
+EXPOSE 9003

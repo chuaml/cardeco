@@ -14,7 +14,7 @@ echo Update complete.
 echo ---
 
 
-call setup.production.bat
+call setup.staging.bat
 echo ---
 echo Upgrade complete.
 echo ---

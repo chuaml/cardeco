@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.0.41
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: cardeco  # db name to create/use
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+    volumes:
+      - ./db/cardeco.sql:/docker-entrypoint-initdb.d/dump.sql #init db if none exist
+      - cardeco-production-data:/var/lib/mysql   #
+    ports:
+      - "3306:3306"
+
+  app:
+    image: cardeco:production
+    ports:
+      - 0.0.0.0:8080:80   # port mapping host:container
+    working_dir: /var/www/html
+    environment:  #
+      IS_PRODUCTION: 1
+      MYSQL_HOST: mysql
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+      MYSQL_DB: cardeco
+
+volumes:
+  cardeco-production-data:
