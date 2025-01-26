@@ -28,7 +28,7 @@ COPY . .
 
 ## install app dependencies
 RUN php composer.phar install --ignore-platform-req=ext-zip \
-&& php composer.phar dumpautoload \
+&& php composer.phar dumpautoload --optimize \
 # Enable Apache mod_rewrite
 && a2enmod rewrite \
 # set php.ini
