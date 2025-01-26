@@ -58,7 +58,7 @@ services:
       target: dev_app  # image variant
     ports:
       - 127.0.0.1:8082:80
-      - 127.0.0.1:9003:9003  # xdebug
+      ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html  ## for realtime watch on file changes
@@ -70,20 +70,8 @@ services:
       MYSQL_USER: cardeco-app
       MYSQL_PASSWORD: cardeco-app
       MYSQL_DB: cardeco_dev
-    develop:
-      watch:
-        - action: sync # Sync changes to the container
-          path: ./ # Path to watch on the host
-          target: /var/www/html # Path inside the container
-          ignore:
-            - ./vendor
-        - action: rebuild # Rebuild the image on changes
-          path: ./composer.json # Path to watch on the host
-          target: /var/www/html/composer.json # Path inside the container
-        - action: rebuild # Rebuild the image on changes
-          path: ./Dockerfile # Path to watch on the host
     extra_hosts:
-      - host.docker.internal:host-gateway
+      - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
 
 volumes:
   cardeco-production-data:

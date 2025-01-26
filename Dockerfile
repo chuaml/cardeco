@@ -61,4 +61,6 @@ RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
 && docker-php-ext-enable xdebug
 
 
-EXPOSE 9003
+## do NOT map nor expose port 9003
+## so that host machine can listen to Xdebug inside container
+## EXPOSE 9003
