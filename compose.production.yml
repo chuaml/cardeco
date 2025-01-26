@@ -7,7 +7,7 @@ services:
       MYSQL_USER: cardeco-app
       MYSQL_PASSWORD: cardeco-app
     volumes:
-      - ./db/cardeco.sql:/docker-entrypoint-initdb.d/dump.sql #init db if none exist
+      - ./db/cardeco.sql:/docker-entrypoint-initdb.d/dump.sql:ro  #init db if none exist
       - cardeco-production-data:/var/lib/mysql   #
     ports:
       - "3306:3306"
