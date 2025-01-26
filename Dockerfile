@@ -3,11 +3,16 @@ WORKDIR /var/www/html
 
 # install system dependencies
 RUN apt-get update && apt-get install -y \
-&& apt-get install zip zlib1g-dev curl libonig-dev libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev -y \
+&& apt-get install zip zlib1g-dev curl libonig-dev libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev \ 
+ libzip-dev \
+ -y \
 ## install necessary PHP extensions
 && docker-php-ext-install mysqli \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
-&& docker-php-ext-install gd
+&& docker-php-ext-install gd \
+&& docker-php-ext-install \
+ zip 
+
 
 # composer php dependencies manager
 ## allow composer to run and install

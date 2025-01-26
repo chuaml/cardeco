@@ -41,7 +41,7 @@
 
 <script>
 	window.app = {}; // global placeholder
-	window.app.hasError = '<?= error_get_last() === null ?>' === '1';
+	// window.app.hasError = '<?= error_get_last() === null ?>' === '1';
 </script>
 
 <!-- smooth page loading transition -->
