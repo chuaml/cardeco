@@ -62,6 +62,7 @@ services:
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html  ## for realtime watch on file changes
+      - ./php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
       - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
     environment:
       IS_PRODUCTION: 0
