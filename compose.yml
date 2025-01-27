@@ -25,7 +25,7 @@ services:
       ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
     working_dir: /var/www/html
     volumes:
-      - ./:/var/www/html  ## for realtime watch on file changes
+      # - ./:/var/www/html  ## avoid using bind-mount for realtime watch on file changes
       - ./php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
       - ./xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
     environment:
@@ -36,6 +36,19 @@ services:
       MYSQL_DB: cardeco_dev
     extra_hosts:
       - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
+    develop:
+      watch:   ## dedicated watch mode using  `docker compose up --watch`  flag
+        - action: sync
+          path: ./
+          target: /var/www/html
+          ignore:
+            - vendor/
+            - node_modules/
+            - public/
+            - upload/
+        - action: rebuild
+          path: composer.json
+
 
 volumes:
   cardeco-dev-data:
