@@ -1,8 +1,6 @@
 <?php
 namespace Orders\PaymentCharges;
 
-require_once(__DIR__ .'\\PaymentCharges.php');;
-
 abstract class DirectCharges extends PaymentCharges
 {
     private $paymentMethod = '';
