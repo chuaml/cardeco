@@ -13,7 +13,11 @@ RUN docker-php-ext-install mysqli \
 && docker-php-ext-install \
  zip \
  mbstring \
- opcache
+ opcache \
+# Enable Apache mod_rewrite
+&& a2enmod rewrite \
+# set php.ini
+&& mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 
 # composer php dependencies manager
@@ -23,25 +27,21 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2.8.5 /usr/bin/composer /usr/bin/composer
 
 
+# install app dependencies
+COPY composer.lock composer.json ./
+RUN composer install --no-autoloader --no-dev --no-interaction --no-progress \
+ --ignore-platform-req=ext-zip
+
+
+
+
 # production setup
 FROM base_image AS production_app
 
-# COPY composer.lock composer.json ./
-# Copy your application code
+# Copy application code
 COPY . .
-
-## install app dependencies
-RUN composer install --ignore-platform-req=ext-zip \
-&& composer dumpautoload --optimize \
-# Enable Apache mod_rewrite
-&& a2enmod rewrite \
-# set php.ini
-&& mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
-
-
-
-# Configure Apache (if needed, e.g., virtual hosts)
-# COPY apache-config /etc/apache2/sites-available/000-default.conf
+RUN composer dumpautoload --no-dev --optimize --no-interaction \
+&& composer clear-cache
 
 EXPOSE 8080
 
@@ -52,14 +52,19 @@ CMD ["apache2-foreground"]
 
 
 # for development setup
-FROM production_app AS dev_app
+FROM base_image AS dev_app
 
-RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini" \
 # xdebug
-&& pecl channel-update pecl.php.net \
+RUN pecl channel-update pecl.php.net \
 && pecl install xdebug-3.1.6 \
-&& docker-php-ext-enable xdebug
+&& docker-php-ext-enable xdebug \
+# include dev dependencies
+&& composer install --no-autoloader --no-interaction --no-progress
 
+# Copy application code
+COPY . .
+RUN composer dumpautoload --no-interaction \
+&& mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
 
 ## do NOT map nor expose port 9003
 ## so that host machine can listen to Xdebug inside container
