@@ -13,10 +13,20 @@ services:
       - cardeco-dev-data:/var/lib/mysql  #
     ports:
       - "3308:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u ${MYSQL_USER} -p ${MYSQL_PASSWORD}"]
+      interval: 60s
+      retries: 2
+      start_period: 1s
+      timeout: 5s
 
   app-dev:
     profiles:
       - dev
+    depends_on:
+      mysql-dev:
+        condition: service_started   # service_healthy to wait for db to ready
+        restart: true
     build:
       dockerfile: ./Dockerfile
       target: dev_app  # image variant
