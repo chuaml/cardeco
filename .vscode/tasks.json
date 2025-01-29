@@ -30,9 +30,9 @@
             "command": "docker build --target production_app -t cardeco:staging ."
         },
         {
-            "label": "redeploy the staging stack",
+            "label": "run staging",
             "type": "shell",
-            "command": "docker stack rm cardeco_staging && docker stack deploy --compose-file=compose.staging.yml cardeco_staging --detach=false"
+            "command": "docker compose -p cardeco_staging down && docker compose --file compose.staging.yml -p cardeco_staging up"
         },
         {
             "label": "build production image",
@@ -40,14 +40,20 @@
             "command": "docker build --target production_app -t cardeco:production ."
         },
         {
-            "label": "redeploy the production stack",
+            "label": "run production",
             "type": "shell",
-            "command": "docker stack rm cardeco_production && docker stack deploy --compose-file=compose.production.yml cardeco_production --detach=false"
+            "command": "docker compose -p cardeco_production down && docker compose --file compose.production.yml -p cardeco_production up"
         },
         {
-            "label": "tear down all stacks, stop and remove all deployed apps",
+            "label": "tear down all, stop all composed stack",
+            "type": "shell",
+            "command": "for /f \"tokens=*\" %x in ('docker compose ls -q') do docker compose -p %x down"
+        },
+
+        {
+            "label": "remove all stacks, stop and remove all deployed apps",
             "type": "shell",
             "command": "for /f \"tokens=*\" %i in ('docker stack ls --format \"{{.Name}}\"') do docker stack rm %i  &&  docker compose down"
-        }
+        },
     ]
 }

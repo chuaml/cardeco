@@ -11,6 +11,10 @@ services:
     volumes:
       - ./db/cardeco.sql:/docker-entrypoint-initdb.d/cardeco.sql:ro  #init db if none exist
       - cardeco-dev-data:/var/lib/mysql  #
+      - ./db/dump:/var/tmp/dump/  #db backup
+    post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
+      - command: sh -c 'sleep 5 && mysqldump -h 127.0.0.1 -u root -ptoor cardeco_dev --lock-all-tables | gzip > /var/tmp/dump/cardeco_dev.db.dump.$(date --utc +"%Y-%m-%d_%H%M%S").sql.gz && cd /var/tmp/dump/ && ls -t | tail -n +61 | xargs -I {} rm -f "{}"'
+        user: root
     ports:
       - "3308:3306"
     healthcheck:
@@ -20,12 +24,13 @@ services:
       start_period: 1s
       timeout: 5s
 
+
   app-dev:
     profiles:
       - dev
     depends_on:
       mysql-dev:
-        condition: service_started   # service_healthy to wait for db to ready
+        condition: service_started   # service_started | service_healthy to skip or wait for db ready respectively
         restart: true
     build:
       dockerfile: ./Dockerfile

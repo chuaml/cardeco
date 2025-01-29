@@ -1,9 +1,7 @@
-@REM build image locally
-docker swarm init
-
-@REM build production image
+@REM # build image locally
+@REM ## build staging image
 docker build --target production_app -t cardeco:production .
 
-@REM deployment
-@REM deploy production stack
-docker stack rm cardeco_production && docker stack deploy --compose-file=compose.production.yml cardeco_production -d
+@REM # deploy staging stack
+docker compose -p cardeco_production down
+docker compose --file compose.production.yml -p cardeco_production up -d
