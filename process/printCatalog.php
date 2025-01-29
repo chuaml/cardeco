@@ -41,7 +41,7 @@ $catalog = $cg->drawCatalog($watermark);
 	<link rel="stylesheet" href="../css/catalog.css">
 	<script src="js/jquery-3.3.1.min"></script>
 	<script src="js/myscript"></script>
-	<script src="js/function"></script>
+	<script src="js/function.js"></script>
 </head>
 
 <body>
