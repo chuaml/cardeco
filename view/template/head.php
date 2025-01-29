@@ -187,7 +187,7 @@
 	}, 0);
 	document.body.addEventListener('submitted', e => {
 		setTimeout(_ => {
-			document.body.classList.remove('sumitting-fborm');
+			document.body.classList.remove('submitting-form');
 		}, 0);
 	});
 	document.body.addEventListener('not-submitted', e => {
