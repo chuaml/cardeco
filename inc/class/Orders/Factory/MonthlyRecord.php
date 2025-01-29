@@ -107,7 +107,6 @@ class MonthlyRecord implements RecordFactory{
             .'LEFT JOIN seller_sku ON orders.sku = seller_sku.sku '
             .'LEFT JOIN stock_items ON orders.sku = stock_items.item_code '
             .'OR seller_sku.itemCode = stock_items.item_code '
-            .'GROUP BY orders.id '
             .'ORDER BY orders.id'
         );
         if(!$stmt){
