@@ -23,6 +23,7 @@ services:
       retries: 2
       start_period: 1s
       timeout: 5s
+    restart: no
 
 
   app-dev:
@@ -66,7 +67,7 @@ services:
         - action: sync+restart
           path: ./config.dev/
           target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
-
+    restart: no
 
 volumes:
   cardeco-dev-data:

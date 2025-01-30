@@ -15,6 +15,7 @@ services:
         user: root
     ports:
       - "3306:3306"
+    restart: always
 
   app:
     image: cardeco:production
@@ -27,6 +28,7 @@ services:
       MYSQL_USER: cardeco-app
       MYSQL_PASSWORD: cardeco-app
       MYSQL_DB: cardeco
+    restart: always   # auto start container on docker launch
 
 volumes:
   cardeco-production-data:
