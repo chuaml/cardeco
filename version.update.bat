@@ -10,9 +10,12 @@ call git fetch --all
 call git pull
 
 echo ---
-echo Update complete.
+echo Update downloaded.
 echo ---
 
+echo ---
+echo Installing...
+echo ---
 
 call setup.production.bat
 echo ---
