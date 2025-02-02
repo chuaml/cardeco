@@ -83,7 +83,7 @@ class HtmlTable extends HtmlObject
             yield '</tfoot>';
         }
 
-        return '</table>';
+        yield '</table>';
     }
 
     public function toHtmlText(): string
