@@ -2,7 +2,7 @@
 
 namespace main;
 
-
+use DateTime;
 use \Exception;
 use HTML\HtmlObject;
 use HTML\HtmlTable;
@@ -10,9 +10,12 @@ use HTML\HtmlTableRow;
 use HTML\HtmlTableCell as Cell;
 use Orders\DailyStockOutItem_Factory;
 use Orders\Factory\Excel\ExcelReader;
+use Orders\MonthlyRecord\OrderLine;
+use Orders\MonthlyRecord_ShippedItem;
 use Product\Manager\ItemManager;
 
-$tbl = null;
+$tbl_for_shippedItemReport = null;
+$tbl_for_MotnhlyRecord = null;
 
 if (isset($_FILES['bigseller_all_status_orders'])) {
     if ($_FILES['bigseller_all_status_orders']['error'] !== 0)
@@ -81,6 +84,46 @@ if (isset($_FILES['bigseller_all_status_orders'])) {
     $tbl->setFooter(1, new Cell(''));
     $tbl->setFooter(2, new Cell('Total: '));
     $tbl->setFooter(3, new Cell($totalCount));
+    $tbl_for_shippedItemReport = $tbl;
+
+
+    // tbl for Monthly Reocrds
+    /** 
+     * @var array<OrderLine>
+     */
+    $orders = [];
+    $iterator = $xlsx->read();
+    foreach ($iterator as $row) {  // map bigseller to MOrder
+        $x = new OrderLine();
+        $x->ShippedItem = DailyStockOutItem_Factory::map($row);
+        $x->orderStatus = $x->ShippedItem->shippingStatus;
+        $x->trackingNumber = trim($row[51]);
+
+        $x->dateOfSendOut = trim($row[69]); //format 08 Jan 2025 14:04 to MM/dd/yyyy
+        if ($x->dateOfSendOut !== '')
+            $x->dateOfSendOut = DateTime::createFromFormat('d M Y H:i', $x->dateOfSendOut)->format('m/d/Y');
+
+        $x->orderNumber = trim($row[0]);
+
+        $orders[] = $x;
+    }
+
+    $tbl = new HtmlTable();
+    $tbl->setHeader(0, new Cell('Order Status'));
+    $tbl->setHeader(1, new Cell('Tracking Number'));
+    $tbl->setHeader(2, (new Cell('Date of Send Out (MM/dd/yyyy)'))->setAttribute('title', 'MM/dd/yyyy'));
+    $tbl->setHeader(3, new Cell('Order Number'));
+    foreach ($orders as $x) {
+        $r = new HtmlTableRow();
+        $r->addCell(new Cell($x->orderStatus));
+        $r->addCell(new Cell($x->trackingNumber));
+        $r->addCell(new Cell($x->dateOfSendOut));
+        $r->addCell(new Cell($x->orderNumber));
+        $r->setAttribute('data-order-number', $x->orderNumber);
+
+        $tbl->addRow($r);
+    }
+    $tbl_for_MotnhlyRecord = $tbl;
 }
 
 
