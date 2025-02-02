@@ -2,10 +2,12 @@ FROM php:7.4-apache AS base_image
 WORKDIR /var/www/html
 
 # install system dependencies
-RUN apt-get update && apt-get install -y \
-&& apt-get install zlib1g-dev curl libonig-dev libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+ zlib1g-dev curl libonig-dev libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev \ 
  libzip-dev \
- -y
+&& apt-get clean \
+&& rm -rf /var/lib/apt/lists/*
+
 # install necessary PHP extensions
 RUN docker-php-ext-install mysqli \
 && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -30,8 +32,8 @@ COPY --from=composer:2.8.5 /usr/bin/composer /usr/bin/composer
 # install app dependencies
 COPY composer.lock composer.json ./
 RUN composer install --no-autoloader --no-dev --no-interaction --no-progress \
- --ignore-platform-req=ext-zip
-
+ --ignore-platform-req=ext-zip \
+&& composer clear-cache
 
 
 
