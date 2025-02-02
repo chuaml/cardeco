@@ -1,5 +1,12 @@
+Dockerfile
+.git
+.gitignore
+.vscode
 node_modules
 vendor
 upload
 public
-Dockerfile
+*.sql
+*.bat
+upload/*
+db/dump/*

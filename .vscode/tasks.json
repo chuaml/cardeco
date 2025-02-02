@@ -8,10 +8,52 @@
             "type": "shell",
             "command": "php -d xdebug.log=\"CON\" -d xdebug.log_level=3 -d xdebug.mode=develop,debug,trace,profile  -d xdebug.show_local_vars=1 -d xdebug.start_with_request=yes \"${file}\""
         },
-         {
-            "label": "composer dumpautoload", 
+        {
+            "label": "composer dumpautoload",
             "type": "shell",
-            "command": "composer dumpautoload",
-         }
+            "command": "composer dumpautoload"
+        },
+        {
+            "label": "run dev --build",
+            "type": "shell",
+            "command": "docker compose --profile dev down && docker compose --profile dev up --build",
+            "problemMatcher": []
+        },
+        {
+            "label": "run dev --watch",
+            "type": "shell",
+            "command": "docker compose --profile dev down && docker compose --profile dev up --watch"
+        },
+        {
+            "label": "build staging image",
+            "type": "shell",
+            "command": "docker build --target production_app -t cardeco:staging ."
+        },
+        {
+            "label": "run staging",
+            "type": "shell",
+            "command": "docker compose -p cardeco_staging down && docker compose --file compose.staging.yml -p cardeco_staging up"
+        },
+        {
+            "label": "build production image",
+            "type": "shell",
+            "command": "docker build --target production_app -t cardeco:production ."
+        },
+        {
+            "label": "run production",
+            "type": "shell",
+            "command": "docker compose -p cardeco_production down && docker compose --file compose.production.yml -p cardeco_production up"
+        },
+        {
+            "label": "tear down all, stop all composed stack",
+            "type": "shell",
+            "command": "for /f \"tokens=*\" %x in ('docker compose ls -q') do docker compose -p %x down"
+        },
+
+        {
+            "label": "remove all stacks, stop and remove all deployed apps",
+            "type": "shell",
+            "command": "for /f \"tokens=*\" %i in ('docker stack ls --format \"{{.Name}}\"') do docker stack rm %i  &&  docker compose down"
+        },
     ]
 }

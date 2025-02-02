@@ -1,0 +1,7 @@
+<?php
+xdebug_break();
+var_dump([
+    'php_ini_loaded_file' => php_ini_loaded_file(),
+    'php_ini_scanned_files' => php_ini_scanned_files()
+]);
+xdebug_info();
