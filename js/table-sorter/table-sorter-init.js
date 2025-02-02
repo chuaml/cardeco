@@ -157,3 +157,67 @@ document.addEventListener('readystatechange', function (ev) {
     });
 
 });
+
+
+{  // highlight column on shift + drag selection
+    let otherColumns = [];
+    function stopColSelection() {
+        otherColumns.forEach(x => {
+            x.inert = false;
+        });
+        otherColumns = [];
+    }
+    document.body.addEventListener('mousedown', function (e) {
+        // assert: table > thead > tr
+        if (e.shiftKey === false) {
+            stopColSelection();
+            return;
+        }
+        if (e.target.matches('td') === false) return;
+        if (e.isTrusted === false) return;
+
+        /** @type HTMLElement */
+        const td = e.target;
+        const col = td.cellIndex + 1;
+        const table = td.closest('table');
+        otherColumns = table.querySelectorAll(`tr>*:not(:nth-child(${col})`);
+        otherColumns.forEach(x => {
+            x.inert = true;
+        });
+    }, { passive: true });
+
+
+    document.body.addEventListener('keyup', function (e) {
+        if (e.code === 'Escape' && e.isTrusted) {
+            stopColSelection();
+        }
+    }, { passive: true });
+
+    document.body.addEventListener('keydown', function (e) {
+        if (e.isTrusted === false) return;
+        if (e.ctrlKey === true) {  // Ctrl + A to select whole table
+            if (e.code === 'KeyA') {
+                const selection = window.getSelection();
+                if (selection.anchorNode === null) return;
+
+                let tbl;
+                if (selection.anchorNode.tagName === 'TABLE') {
+                    stopColSelection();
+                    tbl = selection.anchorNode;
+                }
+                else {
+                    if (selection.anchorNode.parentElement === null || selection.anchorNode.parentElement.matches('td,tr') === false) return;
+                    tbl = selection.anchorNode.parentElement.closest('table');
+                }
+
+                const range = document.createRange();
+                range.selectNodeContents(tbl);
+                e.preventDefault();
+                selection.removeAllRanges();
+                setTimeout(selection => {
+                    selection.addRange(range);
+                }, 0, selection);
+            }
+        }
+    });
+}
