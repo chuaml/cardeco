@@ -6,7 +6,7 @@ use Product\Item;
 
 final class DailyStockOutItem
 {
-    public string $orderTime; // y-M-d
+    // public string $orderTime; // y-M-d
     public string $sku;
     public string $productName;
     public int $quantity = 0;

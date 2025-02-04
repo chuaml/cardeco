@@ -11,9 +11,9 @@ final class DailyStockOutItem_Factory
         $r = $excelFileRow;
         $x = new DailyStockOutItem();
 
-        $x->orderTime = $r[65];
-        $dateObject = DateTime::createFromFormat("d M Y H:i", $x->orderTime);
-        $x->orderTime = $dateObject->format("m/d/Y");
+        // $x->orderTime = $r[69];
+        // $dateObject = DateTime::createFromFormat("d M Y H:i", $x->orderTime);
+        // $x->orderTime = $dateObject->format("m/d/Y");
 
         $x->sku = $r[23];
         $x->productName = $r[25];

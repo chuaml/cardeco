@@ -2,7 +2,7 @@
 
 namespace main;
 
-
+use DateTime;
 use \Exception;
 use HTML\HtmlObject;
 use HTML\HtmlTable;
@@ -63,13 +63,14 @@ if (isset($_FILES['bigseller_all_status_orders'])) {
     $tbl->setHeader(3, new Cell('Quantity'));
 
     $totalCount = 0;
+    $now = (new DateTime())->format('m/d/Y');
     foreach ($item_group_by_sku as $x) {
         if ($x->isShipped() === false) continue;
 
         $r = new HtmlTableRow();
         $r->setAttribute('is-empty-item-code', strlen($x->item->code) > 0 ? 'false' : 'true');
 
-        $r->addCell(new Cell($x->orderTime));
+        $r->addCell(new Cell($now));
         $r->addCell(new Cell($x->item->code ?? $x->sku)); // replaced with item name from db
         $r->addCell(new Cell($x->item->description ?? $x->productName)); // replaced with item name from db
         $r->addCell(new Cell($x->quantity));
