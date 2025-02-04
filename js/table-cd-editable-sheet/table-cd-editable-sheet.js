@@ -160,6 +160,7 @@ body.addEventListener('keydown', e => {
 
 // copy cut paste
 tbody.addEventListener('paste', function (e) {
+    if (e.target.readOnly !== true) return; // return to default paste when editing
     if (e.isTrusted === false) return;
     if (e.target.matches('input:not(:disabled),textarea:not(:disabled)') === false) return;
     e.target.value = e.clipboardData.getData('text/plain');
@@ -168,6 +169,7 @@ tbody.addEventListener('paste', function (e) {
 
 if (navigator.clipboard !== undefined) { // https is required
     tbody.addEventListener('copy', async function (e) {
+        if (e.target.readOnly !== true) return;
         if (e.isTrusted === false) return;
         if (e.target.matches('input,textarea') === false) return;
         if (e.target.disabled)
@@ -180,10 +182,10 @@ if (navigator.clipboard !== undefined) { // https is required
 }
 else { // otherwise manually select then copy cell content
     tbody.addEventListener('copy', async function (e) {
+        if (e.target.readOnly !== true) return;
         if (e.isTrusted === false) return;
         if (e.target.matches('input,textarea') === false) return;
         if (e.target.disabled === true) return;
-        if (e.target.readOnly === false) return;
 
         e.target.select();
         setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
@@ -191,10 +193,10 @@ else { // otherwise manually select then copy cell content
 }
 
 tbody.addEventListener('cut', async function (e) {
+    if (e.target.readOnly !== true) return;
     if (e.isTrusted === false) return;
     if (e.target.matches('input,textarea') === false) return;
     if (e.target.disabled === true) return;
-    if (e.target.readOnly === false) return;
 
     e.target.readOnly = false;
     e.target.select();
