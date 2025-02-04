@@ -29,6 +29,8 @@ if (isset($_FILES['bigseller_all_status_orders'])) {
     $item_group_by_sku = [];
     foreach ($iterator as $row) {
         $x = DailyStockOutItem_Factory::map($row);
+        if ($x->isShipped() === false) continue;
+
         // itemCode is bigseller sku, temporary
         if (array_key_exists($x->sku, $item_group_by_sku) === true) {
             $item = $item_group_by_sku[$x->sku];
@@ -65,8 +67,6 @@ if (isset($_FILES['bigseller_all_status_orders'])) {
     $totalCount = 0;
     $now = (new DateTime())->format('m/d/Y');
     foreach ($item_group_by_sku as $x) {
-        if ($x->isShipped() === false) continue;
-
         $r = new HtmlTableRow();
         $r->setAttribute('is-empty-item-code', strlen($x->item->code) > 0 ? 'false' : 'true');
 
