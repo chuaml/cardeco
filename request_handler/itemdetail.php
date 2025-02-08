@@ -20,8 +20,8 @@ $su->execute_query();
 
 	<title>CarDeco sys</title>
 	<link rel="stylesheet" href="css/style.css">
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/myscript"></script>
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="js/myscript.js"></script>
 	<script src="js/function.js"></script>
 </head>
 

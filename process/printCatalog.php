@@ -39,8 +39,8 @@ $catalog = $cg->drawCatalog($watermark);
 
 	<title>Catalog <?php echo date('y-m-d',time()+28800) ?></title>
 	<link rel="stylesheet" href="../css/catalog.css">
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/myscript"></script>
+	<script src="js/jquery-3.3.1.min.js"></script>
+	<script src="js/myscript.js"></script>
 	<script src="js/function.js"></script>
 </head>
 
