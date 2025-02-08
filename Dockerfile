@@ -40,6 +40,8 @@ RUN composer install --no-autoloader --no-dev --no-interaction --no-progress \
 # production setup
 FROM base_image AS production_app
 
+COPY "./php-production-override.ini" "$PHP_INI_DIR/conf.d/php-production-override.ini"
+
 # Copy application code
 COPY . .
 RUN composer dumpautoload --no-dev --optimize --no-interaction \
