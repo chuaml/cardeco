@@ -2,11 +2,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <link rel="stylesheet" href="css/style.css">
-<title>Cardeco</title>
+
 
 
 
 <?php if (isset($_isProduction) === true && $_isProduction !== true) { ?>
+	<title>Staging - test server</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+	<!-- <link rel="shortcut icon" href="view/icon.png" type="image/png" /> -->
+
 	<script>
 		window.dataLayer = window.dataLayer || [];
 
@@ -16,9 +20,13 @@
 		}
 		gtag('js', new Date());
 	</script>
+	<div style="padding: 0.5em;background-color: green;color:white;">Staging - test server</div>
 
-	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>
 <?php } else { ?>
+
+	<title>Cardeco</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+	<!-- <link rel="shortcut icon" href="view/icon.png" type="image/png" /> -->
 
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-139719LGJQ"></script>
@@ -32,10 +40,6 @@
 
 		gtag('config', 'G-139719LGJQ');
 	</script>
-
-
-	<link rel="shortcut icon" href="view/icon.png" type="image/png" />
-
 
 <?php } ?>
 

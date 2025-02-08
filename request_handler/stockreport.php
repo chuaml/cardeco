@@ -5,7 +5,6 @@
 
 <!DOCTYPE html>
 <html>
-<title>CarDeco sys</title>
 <head>
 	<?php require('view/template/head.php') ?>
 
