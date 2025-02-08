@@ -14,33 +14,39 @@
             "command": "composer dumpautoload"
         },
         {
-            "label": "run dev --build",
+            "label": "run dev --build --watch",
             "type": "shell",
-            "command": "docker compose --profile dev down && docker compose --profile dev up --build",
+            "command": "docker compose --profile dev down && docker compose --profile dev up --build --watch",
             "problemMatcher": []
         },
         {
-            "label": "run dev --watch",
+            "label": "run dev only --watch",
             "type": "shell",
             "command": "docker compose --profile dev down && docker compose --profile dev up --watch"
         },
         {
-            "label": "build staging image",
+            "label": "staging build run",
             "type": "shell",
-            "command": "docker build --target production_app -t cardeco:staging ."
+            "command": [
+                "docker build --target production_app -t cardeco:staging . &&",
+                "docker compose -p cardeco_staging down && docker compose --file compose.staging.yml -p cardeco_staging up"
+            ]
         },
         {
-            "label": "run staging",
+            "label": "staging run only",
             "type": "shell",
             "command": "docker compose -p cardeco_staging down && docker compose --file compose.staging.yml -p cardeco_staging up"
         },
         {
-            "label": "build production image",
+            "label": "production build run",
             "type": "shell",
-            "command": "docker build --target production_app -t cardeco:production ."
+            "command": [
+                "docker build --target production_app -t cardeco:production . &&",
+                "docker compose -p cardeco_production down && docker compose --file compose.production.yml -p cardeco_production up"
+            ]
         },
         {
-            "label": "run production",
+            "label": "production run only",
             "type": "shell",
             "command": "docker compose -p cardeco_production down && docker compose --file compose.production.yml -p cardeco_production up"
         },

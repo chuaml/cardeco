@@ -67,6 +67,9 @@ services:
         - action: sync+restart
           path: ./config.dev/
           target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
+    post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
+      - command: composer dumpautoload --no-interaction
+        user: root
     restart: no
 
 volumes:
