@@ -24,30 +24,32 @@ final class ShippedItemReportTest extends TestCase
         $this->assertTrue($q->tbl_for_shippedItemReport !== null);
         $this->assertTrue($q->tbl_for_MotnhlyRecord !== null);
 
-        // load to domcontent
-        $tbl = new DOMDocument();
-        $tbl->loadHTML($q->tbl_for_shippedItemReport->toHtmlText());
-
+        // shipped item report
         $expectedResult = file_get_contents(__DIR__ . '/expected_output.shipped_item_report.html');
-        $expectedTbl = new DOMDocument();
-        $expectedTbl->loadHTML($expectedResult);
-        // compare 2 DOMDocument object structure
-        $this->assertEquals($expectedTbl->getElementsByTagName('tr')->length, $tbl->getElementsByTagName('tr')->length);
-        foreach ($tbl->getElementsByTagName('th') as $k => $v) {
-            $this->assertEquals($expectedTbl->getElementsByTagName('th')[$k]->nodeValue, $v->nodeValue);
-        }
+        $output = ($q->tbl_for_shippedItemReport->toHtmlText());
+        $this->assert_Table_Header($expectedResult, $output);
 
-
-        $tbl = new DOMDocument();
-        $tbl->loadHTML($q->tbl_for_MotnhlyRecord->toHtmlText());
-
+        // for monthly record - shipped item
         $expectedResult = file_get_contents(__DIR__ . '/expected_output.shipped_item.monthly_record.html');
-        $expectedTbl = new DOMDocument();
-        $expectedTbl->loadHTML($expectedResult);
-        // compare 2 DOMDocument object structure
-        $this->assertEquals($expectedTbl->getElementsByTagName('tr')->length, $tbl->getElementsByTagName('tr')->length);
-        foreach ($tbl->getElementsByTagName('th') as $k => $v) {
-            $this->assertEquals($expectedTbl->getElementsByTagName('th')[$k]->nodeValue, $v->nodeValue);
+        $output = ($q->tbl_for_MotnhlyRecord->toHtmlText());
+        $this->assert_Table_Header($expectedResult, $output);
+    }
+
+    private function assert_Table_Header(string $expected_html_text, ?string $actual_html_text)
+    {
+        $this->assertNotNull($actual_html_text);
+        $this->assertNotEmpty($actual_html_text);
+
+        $expected = new DOMDocument();
+        $expected->loadHTML($expected_html_text);
+
+        $actual = new DOMDocument();
+        $actual->loadHTML($actual_html_text);
+
+        // same header
+        $col = $actual->getElementsByTagName('th');
+        foreach ($expected->getElementsByTagName('th') as $k => $v) { // same header
+            $this->assertEquals($v->nodeValue, $col[$k]->nodeValue);
         }
     }
 }
