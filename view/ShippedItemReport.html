@@ -48,14 +48,14 @@
 
 
     <!-- stockOut summary-->
-    <?php if(isset($handler->tbl_for_shippedItemReport) === true) { ?>
+    <?php if($handler->isToGenerateReport() === true) { ?>
     <div class="paper">
         <i>SHIPPED ITEM REPORT: </i>
         <button id="btnPrint">print</button>
         <hr>
         <div id="wrapper-stockoutitem">
             <?php 
-            foreach($handler->tbl_for_shippedItemReport->streamHtmlText() as $html) {
+            foreach($handler->getShippedItemReport()->streamHtmlText() as $html) {
                 echo $html;
             }
             ?>
@@ -75,11 +75,11 @@
     </div>
     <?php };?>
 
-    <?php if(isset($handler->tbl_for_MotnhlyRecord) === true) { ?>
+    <?php if($handler->isToGenerateReport() === true) { ?>
     <div class="paper" id="container-shippeditem">
         <article id="wrapper-monthlyrecord">
             <?php 
-            foreach($handler->tbl_for_MotnhlyRecord->streamHtmlText() as $html) {
+            foreach($handler->getMonthlyRecord()->streamHtmlText() as $html) {
                 echo $html;
             }
             ?>

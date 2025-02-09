@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Report;
 
@@ -17,33 +17,25 @@ use Product\Manager\ItemManager;
 final class ShippedItemReport
 {
     private mysqli $con;
-    public ?HtmlTable $tbl_for_shippedItemReport;
-    public ?HtmlTable $tbl_for_MotnhlyRecord;
+    private ?ExcelReader $xlsx = null;
 
     public function __construct(
-        mysqli $con
-    ) {
-        $this->con = $con;
-    }
-
-    public function handleRequest(
+        mysqli $con,
         array $files
     ) {
-        if (isset($files['bigseller_all_status_orders'])) {
+        $this->con = $con;
+
+        if (isset($files['bigseller_all_status_orders']) === true) { // has file uploaded
             if ($files['bigseller_all_status_orders']['error'] !== 0)
                 throw new Exception("File has error.");
 
-            $xlsx = new ExcelReader($files['bigseller_all_status_orders']['tmp_name']);
-            $iterator = $xlsx->read();
-
-            $item_group_by_sku = $this->processItems($iterator);
-            $this->fetchItemDetails($item_group_by_sku);
-            $this->generateShippedItemReport($item_group_by_sku);
-
-            // Reset the iterator by calling read() again
-            $iterator = $xlsx->read();
-            $this->generateMonthlyRecord($iterator);
+            $this->xlsx = new ExcelReader($files['bigseller_all_status_orders']['tmp_name']);
         }
+    }
+
+    public function isToGenerateReport(): bool
+    {
+        return $this->xlsx !== null;
     }
 
     private function processItems($iterator)
@@ -80,8 +72,13 @@ final class ShippedItemReport
         }
     }
 
-    private function generateShippedItemReport($item_group_by_sku)
+    public function getShippedItemReport(): HtmlTable
     {
+        // if ($this->xlsx === null) return null;
+        $iterator = $this->xlsx->read();
+        $item_group_by_sku = $this->processItems($iterator);
+        $this->fetchItemDetails($item_group_by_sku);
+
         $tbl = new HtmlTable();
         $tbl->setHeader(0, new Cell('Date'));
         $tbl->setHeader(1, new Cell('Item Code'));
@@ -106,11 +103,15 @@ final class ShippedItemReport
         $tbl->setFooter(1, new Cell(''));
         $tbl->setFooter(2, new Cell('Total: '));
         $tbl->setFooter(3, new Cell($totalCount));
-        $this->tbl_for_shippedItemReport = $tbl;
+
+        return $tbl;
     }
 
-    private function generateMonthlyRecord($iterator)
+    public function getMonthlyRecord(): HtmlTable
     {
+        // if ($this->xlsx === null) return null;
+        $iterator = $this->xlsx->read();
+
         $orders = [];
         $now = (new DateTime())->format('m/d/Y');
         foreach ($iterator as $row) {
@@ -141,6 +142,7 @@ final class ShippedItemReport
 
             $tbl->addRow($r);
         }
-        $this->tbl_for_MotnhlyRecord = $tbl;
+
+        return $tbl;
     }
 }

@@ -18,20 +18,23 @@ final class ShippedItemReportTest extends TestCase
 
         $con = require 'tests/db.connection.php';
 
-        $q = new ShippedItemReport($con);
-        $q->handleRequest($_FILES);
-        // assert is set
-        $this->assertTrue($q->tbl_for_shippedItemReport !== null);
-        $this->assertTrue($q->tbl_for_MotnhlyRecord !== null);
+        $q = new ShippedItemReport($con, $_FILES);
 
         // shipped item report
+        $tbl_for_shippedItemReport = $q->getShippedItemReport();
+        $this->assertTrue($tbl_for_shippedItemReport !== null);
+
         $expectedResult = file_get_contents(__DIR__ . '/expected_output.shipped_item_report.html');
-        $output = ($q->tbl_for_shippedItemReport->toHtmlText());
+        $output = ($tbl_for_shippedItemReport->toHtmlText());
         $this->assert_Table_Header($expectedResult, $output);
 
+
         // for monthly record - shipped item
+        $tbl_for_MotnhlyRecord = $q->getMonthlyRecord();
+        $this->assertTrue($tbl_for_MotnhlyRecord !== null);
+
         $expectedResult = file_get_contents(__DIR__ . '/expected_output.shipped_item.monthly_record.html');
-        $output = ($q->tbl_for_MotnhlyRecord->toHtmlText());
+        $output = ($tbl_for_MotnhlyRecord->toHtmlText());
         $this->assert_Table_Header($expectedResult, $output);
     }
 
