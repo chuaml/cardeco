@@ -1,304 +1,304 @@
-//  WARNING
-// code below assume the page has 1 and only 1 table[cd-editable-sheet]
+
 const body = document.body;
-const tbody = body.querySelector('table[cd-editable-sheet] > tbody');
+body.querySelectorAll('table[cd-editable-sheet] > tbody').forEach(function (tbody) {
 
-// auto adjust column size if too small
-tbody.querySelectorAll('tr>td>input').forEach(function (input) {
-    if (input.value) {
-        input.style['min-width'] = input.value.length + 'ch';
-    }
-});
-tbody.addEventListener('change', function (e) {
-    if (e.target.matches('input') === false) return;
-    e.target.style['min-width'] = e.target.value.length + 'ch';
-});
+    // auto adjust column size if too small
+    tbody.querySelectorAll('tr>td>input').forEach(function (input) {
+        if (input.value) {
+            input.style['min-width'] = input.value.length + 'ch';
+        }
+    });
+    tbody.addEventListener('change', function (e) {
+        if (e.target.matches('input') === false) return;
+        e.target.style['min-width'] = e.target.value.length + 'ch';
+    });
 
-// movement key for cell focus 
-const gotoRowCell = (tr, td_cellIndex) => {
-    if (tr !== null) {
-        tr.children[td_cellIndex].querySelector('input').focus();
-    }
-};
+    // movement key for cell focus 
+    const gotoRowCell = (tr, td_cellIndex) => {
+        if (tr !== null) {
+            tr.children[td_cellIndex].querySelector('input').focus();
+        }
+    };
 
-let inputValueBeforeEditing = '';
-const startEditing = (input) => {
-    inputValueBeforeEditing = input.value;
-    input.removeAttribute('readonly');
-    input.focus();
-};
-const startEditing_overwrite = (input) => {
-    startEditing(input);
-    input.select();
-};
-const stopEditing = (input) => {
-    input.blur();
-    input.setAttribute('readonly', '');
-};
+    let inputValueBeforeEditing = '';
+    const startEditing = (input) => {
+        inputValueBeforeEditing = input.value;
+        input.removeAttribute('readonly');
+        input.focus();
+    };
+    const startEditing_overwrite = (input) => {
+        startEditing(input);
+        input.select();
+    };
+    const stopEditing = (input) => {
+        input.blur();
+        input.setAttribute('readonly', '');
+    };
 
-tbody.addEventListener('keydown', function (e) {
-    if (e.ctrlKey === true) {
-        if (e.shiftKey === false) {  // ctrl + delete
-            if (e.code === 'Delete') {
-                e.target.value = '';
+    tbody.addEventListener('keydown', function (e) {
+        if (e.ctrlKey === true) {
+            if (e.shiftKey === false) {  // ctrl + delete
+                if (e.code === 'Delete') {
+                    e.target.value = '';
+                }
             }
         }
-    }
-    else { // ctrlKey === false
+        else { // ctrlKey === false
 
-        if (e.target.matches('input') === false) return;
+            if (e.target.matches('input') === false) return;
 
-        const td = e.target.closest('td');
-        const tr = td.parentElement;
+            const td = e.target.closest('td');
+            const tr = td.parentElement;
 
-        const code = e.code;
+            const code = e.code;
 
-        const input = e.target;
-        if (code === 'Enter') {
-            e.preventDefault(); // prevent form submission to save changes
+            const input = e.target;
+            if (code === 'Enter') {
+                e.preventDefault(); // prevent form submission to save changes
 
-            if (input.readOnly === false) { // is focus, on edit
-                input.setAttribute('readonly', '');
-                input.blur();
-                if (e.shiftKey === true) { // move cell cursor
-                    gotoRowCell(tr.previousElementSibling, td.cellIndex)
-                }
-                else {
-                    gotoRowCell(tr.nextElementSibling, td.cellIndex);
-                }
-            }
-            else {
-                if (e.ctrlKey === true) { // focus and start editing cell
-                    input.removeAttribute('readonly');
-                    input.focus();
-                }
-                else { // move cell cursor
-                    if (e.shiftKey === true) {
+                if (input.readOnly === false) { // is focus, on edit
+                    input.setAttribute('readonly', '');
+                    input.blur();
+                    if (e.shiftKey === true) { // move cell cursor
                         gotoRowCell(tr.previousElementSibling, td.cellIndex)
                     }
                     else {
                         gotoRowCell(tr.nextElementSibling, td.cellIndex);
                     }
                 }
+                else {
+                    if (e.ctrlKey === true) { // focus and start editing cell
+                        input.removeAttribute('readonly');
+                        input.focus();
+                    }
+                    else { // move cell cursor
+                        if (e.shiftKey === true) {
+                            gotoRowCell(tr.previousElementSibling, td.cellIndex)
+                        }
+                        else {
+                            gotoRowCell(tr.nextElementSibling, td.cellIndex);
+                        }
+                    }
+                }
+                return;
             }
-            return;
-        }
-        else if (code === 'Escape') {
-            input.value = inputValueBeforeEditing;
-            stopEditing(input);
-            input.focus();
-        }
-        else if (
-            code.startsWith('Key')
-            || code.startsWith('Digit')
-            || code.startsWith('Numpad')
-        ) { // alphanumeric keys, focus and start editing cell, start typing
+            else if (code === 'Escape') {
+                input.value = inputValueBeforeEditing;
+                stopEditing(input);
+                input.focus();
+            }
+            else if (
+                code.startsWith('Key')
+                || code.startsWith('Digit')
+                || code.startsWith('Numpad')
+            ) { // alphanumeric keys, focus and start editing cell, start typing
+
+                if (e.target.readOnly === true) {
+                    startEditing_overwrite(e.target);
+                }
+                return;
+            }
 
             if (e.target.readOnly === true) {
-                startEditing_overwrite(e.target);
-            }
-            return;
-        }
-
-        if (e.target.readOnly === true) {
-            if (code === 'ArrowUp') {
-                e.target.blur();
-                gotoRowCell(tr.previousElementSibling, td.cellIndex);
-            }
-            else if (code === 'ArrowDown') {
-                e.target.blur();
-                gotoRowCell(tr.nextElementSibling, td.cellIndex);
-            }
-            else if (code === 'ArrowLeft') {
-                e.target.blur();
-                let cellIndex = td.cellIndex;
-                while (cellIndex-- > 0) {
-                    const input = tr.children[cellIndex].querySelector('input');
-                    if (input !== null) {
-                        input.focus();
-                        break;
+                if (code === 'ArrowUp') {
+                    e.target.blur();
+                    gotoRowCell(tr.previousElementSibling, td.cellIndex);
+                }
+                else if (code === 'ArrowDown') {
+                    e.target.blur();
+                    gotoRowCell(tr.nextElementSibling, td.cellIndex);
+                }
+                else if (code === 'ArrowLeft') {
+                    e.target.blur();
+                    let cellIndex = td.cellIndex;
+                    while (cellIndex-- > 0) {
+                        const input = tr.children[cellIndex].querySelector('input');
+                        if (input !== null) {
+                            input.focus();
+                            break;
+                        }
+                    }
+                }
+                else if (code === 'ArrowRight') {
+                    e.target.blur();
+                    const len = tr.children.length - 1;
+                    let cellIndex = td.cellIndex;
+                    while (cellIndex++ < len) {
+                        const input = tr.children[cellIndex].querySelector('input');
+                        if (input !== null) {
+                            input.focus();
+                            break;
+                        }
                     }
                 }
             }
-            else if (code === 'ArrowRight') {
-                e.target.blur();
-                const len = tr.children.length - 1;
-                let cellIndex = td.cellIndex;
-                while (cellIndex++ < len) {
-                    const input = tr.children[cellIndex].querySelector('input');
-                    if (input !== null) {
-                        input.focus();
-                        break;
-                    }
+
+            if (e.shiftKey === false) { // no ctrl, delete
+                if (code === 'Delete') {
+                    e.target.value = '';
                 }
             }
         }
 
-        if (e.shiftKey === false) { // no ctrl, delete
-            if (code === 'Delete') {
-                e.target.value = '';
-            }
-        }
-    }
-
-});
-
-// Ctrl S to save
-body.addEventListener('keydown', e => {
-    if (e.ctrlKey === true && e.code === 'KeyS') {
-        const table = e.target.closest('table[cd-editable-sheet]');
-        if (table === null) return;
-
-        const form = table.closest('form');
-        if (form === null) return;
-
-        form.requestSubmit();
-        e.preventDefault();
-    }
-});
-
-
-// copy cut paste
-tbody.addEventListener('paste', function (e) {
-    if (e.target.readOnly !== true) return; // return to default paste when editing
-    if (e.isTrusted === false) return;
-    if (e.target.matches('input:not(:disabled),textarea:not(:disabled)') === false) return;
-    e.target.value = e.clipboardData.getData('text/plain');
-    e.target.dispatchEvent(new Event('change', { bubbles: true }));
-});
-
-if (navigator.clipboard !== undefined) { // https is required
-    tbody.addEventListener('copy', async function (e) {
-        if (e.target.readOnly !== true) return;
-        if (e.isTrusted === false) return;
-        if (e.target.matches('input,textarea') === false) return;
-        if (e.target.disabled)
-            e.preventDefault();
-        await navigator.clipboard.writeText(e.target.value);
-        e.target.select();
-        setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
     });
 
-}
-else { // otherwise manually select then copy cell content
-    tbody.addEventListener('copy', async function (e) {
+    // Ctrl S to save
+    body.addEventListener('keydown', e => {
+        if (e.ctrlKey === true && e.code === 'KeyS') {
+            const table = e.target.closest('table[cd-editable-sheet]');
+            if (table === null) return;
+
+            const form = table.closest('form');
+            if (form === null) return;
+
+            form.requestSubmit();
+            e.preventDefault();
+        }
+    });
+
+
+    // copy cut paste
+    tbody.addEventListener('paste', function (e) {
+        if (e.target.readOnly !== true) return; // return to default paste when editing
+        if (e.isTrusted === false) return;
+        if (e.target.matches('input:not(:disabled),textarea:not(:disabled)') === false) return;
+        e.target.value = e.clipboardData.getData('text/plain');
+        e.target.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    if (navigator.clipboard !== undefined) { // https is required
+        tbody.addEventListener('copy', async function (e) {
+            if (e.target.readOnly !== true) return;
+            if (e.isTrusted === false) return;
+            if (e.target.matches('input,textarea') === false) return;
+            if (e.target.disabled)
+                e.preventDefault();
+            await navigator.clipboard.writeText(e.target.value);
+            e.target.select();
+            setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
+        });
+
+    }
+    else { // otherwise manually select then copy cell content
+        tbody.addEventListener('copy', async function (e) {
+            if (e.target.readOnly !== true) return;
+            if (e.isTrusted === false) return;
+            if (e.target.matches('input,textarea') === false) return;
+            if (e.target.disabled === true) return;
+
+            e.target.select();
+            setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
+        });
+    }
+
+    tbody.addEventListener('cut', async function (e) {
         if (e.target.readOnly !== true) return;
         if (e.isTrusted === false) return;
         if (e.target.matches('input,textarea') === false) return;
         if (e.target.disabled === true) return;
 
+        e.target.readOnly = false;
         e.target.select();
-        setTimeout(_ => { window.getSelection().removeAllRanges(); }, 0);
+        setTimeout(input => {
+            input.readOnly = true;
+            input.blur();
+            input.focus();
+        }, 0, e.target);
     });
-}
-
-tbody.addEventListener('cut', async function (e) {
-    if (e.target.readOnly !== true) return;
-    if (e.isTrusted === false) return;
-    if (e.target.matches('input,textarea') === false) return;
-    if (e.target.disabled === true) return;
-
-    e.target.readOnly = false;
-    e.target.select();
-    setTimeout(input => {
-        input.readOnly = true;
-        input.blur();
-        input.focus();
-    }, 0, e.target);
-});
 
 
-// force double click input only to allow focus and edit
-tbody.addEventListener('dblclick', function (e) {
-    if (e.target.matches('input') === false) return;
-    startEditing(e.target);
-});
-tbody.addEventListener('focusout', function (e) {
-    if (e.target.matches('input') === false) return;
-    stopEditing(e.target);
-});
-
-// and auto change all input to readonly, only allow double clicking to focus and edit it
-tbody.querySelectorAll('td > input').forEach(function (x) {
-    x.readOnly = true;
-});
-
-
-// money number formatting
-// 1. auto format currency on input, when currency is entered
-tbody.addEventListener('change', function (e) {
-    if (e.target.matches('input.money') === false) return;
-    const input = e.target;
-    if (input.value === '') return;
-
-    const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
-    if (isNaN(money) === true) return;
-
-    // e.g. 123,456,789.00
-    input.value = money.toLocaleString('en-US', {
-        minimumFractionDigits: 2
+    // force double click input only to allow focus and edit
+    tbody.addEventListener('dblclick', function (e) {
+        if (e.target.matches('input') === false) return;
+        startEditing(e.target);
     });
-});
-
-// 2. then format money number to well format numeric decimal only before submitting to server
-body.addEventListener('submit', function (e) {
-    if (e.target.closest('table[cd-editable-sheet] > tbody') === null) return;
-
-    e.target.querySelectorAll('input.money').forEach(function (x) {
-        x.value = x.value.replace(/[^0-9\.]+/g, '');
+    tbody.addEventListener('focusout', function (e) {
+        if (e.target.matches('input') === false) return;
+        stopEditing(e.target);
     });
-});
 
-{
-    class ChangeStack {
-        #history = [];
-        #head = 0;
-        add(input, oldValue) {
-            this.#history[this.#head] = {
-                input: input,
-                oldValue: oldValue,
-                newValue: input.value,
-            };
-            ++this.#head;
-            this.#history.length = this.#head; // remove previous redo
-            // console.log(this.#head);
-        }
-        undo() {
-            const lastChange = this.#history[this.#head - 1];
-            if (lastChange === undefined) return;
-            --this.#head;
-            lastChange.input.focus();
-            lastChange.input.value = lastChange.oldValue;
-            console.log(this);
-        }
+    // and auto change all input to readonly, only allow double clicking to focus and edit it
+    tbody.querySelectorAll('td > input').forEach(function (x) {
+        x.readOnly = true;
+    });
 
-        redo() {
-            const lastChange = this.#history[this.#head];
-            if (lastChange === undefined) return;
-            this.#head++;
-            lastChange.input.focus();
-            lastChange.input.value = lastChange.newValue;
-        }
-    }
-    const changeStack = new ChangeStack();
 
+    // money number formatting
+    // 1. auto format currency on input, when currency is entered
     tbody.addEventListener('change', function (e) {
-        changeStack.add(e.target, inputValueBeforeEditing);
+        if (e.target.matches('input.money') === false) return;
+        const input = e.target;
+        if (input.value === '') return;
+
+        const money = parseFloat(e.target.value.replace(/[^0-9\.]+/g, ''));
+        if (isNaN(money) === true) return;
+
+        // e.g. 123,456,789.00
+        input.value = money.toLocaleString('en-US', {
+            minimumFractionDigits: 2
+        });
     });
 
-    document.addEventListener('keydown', function (e) {
-        if (e.ctrlKey === false) return;
-        if (e.isTrusted === false) return;
-        if (e.code === 'KeyZ') {
-            document.activeElement.blur();
-            changeStack.undo();
-        }
-        else if (e.code === 'KeyY') {
-            document.activeElement.blur();
-            changeStack.redo();
-        }
+    // 2. then format money number to well format numeric decimal only before submitting to server
+    body.addEventListener('submit', function (e) {
+        if (e.target.closest('table[cd-editable-sheet] > tbody') === null) return;
+
+        e.target.querySelectorAll('input.money').forEach(function (x) {
+            x.value = x.value.replace(/[^0-9\.]+/g, '');
+        });
     });
-}
+
+    {
+        class ChangeStack {
+            #history = [];
+            #head = 0;
+            add(input, oldValue) {
+                this.#history[this.#head] = {
+                    input: input,
+                    oldValue: oldValue,
+                    newValue: input.value,
+                };
+                ++this.#head;
+                this.#history.length = this.#head; // remove previous redo
+                // console.log(this.#head);
+            }
+            undo() {
+                const lastChange = this.#history[this.#head - 1];
+                if (lastChange === undefined) return;
+                --this.#head;
+                lastChange.input.focus();
+                lastChange.input.value = lastChange.oldValue;
+                console.log(this);
+            }
+
+            redo() {
+                const lastChange = this.#history[this.#head];
+                if (lastChange === undefined) return;
+                this.#head++;
+                lastChange.input.focus();
+                lastChange.input.value = lastChange.newValue;
+            }
+        }
+        const changeStack = new ChangeStack();
+
+        tbody.addEventListener('change', function (e) {
+            changeStack.add(e.target, inputValueBeforeEditing);
+        });
+
+        document.addEventListener('keydown', function (e) {
+            if (e.ctrlKey === false) return;
+            if (e.isTrusted === false) return;
+            if (e.code === 'KeyZ') {
+                document.activeElement.blur();
+                changeStack.undo();
+            }
+            else if (e.code === 'KeyY') {
+                document.activeElement.blur();
+                changeStack.redo();
+            }
+        });
+    }
+});
 
 // maybe needed feature
 // if (changeEnterKeyTo_MoveAdjecnt) {
