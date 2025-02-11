@@ -4,6 +4,9 @@
             "./inc/class/",
             "./src/",
             "./tests/"
+        ],
+        "files": [
+            "./src/global.function.php"
         ]
     },
     "scripts": {
