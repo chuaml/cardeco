@@ -31,7 +31,7 @@ final class Stock_Item
         if (empty($post)) {
             return;
         }
-        $action = $post['action'];
+        $action = $post['request'];
         switch ($action) {
             case 'stock_item.update':
                 $this->updateStockItem($post);

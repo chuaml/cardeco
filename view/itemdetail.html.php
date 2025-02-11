@@ -17,7 +17,7 @@ $item = $handler->getItem($_GET['id']);
 	<div class="paper">
 		<h2>item detail</h2>
 		<form method="post" action="#" cd-editable-sheet>
-			<input type="hidden" name="action" value="stock_item.update">
+			<input type="hidden" name="request" value="stock_item.update">
 			<input type="hidden" name="id" value="<?= text($item['id']); ?>">
 
 			<table cd-editable-sheet>
@@ -64,7 +64,7 @@ $item = $handler->getItem($_GET['id']);
 			<code><?= text($item['item_code']); ?></code>
 			<code><?= text($item['description']); ?></code>
 		</h3>
-		<form method="post" id="form-bigsellerSku" action="#">
+		<form method="post" id="form-bigsellerSku" action="#" cd-ajax>
 			<input type="hidden" name="item_id" value="<?= text($item['id']); ?>">
 
 			<button type="button" class="btnAddRow">Add</button>
@@ -88,8 +88,8 @@ $item = $handler->getItem($_GET['id']);
 				</tbody>
 			</table>
 			<hr>
-			<button type="submit" name="action" value="bigseller_sku_map.update">Save</button>
-			<button type="submit" name="action" value="bigseller_sku_map.remove">Remove</button>
+			<button type="submit" name="request" value="bigseller_sku_map.update">Save</button>
+			<button type="submit" name="request" value="bigseller_sku_map.remove">Remove</button>
 		</form>
 
 		<template id="template-bigsellerSku">
@@ -114,10 +114,7 @@ $item = $handler->getItem($_GET['id']);
 					tbody.appendChild(tr);
 				});
 			}
-			document.querySelector('#form-bigsellerSku').addEventListener('keydown', function(e) {
-				if (e.code === 'Enter')
-					e.preventDefault();
-			});
+
 			document.querySelector('#form-bigsellerSku').addEventListener('input', function(e) {
 				// auto check the checkbox
 				if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
@@ -128,6 +125,17 @@ $item = $handler->getItem($_GET['id']);
 			});
 		</script>
 	</div>
+
+	<script>
+		document.body.addEventListener('submit', function(e) {
+			if (confirm('Confirm changes?') !== true) {
+				console.log(e.target);
+				e.preventDefault();
+				e.stopPropagation();
+				return;
+			}
+		});
+	</script>
 
 	<!-- 
 <form name="form_uploadItem_image" method="POST" action="process/uploadStock_image" enctype="multipart/form-data">
