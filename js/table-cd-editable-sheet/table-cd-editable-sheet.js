@@ -143,18 +143,28 @@ body.querySelectorAll('table[cd-editable-sheet] > tbody').forEach(function (tbod
     });
 
     // Ctrl S to save
-    body.addEventListener('keydown', e => {
-        if (e.ctrlKey === true && e.code === 'KeyS') {
-            const table = e.target.closest('table[cd-editable-sheet]');
-            if (table === null) return;
+    {
+        let qid = 0;
+        tbody.addEventListener('keydown', e => {
+            if (e.ctrlKey === true && e.code === 'KeyS' && e.isTrusted === true) {
+                e.preventDefault();
+                clearTimeout(qid);
+                qid = setTimeout(_ => {
+                    const form = e.target.closest('form');
+                    if (form === null) return;
 
-            const form = table.closest('form');
-            if (form === null) return;
+                    const table = form.querySelector('table[cd-editable-sheet]');
+                    if (table === null) return;
 
-            form.requestSubmit();
-            e.preventDefault();
-        }
-    });
+                    const btnSubmit = form.querySelectorAll('button[type="submit"], button:not([type])');
+                    if (btnSubmit.length === 1) {
+                        btnSubmit[0].click();
+                    }
+                    
+                }, 100);
+            }
+        });
+    }
 
 
     // copy cut paste
