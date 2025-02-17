@@ -175,6 +175,9 @@
 							response
 						});
 					} else {
+						form.dispatchEvent(new CustomEvent('not-submitted', {
+							bubbles: true
+						}));
 						console.error('form submitted but server failed ' + response.status, {
 							form,
 							response
@@ -204,6 +207,7 @@
 		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
 		}, 0);
+		alert('error: submission failed, please reload page and try again.');
 	});
 </script>
 
@@ -229,4 +233,3 @@
 		});
 	});
 </script>
-

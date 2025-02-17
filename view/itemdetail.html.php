@@ -135,6 +135,10 @@ $item = $handler->getItem($_GET['id']);
 				return;
 			}
 		});
+
+		document.addEventListener('submitted', function(e) {
+			window.location.reload(); // reload on success submission
+		});
 	</script>
 
 	<!-- 

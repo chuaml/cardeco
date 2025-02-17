@@ -148,10 +148,6 @@ final class Stock_Item
         );
         try {
             foreach ($list as $id => $x) {
-                if ($x['_enable'] !== 'on') {
-                    continue;
-                }
-
                 $stmt->bind_param('i', $id);
                 $stmt->execute();
             }
