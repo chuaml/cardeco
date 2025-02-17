@@ -21,12 +21,33 @@
 	background: #555;
 }
 
-:not(read-only):not(:disabled) select:not(:disabled),
-:not(read-only):not(:disabled) input[type=file]:not(:disabled),
-:not(read-only):not(:disabled) input[type=checkbox]:not(:disabled),
-:not(read-only):not(:disabled) input[type=radio]:not(:disabled),
-:not(read-only):not(:disabled) input[type=submit]:not(:disabled),
-:not(read-only):not(:disabled) button:not(:disabled) {
+select,
+input {
+	padding: .25rem;
+	margin: .1rem;
+}
+
+
+button,
+input[type=submit] {
+	padding: .25rem 1rem;
+	margin: .1rem;
+
+	&:focus-within {
+		outline: 1px solid black;
+	}
+
+	&:active {
+		outline: unset;
+	}
+}
+
+:not(:disabled) select:not(:disabled),
+:not(:disabled) input[type=file]:not(:disabled),
+:not(:disabled) input[type=checkbox]:not(:disabled),
+:not(:disabled) input[type=radio]:not(:disabled),
+:not(:disabled) input[type=submit]:not(:disabled),
+:not(:disabled) button:not(:disabled) {
 	cursor: pointer;
 }
 
@@ -319,7 +340,7 @@ div#result_pages {
 	padding-bottom: .8rem;
 }
 
-#result_pages > a {
+#result_pages>a {
 	padding: 0 .1rem;
 	line-height: 1.5;
 }

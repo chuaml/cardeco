@@ -29,23 +29,23 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 COPY --from=composer:2.8.5 /usr/bin/composer /usr/bin/composer
 
 
+
+
+# production setup
+FROM base_image AS production_app
+
 # install app dependencies
 COPY composer.lock composer.json ./
 RUN composer install --no-autoloader --no-dev --no-interaction --no-progress \
  --ignore-platform-req=ext-zip \
 && composer clear-cache
 
-
-
-# production setup
-FROM base_image AS production_app
-
-COPY "./php-production-override.ini" "$PHP_INI_DIR/conf.d/php-production-override.ini"
-
 # Copy application code
 COPY . .
 RUN composer dumpautoload --no-dev --optimize --no-interaction \
 && composer clear-cache
+
+COPY "./php-production-override.ini" "$PHP_INI_DIR/conf.d/php-production-override.ini"
 
 EXPOSE 8080
 
@@ -61,9 +61,13 @@ FROM base_image AS dev_app
 # xdebug
 RUN pecl channel-update pecl.php.net \
 && pecl install xdebug-3.1.6 \
-&& docker-php-ext-enable xdebug \
-# include dev dependencies
-&& composer install --no-autoloader --no-interaction --no-progress
+&& docker-php-ext-enable xdebug
+
+# install dev and app dependencies
+COPY composer.lock composer.json ./
+RUN composer install --no-autoloader --no-interaction --no-progress \
+ --ignore-platform-req=ext-zip \
+&& composer clear-cache
 
 # Copy application code
 COPY . .

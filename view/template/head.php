@@ -143,48 +143,55 @@
 
 <!-- custom ajax form handling [cd-ajax] -->
 <script>
-	// override form submission, listen network response of form submit and retrigger customer event of resposne result
-	document.body.addEventListener('submit', async e => {
-		// exclude form with file
-		if (e.target.matches('form[cd-ajax]') === false) return;
-		e.preventDefault();
-		const form = e.target;
-		const formData = new FormData(form);
+	{ // override form submission, listen network response of form submit and retrigger customer event of resposne result
+		let btnSubmit = null;
+		document.body.addEventListener('click', e => {
+			if (e.target.matches('form[cd-ajax] button[name]') === false) return;
+			btnSubmit = e.target;
+		});
+		document.addEventListener('submit', async e => {
+			// exclude form with file
+			if (e.target.matches('form[cd-ajax]') === false) return;
+			e.preventDefault();
+			const form = e.target;
+			const formData = new FormData(form);
+			if (btnSubmit !== null && btnSubmit.closest('form[cd-ajax]') === form) { // include clicked button value, plain html by default included it
+				formData.append(btnSubmit.getAttribute('name'), btnSubmit.value);
+			}
+			const url = form.getAttribute('action') || window.location.href;
 
-		return await fetch(form.action, {
-				method: form.method,
-				body: formData
-			})
-			.then(response => {
-				// console.log({
-				// 	form,
-				// 	response
-				// });
-				if (response.ok) {
-					form.dispatchEvent(new CustomEvent('submitted', {
-						bubbles: true,
-						detail: response
+			return await fetch(url, {
+					method: form.getAttribute('method'),
+					body: formData
+				})
+				.then(response => {
+					if (response.ok) {
+						form.dispatchEvent(new CustomEvent('submitted', {
+							bubbles: true,
+							detail: response
+						}));
+						console.log('form submitted success ' + response.status, {
+							form,
+							response
+						});
+					} else {
+						console.error('form submitted but server failed ' + response.status, {
+							form,
+							response
+						});
+					}
+				})
+				.catch(error => {
+					form.dispatchEvent(new CustomEvent('not-submitted', {
+						bubbles: true
 					}));
-					console.log('form submitted success ' + response.status, {
-						form,
-						response
-					});
-				} else {
-					console.error('form submitted but server failed ' + response.status, {
-						form,
-						response
-					});
-				}
-			})
-			.catch(error => {
-				form.dispatchEvent(new CustomEvent('not-submitted', {
-					bubbles: true
-				}));
-				return false;
-			});
-	});
+					return false;
+				});
+		});
+	}
+
 	setTimeout(_ => {
-		document.body.addEventListener('submit', e => {
+		document.addEventListener('submit', e => {
 			document.body.classList.add('submitting-form');
 		});
 	}, 0);
@@ -223,26 +230,3 @@
 	});
 </script>
 
-
-<script>
-	window.addEventListener('DOMContentLoaded', function(ev) {
-
-		const doSave = _ => {
-			const form = document.body.querySelector('form[method=post]');
-			console.log(form);
-			if (form !== null) form.requestSubmit();
-		};
-		document.addEventListener('keyup', function(e) {
-			if (e.ctrlKey === false) return;
-			if (e.code !== 'KeyS') return;
-			if (e.isTrusted)
-				setTimeout(doSave, 0);
-		});
-		document.addEventListener('keydown', function(e) {
-			if (e.ctrlKey === false) return;
-			if (e.code !== 'KeyS') return;
-			e.preventDefault();
-		});
-
-	});
-</script>

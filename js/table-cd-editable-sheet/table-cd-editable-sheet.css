@@ -8,18 +8,27 @@ table[cd-editable-sheet] input {
 }
 
 table[cd-editable-sheet] input:focus:not([readonly]) {
-    cursor: text;
+    &[type=text],
+    &[type=number],
+    &[type=tel],
+    &[type=email],
+    &[type=url],
+    &[type=password],
+    &[type=search],
+    &:not([type]){
+        cursor: text;
+    }
 }
 
-table[cd-editable-sheet]>tbody>tr>td:has(input) {
+table[cd-editable-sheet]>tbody>tr>td:has(>input) {
     /* allow input in inside may use 100% max size */
     height: 0px;
     border: 1px solid #bbb;
     padding: 0;
+    min-height: 1.5em;
 }
 
 table[cd-editable-sheet]>tbody>tr>td>input {
-    min-height: 1.5em;
     width: 100%;
     font-family: monospace;
     height: calc(100% - 2px);
@@ -27,7 +36,6 @@ table[cd-editable-sheet]>tbody>tr>td>input {
     border: 0;
     padding: 0;
     font-size: 1em;
-
 }
 
 /* focus double click to show full width */
