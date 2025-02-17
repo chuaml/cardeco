@@ -195,8 +195,12 @@ document.addEventListener('readystatechange', function (ev) {
 
     document.body.addEventListener('keydown', function (e) {
         if (e.isTrusted === false) return;
-        if (e.ctrlKey === true) {  // Ctrl + A to select whole table
+        if (e.ctrlKey === true) {  // Ctrl A to select whole table
             if (e.code === 'KeyA') {
+                if (document.activeElement.matches('input,textarea') === true) {
+                    if (document.activeElement.readOnly !== true) return;
+                }
+
                 const selection = window.getSelection();
                 if (selection.anchorNode === null) return;
 
