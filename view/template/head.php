@@ -175,8 +175,9 @@
 							response
 						});
 					} else {
-						form.dispatchEvent(new CustomEvent('not-submitted', {
-							bubbles: true
+						form.dispatchEvent(new CustomEvent('submitted-failed', {
+							bubbles: true,
+							detail: response
 						}));
 						console.error('form submitted but server failed ' + response.status, {
 							form,
@@ -186,7 +187,8 @@
 				})
 				.catch(error => {
 					form.dispatchEvent(new CustomEvent('not-submitted', {
-						bubbles: true
+						bubbles: true,
+						detail: null
 					}));
 					return false;
 				});
@@ -202,6 +204,12 @@
 		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
 		}, 0);
+	});
+	document.body.addEventListener('submitted-failed', async e => {
+		setTimeout(_ => {
+			document.body.classList.remove('submitting-form');
+		}, 0);
+		alert('error: ' + await e.detail.text());
 	});
 	document.body.addEventListener('not-submitted', e => {
 		setTimeout(_ => {

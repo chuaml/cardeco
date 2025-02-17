@@ -1,5 +1,7 @@
 <?php
 
+use Exception\HttpException;
+
 final class Stock_Item
 {
     private mysqli $con;
@@ -134,7 +136,13 @@ final class Stock_Item
                     $x['bigseller_sku'],
                     $id
                 );
-                $stmt->execute();
+                try {
+                    $stmt->execute();
+                } catch (mysqli_sql_exception $err) {
+                    if ($err->getCode() === 1062) { // duplicate key
+                        throw new HttpException(400, 'Duplicate entry for "' . $x['bigseller_sku'] . '"');
+                    }
+                }
             }
         } finally {
             $stmt->close();
@@ -143,6 +151,9 @@ final class Stock_Item
 
     public function removeBigSellerSku(array $list): void
     {
+        if (empty($list)) {
+            return;
+        }
         $stmt = $this->con->prepare(
             'DELETE FROM bigseller_sku_map WHERE id = ?;'
         );

@@ -2,6 +2,7 @@
 require 'vendor/autoload.php';
 
 use Exception\HttpException;
+
 $_exception = null;
 try {
     require(__DIR__ . '/db/conn_staff.php');
@@ -38,7 +39,11 @@ try {
 } catch (HttpException $ex) {
     $_exception = $ex;
     $statusCode = $ex->getStatusCode();
-    if ($statusCode === 404) {
+    http_response_code($statusCode);
+    if ($statusCode === 400) {
+        echo $ex->getMessage();
+        exit();
+    } else if ($statusCode === 404) {
         header("HTTP/1.1 404 Not Found");
         include 'view/404.php';
     } else if ($statusCode === 500) {
