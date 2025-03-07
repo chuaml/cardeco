@@ -12,8 +12,12 @@ services:
       - cardeco-dev-data:/var/lib/mysql  #
       - ./db/cardeco.sql.gz:/docker-entrypoint-initdb.d/cardeco.sql.gz:ro  #init db if none exist
       - ./db/dump-dev:/var/tmp/dump/  #db backup
+      - ./db/upgrade.sql:/var/tmp/upgrade.sql:ro  #db upgrade
     post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
       - command: sh -c 'sleep 2 && mysqldump -h 127.0.0.1 -u root -ptoor cardeco_dev --lock-all-tables | gzip > /var/tmp/dump/cardeco_dev.db.dump.$(date --utc +"%Y-%m-%d_%H%M%S").sql.gz && cd /var/tmp/dump/ && ls -t | tail -n +6 | xargs -I {} rm -f "{}"'
+        user: root
+      # upgrade database schema
+      - command: sh -c 'mysql -u root -ptoor cardeco_dev < /var/tmp/upgrade.sql' 
         user: root
     ports:
       - "3308:3306"
