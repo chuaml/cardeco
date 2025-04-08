@@ -53,16 +53,16 @@ class BigSellerOrderProcess
             for ($i = 0; $i < $quantity; ++$i) { // spread out 1 line to multiple line item
                 $list[] = [
                     'orderNum' => trim($r[0]),
-                    'date' => trim($r[65]), // `Order Time`
+                    'date' => trim($r[64]), // `Order Time`
                     'sku' => trim($r[23]),
                     'description' => trim($r[25]), // `Product Name`
-                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[31])),
-                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[52])),
-                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[63])), // `Store Voucher`
-                    'trackingNum' => trim($r[51]),
+                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[31])), // `Price`
+                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[51])), // `Shipping Fee`
+                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[62])), // `Store Voucher`
+                    'trackingNum' => trim($r[50]), // `Tracking Number`
 
                     'paidPrice' => trim($r[32]), // `Product Subtotal`
-                    'shippingProvider' => trim($r[49]), // `Shipping Option`
+                    'shippingProvider' => trim($r[48]), // `Shipping Option`
                     'shippingState' => trim($r[18]), // `Province (State)`
 
                     'marketPlace' => trim($r[9]), // necessary for computation; grouping item counts
