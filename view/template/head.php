@@ -245,18 +245,18 @@
 <script>
 	window.addEventListener('load', function(e) {
 		const stopPrefetch = quicklink.listen({
-			delay: 250,
+			delay: 500,
 			limit: 16,
 			throttle: 4,
-			origins: [
-				location.origin // prefetch self origin only
+			origins: [ // these actually mean domain name, not origin
+				location.hostname // prefetch self domain only
 			],
 			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
 			onError: console.warn,
 		});
 
 		// stop prefetching
-		setTimeout(stopPrefetch, 123000); // 2min
+		setTimeout(stopPrefetch, 6500);
 		document.addEventListener('submitted', e => {
 			stopPrefetch();
 		});
