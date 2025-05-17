@@ -174,8 +174,14 @@
 			const url = form.getAttribute('action') || window.location.href;
 
 			return await fetch(url, {
-					method: form.getAttribute('method'),
-					body: formData
+					method: form.getAttribute('method') || 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Cache-Control': 'max-age=0',
+						'Upgrade-Insecure-Requests': '1',
+					},
+					credentials: 'same-origin',
+					body: new URLSearchParams(formData).toString(),
 				})
 				.then(response => {
 					if (response.ok) {
