@@ -166,6 +166,8 @@
 			// exclude form with file
 			if (e.target.matches('form[cd-ajax]') === false) return;
 			e.preventDefault();
+			await new Promise(r => setTimeout(r, 0)); // allow left over input changes to apply first; yield to 'change' event
+
 			const form = e.target;
 			const formData = new FormData(form);
 			if (btnSubmit !== null && btnSubmit.closest('form[cd-ajax]') === form) { // include clicked button value, plain html by default included it
