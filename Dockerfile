@@ -16,8 +16,8 @@ RUN docker-php-ext-install mysqli \
  zip \
  mbstring \
  opcache \
-# Enable Apache mod_rewrite
-&& a2enmod rewrite \
+# Enable Apache httpd module: mod_rewrite, mod_headers
+&& a2enmod rewrite headers \
 # set php.ini
 && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
