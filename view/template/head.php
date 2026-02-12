@@ -122,6 +122,16 @@
 </script>
 <!-- smooth page loading transition -->
 
+<script>
+	window.addEventListener('error', function (e) {
+		// console.log(e, e.message, e.error.stack);
+		gtag('event', 'exception', {
+			'description': e.error.stack,
+			'error_path_line_col': `pathname: ${location.pathname}\tline: ${e.lineno}\tcol: ${e.colno}`,
+			'fatal': false
+		})
+	});
+</script>
 
 <script>
 	// override form submission, listen network response of form submit and retrigger customer event of resposne result

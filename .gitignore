@@ -21,3 +21,8 @@ _*.*
 
 #ignore folder
 /public/*
+
+#dump & backup files
+db/dump
+db/dump-dev
+*.sql.gz
