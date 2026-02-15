@@ -3,25 +3,69 @@
 <head>
 	<?php require('view/template/head.php') ?>
 
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/myscript.js"></script>
+	<script src="js/jquery-3.3.1.min"></script>
+	<script src="js/myscript"></script>
+	<style>
+		/* make all tab separated column aligned, table view */
+		textarea {
+			tab-size: 16;
+			white-space: pre;
+			font-family: monospace;
+		}
+	</style>
 </head>
 
 <?php include('inc/html/nav.html');?>
 
-<p>*For counting the number of occurrences for each item <br> 
-*Case sensitive for items name</p>
+<i>*Case sensitive for each row text</i>
 <form name="itemlistForm" method="POST" action="counting">
- <label for="itemlistForm">Enter list of items name with each line represents 1 item.<br></label>
+	<label for="itemlistForm">Count items row by ...<br></label>
  <select name="Select" required>
 	<option value="" selected>Please Select</option>
 	<option value="normal">normal</option>
-	<option value="3column">3columns Excel</option>
+	<option value="3column_by_itemName">3columns Excel (by name)</option>
+	<option value="3column_by_itemCode">3columns Excel (by item code)</option>
  </select>
  <input type="submit" name="submit"> <br>
  <textarea name="txtItems" rows="25" cols="64" maxlength="65536" required><?= rtrim($_POST['txtItems'] ?? '') ?></textarea>
 
 </form>
+
+<script>
+    window.addEventListener('DOMContentLoaded', _ => {
+        { // display hints, placeholder, helper info of input
+            function showExampleInput(inputType) {
+                const txtItems = document.querySelector('textarea[name="txtItems"]');
+                if (inputType === 'normal') {
+                    txtItems.setAttribute('placeholder', "text");
+                } else if (inputType === '3column_by_itemName') {
+                    txtItems.setAttribute('placeholder',
+                        "Item code\t*Product name*\tDate"
+                        + "\n" + ['xxx-xxx', 'bbbb', 'yyyy/MM/dd'].join("\t")
+                        + "\n" + ['...', '...', '...'].join("\t")
+                        + "\n" + ['...', '...', '...'].join("\t")
+                    );
+                }
+                else if (inputType === '3column_by_itemCode') {
+                    txtItems.setAttribute('placeholder',
+                        "*Item code*\tProduct name\tDate"
+                        + "\n" + ['xxx-xxx', 'bbbb', 'yyyy/MM/dd'].join("\t")
+                        + "\n" + ['...', '...', '...'].join("\t")
+                        + "\n" + ['...', '...', '...'].join("\t")
+                    );
+                }
+                else {
+                    txtItems.setAttribute('placeholder', 'count by ...');
+                }
+            }
+            const ddlSelect = document.querySelector('form select[name="Select"]');
+            showExampleInput(ddlSelect.selectedOptions[0].value);
+            ddlSelect.addEventListener('change', function (e) {
+                showExampleInput(e.target.selectedOptions[0].value);
+            });
+        }
+    });
+</script>
 
 
 <script>
@@ -36,7 +80,10 @@
 <?php
 //read Submitted data
 if(isset($_POST['submit']) && isset($_POST['Select'])){ ?>
-	<input type="date" id="selected_date" onchange="select_date()"><br>
+	<label>
+		<span>Filter by: </span>
+		<input type="date" id="selected_date" onchange="select_date()"><br>
+	</label>
 	<?php 
 	$data = rtrim($_POST['txtItems']);
 	
@@ -103,7 +150,7 @@ if(isset($_POST['submit']) && isset($_POST['Select'])){ ?>
 				<tr>
 					<td>Total: </td><td>$totalQuantity</td>
 				</tr></tfoot></table>";
-	} else {
+	} if($_POST['Select'] === '3column_by_itemName') {
 		//3columns
 		$data = trim($_POST['txtItems']," \n\r\0\x0B"); //preserve \t tabs for fields delimiter
 		$list = explode("\r\n",$data); 
@@ -201,6 +248,104 @@ if(isset($_POST['submit']) && isset($_POST['Select'])){ ?>
 					<td></td><td>Total items: </td><td></td><td id=\"totalQuantity\">$totalQuantity</td>
 				</tr></tfoot></table>";
 	}
+	else if($_POST['Select'] === '3column_by_itemCode'){
+		//3columns
+		$data = trim($_POST['txtItems']," \n\r\0\x0B"); //preserve \t tabs for fields delimiter
+		$list = explode("\r\n",$data); 
+		 //array_splice($list,0,1); //remove header
+		$temp_list=array();
+
+		if(isset($list[0]) === false){
+			die('Error: Empty Row. Expected 3columns and Rows.');
+		}
+
+		foreach($list as $k => $v){
+			if(strlen(trim($v)) === 0){continue;}
+			$v = trim($v," \n\r\0\x0B");
+			$v = explode("\t",$v); 
+			if(sizeof($v) !== 3){
+				die('Error: Invalid fields size at Row: ' .($k+1)
+				.'<br>&nbsp Please input proper values copied from Excel.<br>
+				&nbsp Expected 3 columns separated with Tabs and excluding Header at row/line 1');
+			}
+			
+			//check item Date
+			$itemDate = trim($v[2]);
+			if(strlen($itemDate) !== 0){
+				if(strlen($itemDate) <= 6){
+				die('Error: Invalid date at Row ' . ($k + 1));
+				} else {
+					if(date_create($itemDate) === false){
+						die('Error: Invalid date format at Row ' . ($k+1));
+					} else {
+						$v[2] = date_format(date_create($itemDate),'Y-m-d');
+					}
+				}
+			}
+			
+			$temp_list[] = $v;
+		}
+		$list = $temp_list;
+		unset($temp_list); unset($k); unset($v);
+		
+		$len = sizeof($list);
+	
+		$itemList = array();
+		$itemCode = trim($list[0][0]);
+		$itemName = trim($list[0][1]);
+		$itemDate = trim($list[0][2]);
+		$itemList[] = array($itemCode, $itemName, $itemDate, 1); //first item name, quantity 1
+		$foundSame = false;
+		for($r=1;$r<$len;++$r){
+			$foundSame = false;
+			$itemCode_temp = trim($list[$r][0]);
+			$len2 = sizeof($itemList);
+			for($i=0;$i<$len2;++$i){
+				$itemCode = trim($itemList[$i][0]);
+				if($itemCode_temp === $itemCode){
+					$itemList[$i][3] += 1;
+					$foundSame = true;
+					break;
+				}
+			}
+			if($foundSame === false){
+				$itemList[] = array(
+							trim($list[$r][0]), 
+							trim($list[$r][1]), 
+							trim($list[$r][2]),
+							1);
+			}
+			
+		}
+		
+		$numrow = sizeof($itemList);
+		$data = "Total Number of Rows: $numrow <br>";
+		
+		$data .= '<table id="item_list">
+				<thead>
+				<tr>
+					<th>Item Code</th><th>Product Name</th><th>Date</th><th>Quantity</th>
+				</tr>
+				</thead>
+				<tbody>';
+		$totalQuantity = 0;
+		foreach($itemList as $r){
+			$r[0] = htmlspecialchars(trim($r[0]), ENT_QUOTES, 'UTF-8');
+			$r[1] = htmlspecialchars(trim($r[1]), ENT_QUOTES, 'UTF-8');
+			$r[2] = htmlspecialchars(trim($r[2]), ENT_QUOTES, 'UTF-8');
+			$data .= "
+					<tr datevalue=\"$r[2]\">
+					<td>$r[0]</td><td>$r[1]</td><td>$r[2]</td><td>$r[3]</td>
+					</tr>";
+			$totalQuantity += intval($r[3]);
+		}
+
+		$data .=  "</tbody>
+				<tfoot>
+				<tr>
+					<td></td><td>Total items: </td><td></td><td id=\"totalQuantity\">$totalQuantity</td>
+				</tr></tfoot></table>";
+	}
 	echo $data;
 }
 
@@ -241,8 +386,8 @@ if(isset($_POST['submit']) && isset($_POST['Select'])){ ?>
 					r[i].style.display = 'none';
 				}
 			}
-			alert(totalQuantity);
-		document.getElementById('totalQuantity').innerHTML = totalQuantity;
+			console.log({totalQuantity});
+		document.getElementById('totalQuantity').textContent = totalQuantity;
 		}
 	}
 </script>

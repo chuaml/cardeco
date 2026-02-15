@@ -22,6 +22,9 @@ _*.*
 *.bak.sql
 
 #ignore folder
-/public/*
-/db/dump/*
-/db/dump-dev/*
+./public/**/*
+
+#dump & backup files
+db/dump
+db/dump-dev
+*.sql.gz

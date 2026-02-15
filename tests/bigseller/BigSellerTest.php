@@ -11,7 +11,7 @@ final class BigSellerTest extends TestCase
     public function testListOrder_OrderFile_OrderSummary(): void
     {
         $con = require 'tests/db.connection.php';
-        $q = new BigSellerOrderProcess($con, 'tests/bigseller/data.input/bigseller.input.order.sample.2025-01-07.xlsx');
+        $q = new BigSellerOrderProcess($con, 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx');
         $data = $q->getData();
         $data['toRestock'];
         $data['toCollect'];
@@ -26,7 +26,7 @@ final class BigSellerTest extends TestCase
     public function testListOrder_OrderFile_ExpectedOutputList(): void
     {
         $con = require 'tests/db.connection.php';
-        $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-01-07.xlsx';
+        $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx';
         $q = new BigSellerOrderProcess($con, $filePath);
         $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.expected.json');
         $expectedResult = json_decode($expectedResult);
@@ -42,7 +42,7 @@ final class BigSellerTest extends TestCase
     public function testListOrder_OrderFile_ExpectedOutputHtml(): void
     {
         $con = require 'tests/db.connection.php';
-        $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-01-07.xlsx';
+        $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx';
         $q = new BigSellerOrderProcess($con, $filePath);
 
         $htmlData = $q->getData();

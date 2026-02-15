@@ -22,6 +22,20 @@
 	</script>
 	<div style="padding: 0.5em;background-color: green;color:white;">Staging - test server</div>
 
+	<script type="text/javascript">
+		(function(c, l, a, r, i, t, y) {
+			c[a] = c[a] || function() {
+				(c[a].q = c[a].q || []).push(arguments)
+			};
+			t = l.createElement(r);
+			t.async = 1;
+			t.src = "https://www.clarity.ms/tag/" + i;
+			y = l.getElementsByTagName(r)[0];
+			y.parentNode.insertBefore(t, y);
+		})(window, document, "clarity", "script", "ri0as4ewcy");
+	</script>
+
+	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>
 <?php } else { ?>
 
 	<title>Cardeco</title>
@@ -153,6 +167,17 @@
 <!-- custom table sorter -->
 <link rel="stylesheet" href="js/table-sorter/table-sorter.css">
 <script src="js/table-sorter/table-sorter-init.js"></script>
+
+<script>
+	window.addEventListener('error', function (e) {
+		// console.log(e, e.message, e.error.stack);
+		gtag('event', 'exception', {
+			'description': e.error.stack,
+			'error_path_line_col': `pathname: ${location.pathname}\tline: ${e.lineno}\tcol: ${e.colno}`,
+			'fatal': false
+		})
+	});
+</script>
 
 <!-- custom ajax form handling [cd-ajax] -->
 <script>
