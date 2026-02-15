@@ -1,7 +1,5 @@
 services:
   mysql-dev:
-    profiles:
-      - dev
     image: mysql:8.0.41
     environment:
       MYSQL_ROOT_PASSWORD: toor
@@ -31,8 +29,6 @@ services:
 
 
   app-dev:
-    profiles:
-      - dev
     depends_on:
       mysql-dev:
         condition: service_started   # service_started | service_healthy to skip or wait for db ready respectively
