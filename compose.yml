@@ -44,6 +44,7 @@ services:
       # - ./:/var/www/html  ## avoid using bind-mount for realtime watch on file changes
       - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
       - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
+      - ./.vscode:/var/www/html/.vscode
     environment:
       IS_PRODUCTION: 0
       MYSQL_HOST: mysql-dev
