@@ -1,4 +1,4 @@
-services:
+services:  ## for development environment
   mysql-dev:
     image: mysql:8.0.41
     environment:
@@ -28,11 +28,11 @@ services:
     restart: no
 
 
-  app-dev:
-    depends_on:
-      mysql-dev:
-        condition: service_started   # service_started | service_healthy to skip or wait for db ready respectively
-        restart: true
+  app-dev: ## this will behave has dev env, not just app server
+    # depends_on:  ## so depends on db should not needed
+    #   mysql-dev:
+    #     condition: service_started   # service_started | service_healthy to skip or wait for db ready respectively
+    #     restart: true
     build:
       dockerfile: ./Dockerfile
       target: dev_app  # image variant
@@ -41,10 +41,10 @@ services:
       ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
     working_dir: /var/www/html
     volumes:
-      # - ./:/var/www/html  ## avoid using bind-mount for realtime watch on file changes
-      - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
-      - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
-      - ./.vscode:/var/www/html/.vscode
+      - ./:/var/www/html  ## bind-mount 2 way bi-directional files sync; exclude ignored files/dir
+      - ./tests/:/var/www/html/tests  ## mount ignored tests, for dev env
+      # - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
+      # - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
     environment:
       IS_PRODUCTION: 0
       MYSQL_HOST: mysql-dev
@@ -53,23 +53,28 @@ services:
       MYSQL_DB: cardeco_dev
     extra_hosts:
       - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
-    develop:
-      watch:   ## dedicated watch mode using  `docker compose up --watch`  flag
-        - action: sync
-          path: ./
-          target: /var/www/html
-          ignore:
-            - vendor/
-            - node_modules/
-            - public/
-            - upload/
+    develop: 
+      watch:   ## only if run with `docker compose up --watch`  flag
+        ## watch only allow 1 way sync --from host to container-- unlike bind-mount is 2 way
+        ## this assume IDE edit on host device without connecting into container
+        ## and also assume host device has the necessary runtime binaries
+        ## incompatible vscode dev workflow; 
+        ## good practice is to connect IDE directly into container for development
+        # - action: sync  ## incompatible vscode dev workflow,  
+        #   path: ./
+        #   target: /var/www/html
+        #   ignore:
+        #     - vendor/
+        #     - node_modules/
+        #     - public/
+        #     - upload/
         - action: rebuild
           path: composer.json
         - action: sync+restart
           path: ./config.dev/
           target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
     post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
-      - command: composer dumpautoload --no-interaction
+      - command: composer dumpautoload --no-interaction && apache2-foreground
         user: root
     restart: no
 

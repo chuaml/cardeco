@@ -28,3 +28,5 @@ _*.*
 db/dump
 db/dump-dev
 *.sql.gz
+
+node_modules
