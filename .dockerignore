@@ -13,6 +13,7 @@ db/*.sql
 db/*.gz
 db/dump/*
 db/dump-dev/*
+config.dev
 tests
 
 
