@@ -15,7 +15,7 @@
     },
     "scripts": {
         "serve": [
-            "composer dumpautoload --no-interaction",
+            "apachectl stop",
             "apache2-foreground"
         ],
 
@@ -31,7 +31,7 @@
             "php -d xdebug.mode=profile -d xdebug.log_level=0 -d zlib.output_compression=1 -d zlib.output_compression_level=1 ./vendor/bin/phpunit ./tests/ --colors=always"
         ],
         "reload": [
-            "composer dumpautoload",
+            "composer dumpautoload --no-interaction",
             "composer run tests"
         ]
     },
