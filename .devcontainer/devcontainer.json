@@ -1,21 +1,18 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
-	"name": "Existing Docker Compose (Extend)",
-	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"name": "dev container",
 	"dockerComposeFile": [
 		"../compose.yml",
-		"docker-compose.yml"
+		"./docker-compose.yml"  // for addon or orverriding only
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
 	"service": "app-dev",
 	//
-	// The optional 'workspaceFolder' property is the path VS Code should open by default when
-	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
-	"workspaceFolder": "/var/www/html",
+	"workspaceFolder": "/var/www/html",  // align with  /.devcontainer/docker-compose.yml
 	"postCreateCommand": "pwd && ls && php -v && whoami",
-	"postStartCommand": "pwd && ls && php -v && whoami",
+	"postStartCommand": "php -v && pwd && echo apache server would be started by default, otherwise manually run \" apache2-foreground \" to start server.",
 	"customizations": {
 		"vscode": {
 			"extensions": [

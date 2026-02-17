@@ -1,6 +1,10 @@
 # setup development container
 
 use vscode with `ms-vscode-remote.remote-containers` extension, the `./.devcontainer/devcontainer.json` combine and bundle all necessary configurations to run and setup a dev container environment
+* vscode command: 
+    - `Dev Containers: Open Folder in Container`
+    - or `Dev Containers: Rebuild and Reopen in Container`
+    
 
 otherwise manually spin up a dev container
 ```bash
@@ -12,5 +16,5 @@ docker compose --file compose.yml -p cardeco_dev up --watch
 
 to stop container and delete everything --including volumn---
 ```bash
-docker compose -p cardeco_dev down
+docker compose -p cardeco_dev down -v --remove-orphans
 ```
