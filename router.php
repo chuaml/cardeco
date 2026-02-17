@@ -33,7 +33,13 @@ try {
     if ($err !== null) {
         if ($err['file'] !== 'xdebug://debug-eval') {
             http_response_code(500);
-            throw new RuntimeException('type=' . $err['type'] . "\n" . $err['message'] . "\n" . $err['file'] . "\nline: " . $err['line'] . "\n\n");
+            try {
+                // for triggerring IDE debugger, to view in IDE only
+                throw new RuntimeException('type=' . $err['type'] . "\n" . $err['message'] . "\n" . $err['file'] . "\nline: " . $err['line'] . "\n\n");
+            } catch (RuntimeException $err) {
+                // log only, prevent showing error page for handled error to frontpage 
+                error_log($err->getMessage());
+            }
         }
     }
 } catch (HttpException $ex) {
