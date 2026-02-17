@@ -38,7 +38,7 @@ services:  ## for development environment
       dockerfile: ./Dockerfile
       target: dev_app  # image variant
     ports:
-      - 8082:80
+      - 127.0.0.1:8082:80
       ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
     working_dir: /var/www/html
     volumes:
@@ -46,8 +46,8 @@ services:  ## for development environment
       - ./tests/:/var/www/html/tests  ## mount the ignored tests in dev env
       - dependencies_php:/var/www/html/vendor
       - dependencies_nodejs:/var/www/html/node_modules
-      # - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
-      # - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
+      - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
+      - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
     environment:
       IS_PRODUCTION: 0
       MYSQL_HOST: mysql-dev
