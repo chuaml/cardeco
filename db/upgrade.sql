@@ -10,3 +10,14 @@ CREATE TABLE if not exists `bigseller_sku_map` (
   CONSTRAINT `bigseller_sku_map_FK` FOREIGN KEY (`item_id`) REFERENCES `stock_items` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+
+-- upgrade old table to innodb
+alter table `bookmarks` ENGINE=InnoDB;
+alter table `bookmarks_items` ENGINE=InnoDB;
+alter table `cashsales` ENGINE=InnoDB;
+alter table `courier_record` ENGINE=InnoDB;
+alter table `lzd_fee_statements` ENGINE=InnoDB;
+alter table `orders` ENGINE=InnoDB;
+alter table `orders_insert_log` ENGINE=InnoDB;
+alter table `orders_temp` ENGINE=InnoDB;
+alter table `seller_sku` ENGINE=InnoDB;

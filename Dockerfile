@@ -16,8 +16,8 @@ RUN docker-php-ext-install mysqli \
  zip \
  mbstring \
  opcache \
-# Enable Apache mod_rewrite
-&& a2enmod rewrite \
+# Enable Apache httpd module: mod_rewrite, mod_headers
+&& a2enmod rewrite headers \
 # set php.ini
 && mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
@@ -67,13 +67,19 @@ RUN pecl channel-update pecl.php.net \
 COPY composer.lock composer.json ./
 RUN composer install --no-autoloader --no-interaction --no-progress \
  --ignore-platform-req=ext-zip \
-&& composer clear-cache
-
-# Copy application code
-COPY . .
-RUN composer dumpautoload --no-interaction \
+&& composer clear-cache \
 && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+## no need copy application code, we gonna bind-mount the project from host dir into container 
+# COPY . .
+# RUN composer dumpautoload --no-interaction  ## no need to generate autoload, wait for ignored dir to be mounted in dev env first
+
+# Start Apache in the foreground
+# CMD ["apache2-foreground"]  ## default command to run in container, may be overriden by other
+## ENTRYPOINT apache2-foreground  # do not use entrypoint as unchangable default command
+
 
 ## do NOT map nor expose port 9003
 ## so that host machine can listen to Xdebug inside container
 ## EXPOSE 9003
+

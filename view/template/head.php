@@ -22,6 +22,20 @@
 	</script>
 	<div style="padding: 0.5em;background-color: green;color:white;">Staging - test server</div>
 
+	<script type="text/javascript">
+		(function(c, l, a, r, i, t, y) {
+			c[a] = c[a] || function() {
+				(c[a].q = c[a].q || []).push(arguments)
+			};
+			t = l.createElement(r);
+			t.async = 1;
+			t.src = "https://www.clarity.ms/tag/" + i;
+			y = l.getElementsByTagName(r)[0];
+			y.parentNode.insertBefore(t, y);
+		})(window, document, "clarity", "script", "ri0as4ewcy");
+	</script>
+
+	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>
 <?php } else { ?>
 
 	<title>Cardeco</title>
@@ -39,6 +53,19 @@
 		gtag('js', new Date());
 
 		gtag('config', 'G-139719LGJQ');
+	</script>
+
+	<script type="text/javascript">
+		(function(c, l, a, r, i, t, y) {
+			c[a] = c[a] || function() {
+				(c[a].q = c[a].q || []).push(arguments)
+			};
+			t = l.createElement(r);
+			t.async = 1;
+			t.src = "https://www.clarity.ms/tag/" + i;
+			y = l.getElementsByTagName(r)[0];
+			y.parentNode.insertBefore(t, y);
+		})(window, document, "clarity", "script", "ri0as4ewcy");
 	</script>
 
 <?php } ?>
@@ -141,6 +168,17 @@
 <link rel="stylesheet" href="js/table-sorter/table-sorter.css">
 <script src="js/table-sorter/table-sorter-init.js"></script>
 
+<script>
+	window.addEventListener('error', function (e) {
+		// console.log(e, e.message, e.error.stack);
+		gtag('event', 'exception', {
+			'description': e.error.stack,
+			'error_path_line_col': `pathname: ${location.pathname}\tline: ${e.lineno}\tcol: ${e.colno}`,
+			'fatal': false
+		})
+	});
+</script>
+
 <!-- custom ajax form handling [cd-ajax] -->
 <script>
 	{ // override form submission, listen network response of form submit and retrigger customer event of resposne result
@@ -153,6 +191,8 @@
 			// exclude form with file
 			if (e.target.matches('form[cd-ajax]') === false) return;
 			e.preventDefault();
+			await new Promise(r => setTimeout(r, 0)); // allow left over input changes to apply first; yield to 'change' event
+
 			const form = e.target;
 			const formData = new FormData(form);
 			if (btnSubmit !== null && btnSubmit.closest('form[cd-ajax]') === form) { // include clicked button value, plain html by default included it
@@ -161,8 +201,14 @@
 			const url = form.getAttribute('action') || window.location.href;
 
 			return await fetch(url, {
-					method: form.getAttribute('method'),
-					body: formData
+					method: form.getAttribute('method') || 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Cache-Control': 'max-age=0',
+						'Upgrade-Insecure-Requests': '1',
+					},
+					credentials: 'same-origin',
+					body: new URLSearchParams(formData).toString(),
 				})
 				.then(response => {
 					if (response.ok) {
@@ -224,18 +270,18 @@
 <script>
 	window.addEventListener('load', function(e) {
 		const stopPrefetch = quicklink.listen({
-			delay: 250,
+			delay: 500,
 			limit: 16,
 			throttle: 4,
-			origins: [
-				location.origin // prefetch self origin only
+			origins: [ // these actually mean domain name, not origin
+				location.hostname // prefetch self domain only
 			],
 			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
 			onError: console.warn,
 		});
 
 		// stop prefetching
-		setTimeout(stopPrefetch, 123000); // 2min
+		setTimeout(stopPrefetch, 6500);
 		document.addEventListener('submitted', e => {
 			stopPrefetch();
 		});
