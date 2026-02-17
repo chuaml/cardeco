@@ -17,6 +17,7 @@
 		"vscode": {
 			"extensions": [
 				"xdebug.php-debug",
+				"zobo.php-intellisense",
 				"bmewburn.vscode-intelephense-client",
 				"DEVSENSE.profiler-php-vscode",
 				"recca0120.vscode-phpunit",
