@@ -61,11 +61,14 @@ FROM base_image AS dev_app
 # xdebug
 RUN pecl channel-update pecl.php.net \
 && pecl install xdebug-3.1.6 \
-&& docker-php-ext-enable xdebug
+&& docker-php-ext-enable xdebug \
+## this alias disable xdebug specifically for the php `composer` command; 
+## to prevent `composer` and any command its spawn being debugged by default, which would be slow down or even stucked
+&& echo "alias composer='XDEBUG_MODE=off composer'" >> /etc/bash.bashrc
 
 # install dev and app dependencies
 COPY composer.lock composer.json ./
-RUN composer install --no-autoloader --no-interaction --no-progress \
+RUN XDEBUG_MODE=off composer install --no-autoloader --no-interaction --no-progress \
  --ignore-platform-req=ext-zip \
 && composer clear-cache \
 && mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"

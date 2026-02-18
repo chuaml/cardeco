@@ -3,9 +3,11 @@
 locally ignore these custom config files changes:
 ```bash
 git update-index --assume-unchanged config.dev/php-dev-override.ini 
-git update-index --assume-unchanged config.dev/xdebug.ini           
+git update-index --assume-unchanged config.dev/xdebug.ini   
+git ls-files -v | grep "^h"
 ```
 - these are php and xdebug conf to be addon and custom override locally during dev
+- `git update-index --no-assume-unchanged ` to re-add file into tracking changes
 
 Run AND Develop the whole project in a Dev Container
 - use VSCODE + `ms-vscode-remote.remote-containers` extension
