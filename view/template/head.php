@@ -266,8 +266,8 @@
 </script>
 
 
-<script src="js/vendor/quicklink.umd.js"></script>
-<script>
+<!-- <script src="js/vendor/quicklink.umd.js"></script> -->
+<!-- <script>
 	window.addEventListener('load', function(e) {
 		const stopPrefetch = quicklink.listen({
 			delay: 500,
@@ -286,4 +286,4 @@
 			stopPrefetch();
 		});
 	});
-</script>
+</script> -->
