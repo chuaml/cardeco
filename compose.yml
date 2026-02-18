@@ -60,7 +60,7 @@ services:  ## for development environment
     command: sleep infinity  ## keep container running, allow vscode to connect
                              ## and stop Apache server from starting automatically in background
     post_start: 
-      - command: composer dumpautoload --no-interaction
+      - command: XDEBUG_MODE=off composer dumpautoload --no-interaction
         user: root
     # develop: 
     #   watch:   ## only if run with `docker compose up --watch`  flag
