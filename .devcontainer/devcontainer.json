@@ -11,7 +11,7 @@
 	"service": "app-dev",
 	//
 	"workspaceFolder": "/var/www/html",  // align with  /.devcontainer/docker-compose.yml
-	"postCreateCommand": "pwd && ls && php -v && whoami",
+	"postCreateCommand": "pwd && ls && php -v && whoami && XDEBUG_MODE=off composer dumpautoload",
 	"postStartCommand": "php -v && pwd && echo apache server would be started by default, otherwise manually run \" apache2-foreground \" to start server.",
 	"customizations": {
 		"vscode": {

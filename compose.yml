@@ -39,7 +39,8 @@ services:  ## for development environment
       target: dev_app  # image variant
     ports:
       - 127.0.0.1:8082:80
-      ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
+      - 127.0.0.1:9003:9003  ## this must be mapped, other all `php` and `composer` command would stuck if no active debug session
+          ## xdebug only work when debugging session started inside container itself
     working_dir: /var/www/html
     volumes:
       - ./:/var/www/html  ## bind-mount 2 way bi-directional files sync; exclude ignored files/dir

@@ -62,7 +62,8 @@ FROM base_image AS dev_app
 RUN pecl channel-update pecl.php.net \
 && pecl install xdebug-3.1.6 \
 && docker-php-ext-enable xdebug \
-## this alias disable xdebug specifically for the php `composer` command; 
+## if xdebug enabled, `composer` be stucked when port 9003 is not being mapped to host's port AND not being used at all
+## this alias default to disable xdebug specifically for the php `composer` command; 
 ## to prevent `composer` and any command its spawn being debugged by default, which would be slow down or even stucked
 && echo "alias composer='XDEBUG_MODE=off composer'" >> /etc/bash.bashrc
 
