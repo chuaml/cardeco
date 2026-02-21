@@ -6,7 +6,10 @@
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
+    pkgs.apacheHttpd_2_4
+    pkgs.apacheHttpdPackages_2_4.apacheHttpd
     pkgs.php81
+    pkgs.php81Extensions.xdebug
     pkgs.php81Extensions.mysqli
     pkgs.php81Extensions.pdo
     pkgs.php81Extensions.pdo_mysql
@@ -20,6 +23,9 @@
   idx = {
     # Search for the extensions you want on https://open-vsx.org/ and use "publisher.id"
     extensions = [
+      "bmewburn.vscode-intelephense-client"
+      "felixfbecker.php-debug"
+      "zobo.php-intellisense"
       # "vscodevim.vim"
       "ms-vscode.js-debug"
       "usernamehw.errorlens"
@@ -31,7 +37,7 @@
 
     # Enable previews
     previews = {
-      enable = true;
+      enable = false;
       previews = {
         # web = {
         #   # Example: run "npm run dev" with PORT set to IDX's defined port for previews,
@@ -51,7 +57,7 @@
       # Runs when a workspace is first created
       onCreate = {
         # Example: install JS dependencies from NPM
-        # npm-install = "npm install";
+        composer-install = "XDEBUG_MODE=off composer install --no-autoloader --no-interaction && composer dumpautoload --no-interaction";
       };
       # Runs when the workspace is (re)started
       onStart = {

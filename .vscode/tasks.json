@@ -11,7 +11,7 @@
         {
             "label": "composer dumpautoload",
             "type": "shell",
-            "command": "composer dumpautoload"
+            "command": "XDEBUG_MODE=off composer dumpautoload --no-interaction"
         },
         {
             "label": "run dev --build --watch",
