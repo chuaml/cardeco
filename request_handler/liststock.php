@@ -16,20 +16,27 @@ $st = ctime();
 <head>
 	<?php require('view/template/head.php') ?>
 
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/table-sorter.min"></script>
+	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/myscript.js"></script>
 	<script src="js/function.js"></script>
 </head>
 <?php include('inc/html/nav.html');?>
 
-<body onload="getTxtInput();getChkShowImage();">
+<body onload="getChkShowImage();">
 <form name="itemlistForm" method="GET" action="liststock" onsubmit="setTxtInput();setChkShowImage();" />
 <label for="chkShowImage" style="line-height: 1.5">Show Images </label>
 <input type="checkbox" name="chkShowImage" id="chkShowImage" /> <br />
  <input type="search" id="txtInput" name="txtInput" class="txtInput" maxlength="255" placeholder="Itemcode / Description..." />
  <input type="submit" name="submit" /> 
 </form>
+
+<script>
+	{
+		const txtInput = document.getElementById('txtInput');
+		txtInput.value = (new URLSearchParams(location.search)).get('txtInput');
+		txtInput.focus();
+	}
+</script>
 
 <?php 
 $txtInput = isset($_GET['txtInput']) ? trim($_GET['txtInput']) : '';

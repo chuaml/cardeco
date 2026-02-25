@@ -1,8 +1,6 @@
 <?php 
 namespace Orders\PaymentCharges;
 
-require_once(__DIR__ .'\\PaymentCharges.php');
-
 //for specifying PlateformCharges object
 abstract class PlatformCharges extends PaymentCharges{
     const PAYMENT_METHOD = 'Platform';

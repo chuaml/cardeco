@@ -5,7 +5,6 @@ use \Orders\RecordDeleter;
 use \Orders\Factory\Lazada;
 use \Orders\Factory\Shopee;
 use \Orders\Lazada\AutoFilling;
-use \Lazada\Manager\ItemManager;
 
 function getRecords($Factory):array{
     $list = $Factory->generateRecords();
@@ -65,4 +64,3 @@ if(isset($_FILES['orders']) && isset($_POST['platform'])){
 $con->close();
 
 require('view/RecordInserterCSV.html');
-?>

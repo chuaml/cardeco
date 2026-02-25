@@ -3,6 +3,8 @@
 
 <head>
     <?php require('view/template/head.php'); ?>
+    <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
+    <script type="module" src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" async defer></script>
 </head>
 
 <?php include('inc/html/nav.html'); ?>
@@ -34,21 +36,47 @@
 
         <form method="GET">
             <span>Record Month: </span>
-            <input type="month" name="RecordMonth" onchange="submit()" max="<?php echo date_format(date_create(),'Y-m'); ?>"
-                value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" required />
+            <input type="month" name="RecordMonth" min="2019-01" max="<?php echo date_format(date_create(),'Y-m'); ?>"
+                value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" />
             <input type="submit" name="exportCSV[default]" value="Export" />
             <input type="submit" name="exportCSV[sqlImport]" value="SQL Import" />
+            <script>
+                document.querySelector('input[name=RecordMonth]').addEventListener('change', e => {
+                    if (e.target.value === '') {
+                        e.target.form.requestSubmit();
+                        return;
+                    }
+                    const yyyy_mm = /^[1-9][0-9]{3}-(:?0[1-9]|1[1-2])/;
+                    if (yyyy_mm.test(e.target.value) === false) return;
+                    e.target.form.requestSubmit();
+                }, { passive: true });
+                document.querySelector('input[name=RecordMonth]').addEventListener('keyup', e => {
+                    if (e.isTrusted === false) return;
+                    if (e.code === 'Delete' || e.code === 'Backspace') {
+                        // e.target.value = '';
+                    }
+                    else if (e.code === 'Escape') {
+                        e.target.blur();
+                    }
+                    else if (e.code === 'Enter') {
+                        if (e.target.value === '') {
+                            e.target.value = '';
+                            e.target.form.requestSubmit();
+                        }
+                    }
+                }, { passive: true });
+            </script>
         </form>
 
     </div>
     <span style="float: right;"><button id="btnHideShowCol">Info</button></span>
-    <form method="POST" id="RecordEditorForm" class="ajax">
+    <form method="POST" id="RecordEditorForm" cd-ajax>
         <input type="submit" value="Save" tabindex="1" />
         <?php echo $recordEditor; ?>
     </form>
-</body>
 
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/RecordEditor.js"></script>
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/RecordEditor.js"></script>
+</body>
 
 </html>

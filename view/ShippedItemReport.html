@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <?php require('view/template/head.php') ?>
+
+    <style>
+        tbody>tr[is-empty-item-code="true"]>td {
+            background-color: #ffd7de;
+            font-style: italic;
+        }
+
+        tbody>tr.sorted>td {
+            background-color: #deffde;
+        }
+
+        tbody{
+            counter-reset: row-number;
+        }
+        tbody>tr.sorted>td:nth-child(4)::after {
+            content: ' - ' counter(row-number);
+            counter-increment: row-number;
+            font-style: italic;
+        }
+
+        #container-shippeditem {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+        }
+
+        textarea {
+            width: 100%;
+            height: 100%;
+            line-height: 1.5;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+
+<?php include('inc/html/nav.html'); ?>
+
+<body>
+    <h1>Shipped Item Report</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <p>Enter BigSeller all orders to generate Shipped Item Report:</p>
+        <input type="file" name="bigseller_all_status_orders" accept=".xlsx" onchange="this.form.submit()" required>
+    </form>
+
+
+    <!-- stockOut summary-->
+    <?php if($handler->isToGenerateReport() === true) { ?>
+    <div class="paper">
+        <i>SHIPPED ITEM REPORT: </i>
+        <button id="btnPrint">print</button>
+        <hr>
+        <div id="wrapper-stockoutitem">
+            <?php 
+            foreach($handler->getShippedItemReport()->streamHtmlText() as $html) {
+                echo $html;
+            }
+            ?>
+        </div>
+
+        <script>
+            document.querySelector('#btnPrint').addEventListener('click', e => {
+                const newTab = window.open();
+
+                newTab.document.writeln('<style>table,th,td{ border:1px solid black;} td { padding: 0 1ch; }</style>');
+
+                const table = document.querySelector('#wrapper-stockoutitem');
+                newTab.document.writeln(table.innerHTML);
+                newTab.print();
+            });
+        </script>
+    </div>
+    <?php };?>
+
+    <?php if($handler->isToGenerateReport() === true) { ?>
+    <div class="paper" id="container-shippeditem">
+        <article id="wrapper-monthlyrecord">
+            <?php 
+            foreach($handler->getMonthlyRecord()->streamHtmlText() as $html) {
+                echo $html;
+            }
+            ?>
+        </article>
+        <article>
+            <textarea id="txtOrderNumber" placeholder="Order numbers to sort..."></textarea>
+        </article>
+        <script>
+            {
+                let qid = 0;
+                document.querySelector('#txtOrderNumber').addEventListener('input', function (e) {
+                    clearTimeout(qid);
+                    qid = setTimeout(_ => {
+                        const inputOrderNumbers = e.target.value.split("\n").map(x => x.trim());
+                        const tbody = document.querySelector('#wrapper-monthlyrecord > table > tbody');
+                        tbody.querySelectorAll('tr.sorted').forEach(function (tr) {
+                            tr.classList.remove('sorted');
+                        });
+                        for (let i = inputOrderNumbers.length - 1; i > -1; --i) {
+                            const id = inputOrderNumbers[i];
+                            const tr = tbody.querySelector(`tr[data-order-number="${id}"]`);
+                            if (tr !== null) {
+                                tbody.prepend(tr);
+                                tr.classList.add('sorted');
+                            }
+                        }
+                    }, 100);
+                });
+                document.addEventListener('click', function (e) {
+                    console.log(e);
+                })
+            }
+        </script>
+    </div>
+    <?php };?>
+
+</body>
+
+</html>

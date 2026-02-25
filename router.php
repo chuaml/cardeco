@@ -29,15 +29,21 @@ try {
         throw new HttpException(404, 'page not found: ' . $_requestUri);
     }
 
-    $error_get_last = error_get_last();
-    if ($error_get_last !== null) {
-        http_response_code(500);
-        throw new Exception('Some unknown notice/warning/error has occoured.');
+    $err = error_get_last();
+    if ($err !== null) {
+        if ($err['file'] !== 'xdebug://debug-eval') {
+            http_response_code(500);
+            throw new RuntimeException('type=' . $err['type'] . "\n" . $err['message'] . "\n" . $err['file'] . "\nline: " . $err['line'] . "\n\n");
+        }
     }
 } catch (HttpException $ex) {
     $_exception = $ex;
     $statusCode = $ex->getStatusCode();
-    if ($statusCode === 404) {
+    http_response_code($statusCode);
+    if ($statusCode === 400) {
+        echo $ex->getMessage();
+        exit();
+    } else if ($statusCode === 404) {
         header("HTTP/1.1 404 Not Found");
         include 'view/404.php';
     } else if ($statusCode === 500) {
@@ -47,8 +53,10 @@ try {
         header("HTTP/1.1 500 Internal Server Error");
         include 'view/500.php';
     }
+    throw $ex;
 } catch (Throwable $ex) {
     header("HTTP/1.1 500 Internal Server Error");
     $_exception = $ex;
     include 'view/500.php';
+    throw $ex;
 }

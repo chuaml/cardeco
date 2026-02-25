@@ -13,8 +13,7 @@ if(isset($_POST['btnSubmit'])){
 <head>
 	<?php require('view/template/head.php') ?>
 
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/table-sorter.min"></script>
+	<script src="js/jquery-3.3.1.min.js"></script>
 	<script src="js/myscript.js"></script>
 	<script src="js/function.js"></script>
 </head>

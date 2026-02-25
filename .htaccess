@@ -8,5 +8,7 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 
 
 <IfModule mod_headers.c>
-    Header set Cache-Control "max-age=23400, public"
+    <FilesMatch "\.(ico|css|js|gif|jpg|jpeg|png|svg|woff2?|ttf|eot)$">
+        Header set Cache-Control "public, max-age=600, must-revalidate"
+    </FilesMatch>
 </IfModule>

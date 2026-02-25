@@ -86,7 +86,7 @@ class ExcelReader
         }
     }
 
-    public function read(?string $fileTab = null, int $startRowPos = 1, int $lastRowPos = -1)
+    public function read(?string $fileTab = null, int $startRowPos = 1, int $lastRowPos = -1): Generator
     {
         //assume row 1 is header
         $header = [];
