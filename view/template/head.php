@@ -164,12 +164,16 @@
 </script>
 <!-- smooth page loading transition -->
 
-<!-- custom table sorter -->
+<!-- table editor -->
+<link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
+<script src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" defer></script>
+	
+<!-- custom table sorter & column editor -->
 <link rel="stylesheet" href="js/table-sorter/table-sorter.css">
 <script src="js/table-sorter/table-sorter-init.js"></script>
 
 <script>
-	window.addEventListener('error', function (e) {
+	window.addEventListener('error', function(e) {
 		// console.log(e, e.message, e.error.stack);
 		gtag('event', 'exception', {
 			'description': e.error.stack,
@@ -287,3 +291,10 @@
 		});
 	});
 </script> -->
+
+
+
+<!-- these are needed for many legacy files -->
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/myscript.js"></script>
+<script src="js/function.js"></script>

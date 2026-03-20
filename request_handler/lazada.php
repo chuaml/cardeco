@@ -32,4 +32,4 @@ try {
     $con->close();
 }
 
-require 'view/lazada.html';
+$_view_html_path = 'view/lazada.html';

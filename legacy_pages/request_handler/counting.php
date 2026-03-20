@@ -1,23 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-	<?php require('view/template/head.php') ?>
-
-	<script src="js/jquery-3.3.1.min"></script>
-	<script src="js/myscript"></script>
-	<style>
-		/* make all tab separated column aligned, table view */
-		textarea {
-			tab-size: 16;
-			white-space: pre;
-			font-family: monospace;
-		}
-	</style>
-</head>
-
-<?php include('inc/html/nav.html'); ?>
-
 <i>*Case sensitive for each row text</i>
 <form name="itemlistForm" method="POST" action="counting">
 	<label for="itemlistForm">Count items row by ...<br></label>
@@ -411,7 +391,3 @@ if (isset($_POST['submit']) && isset($_POST['Select'])) { ?>
 		}
 	}
 </script>
-
-</body>
-
-</html>

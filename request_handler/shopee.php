@@ -204,4 +204,4 @@ try {
     $con->close();
 }
 
-require('view/shopee.html');
+$_view_html_path = 'view/shopee.html';

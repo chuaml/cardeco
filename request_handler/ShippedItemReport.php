@@ -6,4 +6,4 @@ use Report\ShippedItemReport;
 
 $handler = new ShippedItemReport($con, $_FILES);
 
-require('view/ShippedItemReport.html');
+$_view_html_path = 'view/ShippedItemReport.html';

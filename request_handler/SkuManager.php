@@ -41,5 +41,5 @@ try{
 }
 
 
-require('view/SkuManager.html');
+$_view_html_path = 'view/SkuManager.html';
 ?>

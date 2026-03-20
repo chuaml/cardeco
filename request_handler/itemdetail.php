@@ -5,4 +5,4 @@
 $handler = new Stock_Item($con);
 $handler->handleRequest($_POST);
 
-require 'view/itemdetail.html.php';
+$_view_html_path = 'view/itemdetail.html.php';

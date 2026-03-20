@@ -63,4 +63,4 @@ if(isset($_FILES['orders']) && isset($_POST['platform'])){
 }
 $con->close();
 
-require('view/RecordInserterCSV.html');
+$_view_html_path = 'view/RecordInserterCSV.html';

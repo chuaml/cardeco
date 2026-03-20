@@ -36,4 +36,4 @@ try {
     $con->close();
 }
 
-require 'view/bigseller.html';
+$_view_html_path = 'view/bigseller.html';

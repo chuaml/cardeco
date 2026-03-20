@@ -1,82 +1,65 @@
-<!DOCTYPE html>
-<html lang="en">
+<div id="result_pages">
+    <?php echo $pageFloor; ?>
+</div>
 
-<head>
-    <?php require('view/template/head.php'); ?>
-    <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
-    <script type="module" src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" async defer></script>
-</head>
+<div>
+    <form method="GET" name="SearchForm">
+        <input type="search" name="searchValue" maxlength="255" />
+        <input type="submit" value="Search" />
+        <select name="searchField">
+            <option value="orderNum">Order Number</option>
+            <option value="date">date</option>
+            <option value="dateStockOut">date stock out</option>
+        </select>
 
-<?php include('inc/html/nav.html'); ?>
-
-<body>
-    <div id="result_pages">
-        <?php echo $pageFloor; ?>
-    </div>
-
-
-    <div>
-        <form method="GET" name="SearchForm">
-            <input type="search" name="searchValue" maxlength="255" />
-            <input type="submit" value="Search" />
-            <select name="searchField">
-                <option value="orderNum">Order Number</option>
-                <option value="date">date</option>
-                <option value="dateStockOut">date stock out</option>
-            </select>
-
-            <select name="platformCharges">
-                <option value="ALL">All</option>
-                <option value="Lazada">Lazada</option>
-                <option value="Shopee">Shopee</option>
-                <option value="11Street">11Street</option>
-                <option value="GHL">GHL</option>
-            </select>
-        </form>
-
-        <form method="GET">
-            <span>Record Month: </span>
-            <input type="month" name="RecordMonth" min="2019-01" max="<?php echo date_format(date_create(),'Y-m'); ?>"
-                value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" />
-            <input type="submit" name="exportCSV[default]" value="Export" />
-            <input type="submit" name="exportCSV[sqlImport]" value="SQL Import" />
-            <script>
-                document.querySelector('input[name=RecordMonth]').addEventListener('change', e => {
-                    if (e.target.value === '') {
-                        e.target.form.requestSubmit();
-                        return;
-                    }
-                    const yyyy_mm = /^[1-9][0-9]{3}-(:?0[1-9]|1[1-2])/;
-                    if (yyyy_mm.test(e.target.value) === false) return;
-                    e.target.form.requestSubmit();
-                }, { passive: true });
-                document.querySelector('input[name=RecordMonth]').addEventListener('keyup', e => {
-                    if (e.isTrusted === false) return;
-                    if (e.code === 'Delete' || e.code === 'Backspace') {
-                        // e.target.value = '';
-                    }
-                    else if (e.code === 'Escape') {
-                        e.target.blur();
-                    }
-                    else if (e.code === 'Enter') {
-                        if (e.target.value === '') {
-                            e.target.value = '';
-                            e.target.form.requestSubmit();
-                        }
-                    }
-                }, { passive: true });
-            </script>
-        </form>
-
-    </div>
-    <span style="float: right;"><button id="btnHideShowCol">Info</button></span>
-    <form method="POST" id="RecordEditorForm" cd-ajax>
-        <input type="submit" value="Save" tabindex="1" />
-        <?php echo $recordEditor; ?>
+        <select name="platformCharges">
+            <option value="ALL">All</option>
+            <option value="Lazada">Lazada</option>
+            <option value="Shopee">Shopee</option>
+            <option value="11Street">11Street</option>
+            <option value="GHL">GHL</option>
+        </select>
     </form>
 
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/RecordEditor.js"></script>
-</body>
+    <form method="GET">
+        <span>Record Month: </span>
+        <input type="month" name="RecordMonth" min="2019-01" max="<?php echo date_format(date_create(),'Y-m'); ?>" value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" />
+        <input type="submit" name="exportCSV[default]" value="Export" />
+        <input type="submit" name="exportCSV[sqlImport]" value="SQL Import" />
+        <script>
+            document.querySelector('input[name=RecordMonth]').addEventListener('change', e => {
+                if (e.target.value === '') {
+                    e.target.form.requestSubmit();
+                    return;
+                }
+                const yyyy_mm = /^[1-9][0-9]{3}-(:?0[1-9]|1[1-2])/;
+                if (yyyy_mm.test(e.target.value) === false) return;
+                e.target.form.requestSubmit();
+            }, { passive: true });
+            document.querySelector('input[name=RecordMonth]').addEventListener('keyup', e => {
+                if (e.isTrusted === false) return;
+                if (e.code === 'Delete' || e.code === 'Backspace') {
+                    // e.target.value = '';
+                }
+                else if (e.code === 'Escape') {
+                    e.target.blur();
+                }
+                else if (e.code === 'Enter') {
+                    if (e.target.value === '') {
+                        e.target.value = '';
+                        e.target.form.requestSubmit();
+                    }
+                }
+            }, { passive: true });
+        </script>
+    </form>
 
-</html>
+</div>
+<span style="float: right;"><button id="btnHideShowCol">Info</button></span>
+<form method="POST" id="RecordEditorForm" cd-ajax>
+    <input type="submit" value="Save" tabindex="1" />
+    <?php echo $recordEditor; ?>
+</form>
+
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/RecordEditor.js"></script>

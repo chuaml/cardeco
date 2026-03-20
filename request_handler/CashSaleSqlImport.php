@@ -69,7 +69,7 @@ try {
             $table = new TableDisplayer($list, 'tblCashSaleImport');
         }
     }
-    require('view/CashsaleSqlImport.html');
+    $_view_html_path = 'view/CashsaleSqlImport.html';
 } finally {
     $con->close();
 }

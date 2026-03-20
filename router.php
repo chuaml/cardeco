@@ -8,10 +8,15 @@ try {
     require(__DIR__ . '/db/conn_staff.php');
 
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    $_view_html_path = ''; // *.html view to be loaded, if any
 
     // default route
     if ($path === '/') {
-        require 'request_handler/lazada.php';
+        require $_requestUri;
+        if ($_view_html_path !== '') {
+            require 'view/_layout.main.html';
+        }
+
         return;
     }
 
@@ -25,8 +30,17 @@ try {
 
     if (file_exists($_requestUri) === true) {
         require $_requestUri;
+        if ($_view_html_path !== '') {
+            require 'view/_layout.main.html';
+        }
     } else {
-        throw new HttpException(404, 'page not found: ' . $_requestUri);
+        $legacy_page = 'legacy_pages/' . $_requestUri;  // try remap to legacy pages, if any
+        if (file_exists($legacy_page) === true) {
+            $_view_html_path = $legacy_page;  // these legacy pages run and output in <body> part after <head>
+            require 'view/_layout.main.html';
+        } else {
+            throw new HttpException(404, 'page not found: ' . $_requestUri);
+        }
     }
 
     $err = error_get_last();

@@ -37,4 +37,4 @@ try {
     $con->close();
 }
 
-require 'view/tiktok.html';
+$_view_html_path = 'view/tiktok.html';
