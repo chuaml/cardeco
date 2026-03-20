@@ -1,29 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<h3>Update Lazada Products Info</h3>
 
-<head>
-    <?php require('view/template/head.php') ?>
-</head>
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="LzdProducts" accept=".csv" required>
+    <input type="submit" />
+</form>
 
-<?php include('inc/html/nav.html'); ?>
+<hr>
 
-<body>
-    <h3>Update Lazada Products Info</h3>
-
-    <form method="POST" enctype="multipart/form-data">
-        <input type="file" name="LzdProducts" accept=".csv" required>
-        <input type="submit" />
-    </form>
-
-    <hr>
-    
-    <div class="error">
-        <?=$errorMsg;?>
-    </div>
-    <p>
-        <?= $msg;?>
-    </p>
-
-</body>
-
-</html>
+<div class="error">
+    <?=$errorMsg;?>
+</div>
+<p>
+    <?= $msg;?>
+</p>

@@ -85,4 +85,4 @@ try {
     $con->close();
 }
 
-require 'view/LzdFeeChecker.html';
+$_view_html_path = 'view/LzdFeeChecker.html';

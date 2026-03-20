@@ -95,5 +95,5 @@ try{
     $error = $e;
 }
 
-require('view/RecordUpdater.html');
+$_view_html_path = 'view/RecordUpdater.html';
 ?>

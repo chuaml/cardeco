@@ -1,40 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <?php require('view/template/head.php') ?>
-    <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
-    <script type="module" src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" async defer></script>
-</head>
-
-<?php include('inc/html/nav.html'); ?>
-
-<body>
-    <h3>Item Manager</h3>
-    <form method="GET">
-        <input type="text" name="itemCode" id="itemCode" list="itemCodeList" maxlength="255" placeholder="Item Code..."
-            >
-        <input type="submit" value="search">
-    </form>
-    <hr>
-    <form method="POST" id="ItemEditorForm" cd-ajax>
+<h3>Item Manager</h3>
+<form method="GET">
+    <input type="text" name="itemCode" id="itemCode" list="itemCodeList" maxlength="255" placeholder="Item Code...">
+    <input type="submit" value="search">
+</form>
+<hr>
+<form method="POST" id="ItemEditorForm" cd-ajax>
     <?php if(isset($itemEditorHtml) === true) { ?>
-        <input type="submit" value="save">
-        <?php 
+    <input type="submit" value="save">
+    <?php 
         foreach($itemEditorHtml as $html) {
             echo $html;
         }
         ?>
     <?php };?>
-    </form>
+</form>
 
-    <p class="error">
-        <?= $error;?>
-    </p>
-    
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <script src="js/ItemManager.js"></script>
-</body>
+<p class="error">
+    <?= $error;?>
+</p>
 
-
-</html>
+<script src="js/jquery-3.3.1.min.js"></script>
+<script src="js/ItemManager.js"></script>

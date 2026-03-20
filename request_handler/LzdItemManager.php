@@ -59,5 +59,5 @@ try{
 }catch(\Exception $e){
     $errorMsg = \htmlspecialchars($e->getMessage(), ENT_QUOTES);
 }
-require('view/LzdItemManager.html');
+$_view_html_path = 'view/LzdItemManager.html';
 ?>

@@ -69,4 +69,4 @@ if (isset($_POST['r'])) {
     // var_dump($_POST);
 }
 
-require('view/RecordInserter.html');
+$_view_html_path = 'view/RecordInserter.html';

@@ -13,7 +13,7 @@ dump-*.sql
 #
 ~$*.xlsx
 *.txt
-_*.*
+# _*.*
 *.7z
 *.rar
 *.zip

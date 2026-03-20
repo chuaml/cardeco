@@ -301,4 +301,4 @@ try {
     $con->close();
 }
 
-require('view/RecordEditor.html');
+$_view_html_path = 'view/RecordEditor.html';

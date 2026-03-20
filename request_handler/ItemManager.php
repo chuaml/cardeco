@@ -52,7 +52,7 @@ try {
 
         $itemEditorHtml = $ItemEditor->getTable();
     }
-    require('view/ItemManager.html');
+    $_view_html_path = 'view/ItemManager.html';
 } finally {
     $con->close();
 }
