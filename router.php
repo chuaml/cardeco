@@ -12,7 +12,7 @@ try {
 
     // default route
     if ($path === '/') {
-        require $_requestUri;
+        require 'request_handler/lazada.php';
         if ($_view_html_path !== '') {
             require 'view/_layout.main.html';
         }
