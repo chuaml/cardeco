@@ -1,7 +1,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
-<link rel="stylesheet" href="css/style.css">
+<!-- <link rel="stylesheet" href="css/style.css"> -->
+<link rel="stylesheet" href="css/vibe.style.css">
+
 
 
 
@@ -94,7 +96,8 @@
 	#page-loader>* {
 		background-color: #eee;
 		box-shadow: 0 0 2px 0 #fff;
-		padding: 0 .5rem;
+		padding: 0.5rem 1rem;
+		border-radius: 1rem;
 	}
 
 	#page-loader>* {
@@ -109,11 +112,34 @@
 		transition: .5s ease;
 		background-color: hsl(0deg 0% 50% / 25%);
 		display: flex;
+		backdrop-filter: blur(1px);
 	}
 
 	#page-loader.loading>* {
 		opacity: 1;
 		transition-delay: .5s;
+	}
+
+	/* loading circle */
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+
+	#page-loader>* {
+		display: flex;
+		gap: .5rem;
+	}
+
+	#page-loader>*::after {
+		content: " ";
+		width: 1rem;
+		height: 1rem;
+		border: 3px solid var(--primary-light);
+		border-top-color: var(--primary);
+		border-radius: 50%;
+		animation: spin 0.8s linear infinite;
 	}
 </style>
 <div id="page-loader" style="display: flex;">
@@ -167,7 +193,7 @@
 <!-- table editor -->
 <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
 <script src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" defer></script>
-	
+
 <!-- custom table sorter & column editor -->
 <link rel="stylesheet" href="js/table-sorter/table-sorter.css">
 <script src="js/table-sorter/table-sorter-init.js"></script>
