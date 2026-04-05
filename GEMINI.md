@@ -7,6 +7,8 @@ This is a legacy custom software system solution for a specific company. All cha
 - **Database:** MySQL 8
 - **Web Server:** Apache 2.4 (LAMP stack in Docker, WAMP stack for legacy/staging/production)
 - **Entry Point:** `router.php` (enforced by `.htaccess`). All requests are routed through this file.
+- **Routing Logic:** Can be inferred from `router.php`. Most page request pathname follow a 1-to-1 mapping to a PHP file, with either `request_handler/**` or `legacy_pages/request_handler/**` being a primary destination for many requests, including legacy page paths. A request_handler file will use either a HTML or a PHP file from `view/**` with corresponding pathname or filename for displaying UI. 
+- **Class Locations:** Most modern class files are stored in `src/**`. Additional classes are located in `inc/class/`.
 - **Legacy Compatibility:** Maintain backward compatibility for WAMP stack while developing in Docker-LAMP.
 
 ## Development Workflow
