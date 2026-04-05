@@ -23,7 +23,9 @@
 				"recca0120.vscode-phpunit",
 				"usernamehw.errorlens",
 				"dbaeumer.vscode-eslint",
-				"eamodio.gitlens"
+				"eamodio.gitlens",
+				"google.geminicodeassist",
+				"google.gemini-cli-vscode-ide-companion"
 			]
 		}
 	},

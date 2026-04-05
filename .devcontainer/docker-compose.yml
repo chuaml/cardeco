@@ -24,3 +24,13 @@
 #     #   - SYS_PTRACE
 #     # security_opt:
 #     #   - seccomp:unconfined
+
+
+services:
+  gemini-cli:
+    # image: mcr.microsoft.com/devcontainers/javascript-node:24
+    image: us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.36.0
+    volumes:
+      - ./:/workspace:cached
+    working_dir: /workspace
+    command: sleep infinity

@@ -1,0 +1,23 @@
+# Gemini CLI ignore file
+
+# Dependencies
+node_modules/
+vendor/
+
+# Environment and Secrets
+.env
+*.local
+config.dev/php-dev-override.ini
+config.dev/xdebug.ini
+
+# Logs and Temp
+logs/
+tmp/
+*.log
+
+# System
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
