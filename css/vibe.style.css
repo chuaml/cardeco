@@ -20,6 +20,10 @@
     font-size: 16px;
 }
 
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: var(--bg);
@@ -172,7 +176,7 @@ form label {
     display: inline-block;
 }
 
-#txtInput {
+#txtInput, .txtInput {
     width: 100%;
     max-width: 500px;
     padding: 14px 18px;
@@ -184,9 +188,10 @@ form label {
     margin: 8px 0 20px 0;
     background: #f8fafc;
     font-family: inherit;
+    box-sizing: border-box;
 }
 
-#txtInput:focus {
+#txtInput:focus, .txtInput:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
     background: white;
@@ -416,4 +421,57 @@ span[style*="query took"] {
     text-align: right;
     font-family: ui-monospace, SFMono-Regular, monospace;
     margin-bottom: 8px;
+}
+
+/* Catalog Grid Styles for Legacy Pages */
+.catalog_container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.catalog_item {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.catalog_item:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary-light);
+}
+
+.catalog_item img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    border-radius: var(--radius-md);
+    background: #f8fafc;
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border);
+}
+
+.catalog_item small {
+    display: inline-block;
+    width: 100px;
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-right: 0.5rem;
+}
+
+.catalog_item {
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
