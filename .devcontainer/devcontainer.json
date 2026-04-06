@@ -24,7 +24,6 @@
 				"usernamehw.errorlens",
 				"dbaeumer.vscode-eslint",
 				"eamodio.gitlens",
-				"google.geminicodeassist",
 				"google.gemini-cli-vscode-ide-companion"
 			]
 		}
