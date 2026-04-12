@@ -1,9 +1,7 @@
 {
     "autoload": {
-        "psr-4": {
-            "App\\": "src/"
-        },
         "classmap": [
+            "./inc/class/",
             "./src/"
         ],
         "files": [
