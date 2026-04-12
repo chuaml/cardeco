@@ -1,7 +1,19 @@
 <?php
 require 'vendor/autoload.php';
 
+// Fallback PSR-4 autoloader for App namespace
+spl_autoload_register(function ($class) {
+    $prefix = 'App\\';
+    $base_dir = __DIR__ . '/src/';
+    $len = strlen($prefix);
+    if (strncmp($prefix, $class, $len) !== 0) return;
+    $relative_class = substr($class, $len);
+    $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
+    if (file_exists($file)) require $file;
+});
+
 use Exception\HttpException;
+use App\Handler\LazadaHandler;
 
 $_exception = null;
 try {
@@ -11,8 +23,12 @@ try {
     $_view_html_path = ''; // *.html view to be loaded, if any
 
     // default route
-    if ($path === '/') {
-        require 'request_handler/lazada.php';
+    if ($path === '/' || $path === '') {
+        $handler = new LazadaHandler($con);
+        $response = $handler->handle($_REQUEST, $_FILES);
+        $_view_html_path = $response->viewPath;
+        extract($response->data);
+
         if ($_view_html_path !== '') {
             require 'view/_layout.main.html';
         }
@@ -28,7 +44,20 @@ try {
         $_requestUri .= '.php';
     }
 
-    if (file_exists($_requestUri) === true) {
+    // Dynamic Class Handler resolution (PSR-4 App\Handler)
+    $className = str_replace('/', '\\', trim($path, '/'));
+    $handlerClass = "App\\Handler\\" . $className . "Handler";
+
+    if (class_exists($handlerClass)) {
+        $handler = new $handlerClass($con);
+        $response = $handler->handle($_REQUEST, $_FILES);
+        $_view_html_path = $response->viewPath;
+        extract($response->data);
+
+        if ($_view_html_path !== '') {
+            require 'view/_layout.main.html';
+        }
+    } else if (file_exists($_requestUri) === true) {
         require $_requestUri;
         if ($_view_html_path !== '') {
             require 'view/_layout.main.html';
