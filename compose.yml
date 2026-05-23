@@ -32,7 +32,7 @@ services:  ## for development environment
     #     user: root
 
 
-  app-dev: ## this will behave has dev env, not just app server
+  app: ## this will behave has dev env, not just app server
     restart: no
     build:
       dockerfile: ./Dockerfile
@@ -58,10 +58,12 @@ services:  ## for development environment
     extra_hosts:
       - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
 
-    command: sleep infinity  ## keep container running, allow vscode to connect
+    ## for single command only
+    command: apache2-foreground  ## keep container running, allow vscode to connect
                              ## and stop Apache server from starting automatically in background
-    post_start: 
-      - command: XDEBUG_MODE=off composer dumpautoload --no-interaction
+  
+    post_start: ## addon subsequent commands to run
+      - command: DEBUG_MODE=off composer dumpautoload --no-interaction && apache2-foreground
         user: root
     # develop: 
     #   watch:   ## only if run with `docker compose up --watch`  flag
@@ -84,8 +86,22 @@ services:  ## for development environment
     #       path: ./config.dev/
     #       target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
 
+  app-dev:
+    image: mcr.microsoft.com/playwright:v1.59.1-noble
+    volumes:
+      - ./:/var/www/html
+      - dev_devependencies_nodejs:/var/www/html/node_modules
+    working_dir: /var/www/html
+    command: sleep infinity
+    ports:
+      - "9323:9323"
+    ipc: host
+    init: true
+    environment:
+      - DISPLAY=host.docker.internal:0.0
 
 volumes:
   cardeco-dev-data:
   dependencies_php:
   dependencies_nodejs:
+  dev_devependencies_nodejs:
