@@ -4,15 +4,15 @@
 	"name": "dev container",
 	"dockerComposeFile": [
 		"../compose.yml",
-		"./docker-compose.yml"  // for addon or orverriding only
+		"./docker-compose.yml" // for addon or orverriding only
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
 	"service": "app-dev",
 	//
-	"workspaceFolder": "/var/www/html",  // align with  /.devcontainer/docker-compose.yml
-	"postCreateCommand": "pwd && ls && php -v && whoami && XDEBUG_MODE=off composer dumpautoload",
-	"postStartCommand": "php -v && pwd && echo apache server would be started by default, otherwise manually run \" apache2-foreground \" to start server.",
+	"workspaceFolder": "/var/www/html", // align with  /.devcontainer/docker-compose.yml
+	// "postCreateCommand": "pwd && ls && php -v && whoami && XDEBUG_MODE=off composer dumpautoload",
+	// "postStartCommand": "php -v && pwd && echo apache server would be started by default, otherwise manually run \" apache2-foreground \" to start server.",
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -24,7 +24,8 @@
 				"usernamehw.errorlens",
 				"dbaeumer.vscode-eslint",
 				"eamodio.gitlens",
-				"google.gemini-cli-vscode-ide-companion"
+				"google.gemini-cli-vscode-ide-companion",
+				"ms-playwright.playwright"
 			]
 		}
 	},
@@ -36,7 +37,7 @@
 	}
 	//
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
+	// "forwardPorts": []
 	// Uncomment the next line if you want start specific services in your Docker Compose config.
 	// "runServices": [],
 	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.

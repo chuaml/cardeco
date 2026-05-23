@@ -1,11 +1,15 @@
 {
     "compilerOptions": {
         "target": "es2024",
-        "module": "none",
-        "moduleResolution": "classic",
+        "module": "es2022",
+        "moduleResolution": "node",
         "baseUrl": "./",
         "checkJs": true,
-        "paths": {},
+        "paths": {
+            "@": [
+                "./node_modules/"
+            ]
+        },
     },
     "include": [
         "./tagteams/libs.js",
