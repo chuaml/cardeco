@@ -29,7 +29,10 @@
             "type": "php",
             "request": "launch",
             "port": 9003,
-            "stopOnEntry": false
+            "stopOnEntry": false,
+            "pathMappings": {
+                "/var/www/html": "${workspaceFolder}"
+            }
         },
         {
             "name": "Launch currently open script",

@@ -1,51 +1,26 @@
-$(document).ready(function () {
 
-    const tblRecord = "table#ItemEditor";
-    const th = tblRecord + ">thead>tr>th";
-    const rows = tblRecord + ">tbody>tr";
-    const tr = $(rows);
+setTimeout(_ => { // unsave changes confirmation
+    let hasChanges = false;
+    window.addEventListener('beforeunload', function (e) {
+        const currentInput = document.activeElement;
+        try {
+            currentInput.blur(); // focus emit last 'change' event
+        } catch (err) { console.error(err); }
 
-    let col;
-    let cell;
-    const targetColId = [
-        "description"
-    ];
+        if (hasChanges === false) return;
+        e.preventDefault();
+        this.dispatchEvent(new Event('pageshow')); // cancel loading screen
+        this.setTimeout(_ => currentInput.focus(), 0); // focus back last 'change' input
 
-    let cellEnterAction = function (e) {
-        if (e.keyCode === 13) {
-            e.preventDefault();
-            $(e.target).focusout();
-        }
-    };
+        e.returnValue = 'abandon unsaved changes?';
+        return 'abandon unsaved changes?';
+    }, true);
 
-    targetColId.forEach(function (colId) {
-        col = $(th + "#" + colId).index() + 1;
-        for (i = 1; i <= tr.length; ++i) {
-            cell = $(rows + ":nth-child(" + i + ")>td:nth-child(" + col + ")");
-            cell.dblclick(function () {
-                $(this).children("input").attr("readonly", false)
-                    .focus()
-                    .select();
-            });
-            cell.focusout(function () {
-                $(this).children("input").attr("readonly", true);
-            });
-            cell.keypress(cellEnterAction);
-            cell.children("input").change(function () {
-                //leaving confirmation
-                $(window).bind("beforeunload", function () {
-                    return "gg";
-                });
-            })
-        }
-    });
+    document.querySelector('table').addEventListener('change', function (e) {
+        hasChanges = true;
+    }, { passive: true });
 
-    $("form#ItemEditorForm").submit(function () {
-        if (confirm("confirm save changes?")) {
-            $(window).unbind("beforeunload");
-        } else {
-            return false;
-        }
-    });
-
-});
+    document.addEventListener('submitted', function (e) {
+        hasChanges = false;
+    }, { passive: true });
+}, 0);

@@ -3,18 +3,21 @@
 
 <head>
     <?php require('view/template/head.php') ?>
+
+    <link rel="stylesheet" href="js/table-cd-editable-sheet/table-cd-editable-sheet.css">
+    <script type="module" src="js/table-cd-editable-sheet/table-cd-editable-sheet.js" async defer></script>
 </head>
 
 <?php include('inc/html/nav.html'); ?>
 
 <body>
-    <form method="POST" id="RecordInserterForm">
+    <form method="POST" id="RecordInserterForm" autocomplete="off">
         <input type="submit" />
 
         <?php require('view/template/Orders/platform.html') ?>
 
         <span style="float: right;"><button type="button" id="btnAddNew">Add Line</button></span>
-        <table id="RecordInserter">
+        <table id="RecordInserter" cd-editable-sheet>
             <thead>
                 <tr>
                     <th id="orderNum">Order Number</th>
@@ -30,14 +33,14 @@
 
             <tbody>
                 <tr>
-                    <td><input type="text" name="r[0][orderNum]" maxlength="20"></td>
-                    <td><input type="text" name="r[0][sku]" maxlength="60"></td>
-                    <td><input type="date" name="r[0][date]"></td>
-                    <td><input type="text" name="r[0][trackingNum]" maxlength="20"></td>
-                    <td><input type="text" name="r[0][status]" value="READY_TO_SHIP" readonly></td>
-                    <td><input type="number" name="r[0][sellingPrice]" min="0" max="10000" step="0.01"></td>
-                    <td><input type="number" name="r[0][shippingFee]" min="0" max="10000" step="0.01"></td>
-                    <td><input type="number" name="r[0][shippingFeeByCust]" min="0" max="10000" step="0.01"></td>
+                    <td><input readonly type="text" name="r[0][orderNum]" maxlength="20"></td>
+                    <td><input readonly type="text" name="r[0][sku]" maxlength="60"></td>
+                    <td><input readonly type="date" name="r[0][date]"></td>
+                    <td><input readonly type="text" name="r[0][trackingNum]" maxlength="20"></td>
+                    <td><input readonly type="text" name="r[0][status]" value="READY_TO_SHIP" readonly></td>
+                    <td><input readonly type="number" name="r[0][sellingPrice]" min="0" max="10000" step="0.01" value="0.00"></td>
+                    <td><input readonly type="number" name="r[0][shippingFee]" min="0" max="10000" step="0.01" value="0.00"></td>
+                    <td><input readonly type="number" name="r[0][shippingFeeByCust]" min="0" max="10000" step="0.01" value="0.00"></td>
                 </tr>
             </tbody>
 
@@ -47,11 +50,11 @@
             <?php echo $error->getMessage();?>
         </div>
     </form>
+
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <script src="js/RecordInserter.js"></script>
+
+    <?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
 </body>
-
-<script src="js/jquery-3.3.1.min.js"></script>
-<script src="js/RecordInserter.js"></script>
-
-<?php if(!empty($msg)){echo "<script>alert('$msg')</script>";} ?>
 
 </html>

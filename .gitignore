@@ -19,10 +19,14 @@ _*.*
 *.zip
 [a-zA-Z0-9].php
 
+*.bak.sql
+
 #ignore folder
-/public/*
+./public/**/*
 
 #dump & backup files
 db/dump
 db/dump-dev
 *.sql.gz
+
+node_modules

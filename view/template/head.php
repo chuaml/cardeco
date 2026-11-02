@@ -2,11 +2,15 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
 <link rel="stylesheet" href="css/style.css">
-<title>Cardeco</title>
+
 
 
 
 <?php if (isset($_isProduction) === true && $_isProduction !== true) { ?>
+	<title>Staging - test server</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+	<!-- <link rel="shortcut icon" href="view/icon.png" type="image/png" /> -->
+
 	<script>
 		window.dataLayer = window.dataLayer || [];
 
@@ -16,6 +20,7 @@
 		}
 		gtag('js', new Date());
 	</script>
+	<div style="padding: 0.5em;background-color: green;color:white;">Staging - test server</div>
 
 	<script type="text/javascript">
 		(function(c, l, a, r, i, t, y) {
@@ -33,6 +38,10 @@
 	<div style="padding: 0.5em;background-color: green;color:white;">test server: dev</div>
 <?php } else { ?>
 
+	<title>Cardeco</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/vnd.microsoft.icon" />
+	<!-- <link rel="shortcut icon" href="view/icon.png" type="image/png" /> -->
+
 	<!-- Google tag (gtag.js) -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=G-139719LGJQ"></script>
 	<script>
@@ -46,15 +55,23 @@
 		gtag('config', 'G-139719LGJQ');
 	</script>
 
-
-	<link rel="shortcut icon" href="view/icon.png" type="image/png" />
-
+	<script type="text/javascript">
+		(function(c, l, a, r, i, t, y) {
+			c[a] = c[a] || function() {
+				(c[a].q = c[a].q || []).push(arguments)
+			};
+			t = l.createElement(r);
+			t.async = 1;
+			t.src = "https://www.clarity.ms/tag/" + i;
+			y = l.getElementsByTagName(r)[0];
+			y.parentNode.insertBefore(t, y);
+		})(window, document, "clarity", "script", "ri0as4ewcy");
+	</script>
 
 <?php } ?>
 
 <script>
 	window.app = {}; // global placeholder
-	window.app.hasError = '<?= error_get_last() === null ?>' === '1';
 </script>
 
 <!-- smooth page loading transition -->
@@ -72,27 +89,34 @@
 		align-items: center;
 		font-size: 16px;
 		cursor: progress;
-
-		background-color: hsl(0deg 0% 50% / 0%);
 	}
 
-	#page-loader * {
+	#page-loader>* {
+		background-color: #eee;
+		box-shadow: 0 0 2px 0 #fff;
+		padding: 0 .5rem;
+	}
+
+	#page-loader>* {
 		opacity: 0;
+	}
+
+	#page-loader.loading-overdue {
+		transition: .25s ease-in;
 	}
 
 	#page-loader.loading {
 		transition: .5s ease;
-		transition-delay: .5s;
 		background-color: hsl(0deg 0% 50% / 25%);
 		display: flex;
 	}
 
-	#page-loader.loading * {
+	#page-loader.loading>* {
 		opacity: 1;
-		transition-delay: .75s;
+		transition-delay: .5s;
 	}
 </style>
-<div id="page-loader" style="display: none;">
+<div id="page-loader" style="display: flex;">
 	<p><i>loading...</i></p>
 </div>
 <script>
@@ -102,25 +126,47 @@
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
 			loader.style['display'] = 'flex';
-			setTimeout(() => {
-				loader.classList.toggle('loading');
-			}, 50);
+			setTimeout(loader => {
+				loader.classList.add('loading');
+			}, 250, loader);
 		});
 	});
+
+	setTimeout(_ => {
+		const loader = document.getElementById('page-loader');
+		if (loader.style['display'] !== 'none')
+			loader.classList.add('loading');
+		setTimeout(loader => {
+			if (loader.style['display'] !== 'none')
+				loader.classList.add('loading-overdue');
+		}, 500, loader);
+	}, 500);
 
 	// hide loading when returning current loading page
 	window.addEventListener('pageshow', function(e) {
 		console.log(e.type);
 		requestAnimationFrame(_ => {
 			const loader = document.getElementById('page-loader');
-			loader.style['display'] = 'none';
-			setTimeout(() => {
+
+			if (loader.classList.contains('loading-overdue')) { // slow fade for long loading
 				loader.classList.remove('loading');
-			}, 50);
+				setTimeout(loader => {
+					loader.classList.remove('loading-overdue');
+					loader.style['display'] = 'none';
+				}, 250, loader);
+			} else { // otherwise stop loading display immediately
+				loader.style['display'] = 'none';
+				loader.classList.remove('loading-overdue');
+				loader.classList.remove('loading');
+			}
 		});
 	});
 </script>
 <!-- smooth page loading transition -->
+
+<!-- custom table sorter -->
+<link rel="stylesheet" href="js/table-sorter/table-sorter.css">
+<script src="js/table-sorter/table-sorter-init.js"></script>
 
 <script>
 	window.addEventListener('error', function (e) {
@@ -133,53 +179,111 @@
 	});
 </script>
 
+<!-- custom ajax form handling [cd-ajax] -->
 <script>
-	// override form submission, listen network response of form submit and retrigger customer event of resposne result
-	document.body.addEventListener('submit', async e => {
-		// exclude form with file
-		if (e.target.matches('form.ajax') === false) return;
-		e.preventDefault();
-		const form = e.target;
-		const formData = new FormData(form);
+	{ // override form submission, listen network response of form submit and retrigger customer event of resposne result
+		let btnSubmit = null;
+		document.body.addEventListener('click', e => {
+			if (e.target.matches('form[cd-ajax] button[name]') === false) return;
+			btnSubmit = e.target;
+		});
+		document.addEventListener('submit', async e => {
+			// exclude form with file
+			if (e.target.matches('form[cd-ajax]') === false) return;
+			e.preventDefault();
+			await new Promise(r => setTimeout(r, 0)); // allow left over input changes to apply first; yield to 'change' event
 
-		return await fetch(form.action, {
-				method: form.method,
-				body: formData
-			})
-			.then(response => {
-				console.log({
-					form,
-					response
+			const form = e.target;
+			const formData = new FormData(form);
+			if (btnSubmit !== null && btnSubmit.closest('form[cd-ajax]') === form) { // include clicked button value, plain html by default included it
+				formData.append(btnSubmit.getAttribute('name'), btnSubmit.value);
+			}
+			const url = form.getAttribute('action') || window.location.href;
+
+			return await fetch(url, {
+					method: form.getAttribute('method') || 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+						'Cache-Control': 'max-age=0',
+						'Upgrade-Insecure-Requests': '1',
+					},
+					credentials: 'same-origin',
+					body: new URLSearchParams(formData).toString(),
+				})
+				.then(response => {
+					if (response.ok) {
+						form.dispatchEvent(new CustomEvent('submitted', {
+							bubbles: true,
+							detail: response
+						}));
+						console.log('form submitted success ' + response.status, {
+							form,
+							response
+						});
+					} else {
+						form.dispatchEvent(new CustomEvent('submitted-failed', {
+							bubbles: true,
+							detail: response
+						}));
+						console.error('form submitted but server failed ' + response.status, {
+							form,
+							response
+						});
+					}
+				})
+				.catch(error => {
+					form.dispatchEvent(new CustomEvent('not-submitted', {
+						bubbles: true,
+						detail: null
+					}));
+					return false;
 				});
-				form.dispatchEvent(new CustomEvent('submitted', {
-					bubbles: true,
-					detail: response
-				}));
-				return true;
-				// if (response.ok) {
-				// } else {
-				// }
-			})
-			.catch(error => {
-				form.dispatchEvent(new CustomEvent('not-submitted', {
-					bubbles: true
-				}));
-				return false;
-			});
-	});
-	document.body.addEventListener('submit', e => {
-		requestAnimationFrame(_ => {
+		});
+	}
+
+	setTimeout(_ => {
+		document.addEventListener('submit', e => {
 			document.body.classList.add('submitting-form');
 		});
-	});
+	}, 0);
 	document.body.addEventListener('submitted', e => {
-		requestAnimationFrame(_ => {
+		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
-		});
+		}, 0);
+	});
+	document.body.addEventListener('submitted-failed', async e => {
+		setTimeout(_ => {
+			document.body.classList.remove('submitting-form');
+		}, 0);
+		alert('error: ' + await e.detail.text());
 	});
 	document.body.addEventListener('not-submitted', e => {
-		requestAnimationFrame(_ => {
+		setTimeout(_ => {
 			document.body.classList.remove('submitting-form');
+		}, 0);
+		alert('error: submission failed, please reload page and try again.');
+	});
+</script>
+
+
+<script src="js/vendor/quicklink.umd.js"></script>
+<script>
+	window.addEventListener('load', function(e) {
+		const stopPrefetch = quicklink.listen({
+			delay: 500,
+			limit: 16,
+			throttle: 4,
+			origins: [ // these actually mean domain name, not origin
+				location.hostname // prefetch self domain only
+			],
+			el: document.querySelector('body > nav'), // observe and prefetech only links in this element
+			onError: console.warn,
+		});
+
+		// stop prefetching
+		setTimeout(stopPrefetch, 6500);
+		document.addEventListener('submitted', e => {
+			stopPrefetch();
 		});
 	});
 </script>

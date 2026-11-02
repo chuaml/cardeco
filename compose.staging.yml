@@ -1,0 +1,44 @@
+services:
+  mysql:
+    image: mysql:8.0.41
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: cardeco  # db name to create/use
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+    volumes:
+      - cardeco-staging-data:/var/lib/mysql   #
+      - ./db/cardeco.sql.gz:/docker-entrypoint-initdb.d/cardeco.sql.gz:ro  #init db if none exist
+      - ./db/upgrade.sql:/var/tmp/upgrade.sql:ro  #db upgrade
+    post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
+      - command: sh -c 'sleep 5 && mysqldump -h 127.0.0.1 -u root -ptoor cardeco --lock-all-tables > cardeco.staging.sql'
+        user: root
+      # upgrade database schema
+      - command: sh -c 'mysql -u root -ptoor cardeco < /var/tmp/upgrade.sql' 
+        user: root
+    ports:
+      - "3307:3306"  # port mapping host:container
+    restart: always
+
+  app:
+    image: cardeco:staging
+    depends_on:
+      mysql:
+        condition: service_started   # service_started | service_healthy to skip or wait for db ready respectively
+        restart: true
+    ports:
+      - 127.0.0.1:8081:80   # port mapping host:container
+    working_dir: /var/www/html
+    environment:
+      IS_PRODUCTION: 0
+      MYSQL_HOST: mysql
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+      MYSQL_DB: cardeco
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: always
+
+
+volumes:
+  cardeco-staging-data:

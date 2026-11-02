@@ -1,0 +1,90 @@
+## for setting-up a container of development environment
+## just use VSCODE + extension `ms-vscode-remote.remote-containers`
+## and refer extra configuration for dev in ".devcontainer/*"
+
+services:  ## for development environment
+  mysql-dev:
+    restart: no  ## to auto start when docker start?
+    image: mysql:8.0.41
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: cardeco_dev  # db name to create/use
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+    ports:
+      - "3308:3306"
+    volumes:
+      - cardeco-dev-data:/var/lib/mysql  #
+      - ./db/cardeco.sql.gz:/docker-entrypoint-initdb.d/cardeco.sql.gz:ro  #init db if none exist
+      - ./db/dump-dev:/var/tmp/dump/  #db backup
+      - ./db/upgrade.sql:/var/tmp/upgrade.sql:ro  #db upgrade
+    # healthcheck:  ## skip, allow dev-container to startup first
+    #   test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u ${MYSQL_USER} -p ${MYSQL_PASSWORD}"]
+    #   interval: 60s
+    #   retries: 2
+    #   start_period: 1s
+    #   timeout: 5s
+    # post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
+    #   - command: sh -c 'sleep 2 && mysqldump -h 127.0.0.1 -u root -ptoor cardeco_dev --lock-all-tables | gzip > /var/tmp/dump/cardeco_dev.db.dump.$(date --utc +"%Y-%m-%d_%H%M%S").sql.gz && cd /var/tmp/dump/ && ls -t | tail -n +6 | xargs -I {} rm -f "{}"'
+    #     user: root
+    #   # upgrade database schema
+    #   - command: sh -c 'mysql -u root -ptoor cardeco_dev < /var/tmp/upgrade.sql' 
+    #     user: root
+
+
+  app-dev: ## this will behave has dev env, not just app server
+    restart: no
+    build:
+      dockerfile: ./Dockerfile
+      target: dev_app  # image variant
+    ports:
+      - 8082:80
+      ## - 127.0.0.1:9003:9003  # do NOT enable this for XDebug, as it stop XDebug from working on host machine
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html  ## bind-mount 2 way bi-directional files sync; exclude ignored files/dir
+      - ./tests/:/var/www/html/tests  ## mount the ignored tests in dev env
+      - dependencies_php:/var/www/html/vendor
+      - dependencies_nodejs:/var/www/html/node_modules
+      # - ./config.dev/php-dev-override.ini:/usr/local/etc/php/conf.d/php-dev-override.ini:ro  ## for override part of php.ini
+      # - ./config.dev/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini:ro  # RO readonly
+    environment:
+      IS_PRODUCTION: 0
+      MYSQL_HOST: mysql-dev
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+      MYSQL_DB: cardeco_dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
+
+    command: sleep infinity  ## keep container running, allow vscode to connect
+                             ## and stop Apache server from starting automatically in background
+    post_start: 
+      - command: composer dumpautoload --no-interaction
+        user: root
+    # develop: 
+    #   watch:   ## only if run with `docker compose up --watch`  flag
+    #     ## watch only allow 1 way sync --from host to container-- unlike bind-mount is 2 way
+    #     ## this assume IDE edit on host device without connecting into container
+    #     ## and also assume host device has the necessary runtime binaries
+    #     ## incompatible vscode dev workflow; 
+    #     ## good practice is to connect IDE directly into container for development
+    #     # - action: sync  ## incompatible vscode dev workflow,  
+    #     #   path: ./
+    #     #   target: /var/www/html
+    #     #   ignore:
+    #     #     - vendor/
+    #     #     - node_modules/
+    #     #     - public/
+    #     #     - upload/
+    #     - action: rebuild
+    #       path: composer.json
+    #     - action: sync+restart
+    #       path: ./config.dev/
+    #       target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
+
+
+volumes:
+  cardeco-dev-data:
+  dependencies_php:
+  dependencies_nodejs:

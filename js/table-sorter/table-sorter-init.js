@@ -2,6 +2,7 @@
 // sort row by clicking header
 document.body.addEventListener('click', async function (e) {
     // assert: table > thead > tr
+    if (e.ctrlKey || e.shiftKey) return;
     if (e.target.matches('th:not([onclick])') === false) return;
     const th = e.target;
     const rows = th.closest('table').querySelectorAll('tbody > tr');
@@ -82,3 +83,145 @@ document.body.addEventListener('click', async function (e) {
     });
 
 }, { passive: true });
+
+
+// draggable column
+document.addEventListener('readystatechange', function (ev) {
+    if (ev.target.readyState !== 'interactive') return;
+
+    const enableDrag = e => {
+        // if (e.target.matches('th[draggable]') === false) return;
+        if (e.ctrlKey === false) return;
+        if (e.shiftKey) return;
+        if (e.isTrusted === false) return;
+        e.target.draggable = true;
+    };
+
+    let dragged_th = null;
+    const handle_dragstart = e => {
+        if (('closest' in e.target) === false) return;
+        dragged_th = e.target.closest('th');
+        dragged_th.classList.add('dragstart');
+    };
+    const handle_dragend = e => {
+        if (dragged_th === null) return;
+        dragged_th.classList.remove('dragstart');
+        dragged_th = null;
+        e.target.draggable = false;
+    };
+
+    const handle_dragover = e => { e.preventDefault(); };
+
+    let dragenter_pid = 0;
+    const handle_drop = e => {
+        if (dragged_th === e.target || dragged_th === null) return;
+        clearTimeout(dragenter_pid);
+        const dropAt_th = e.target;
+        const dropped_th_index = dropAt_th.cellIndex;
+        const dragged_th_index = dragged_th.cellIndex;
+        const moveColumn = (_ => {
+            if (dragged_th_index < dropped_th_index) { // move to right
+                return (tr, td, td2) => tr.insertBefore(td, td2.nextSibling);
+            }
+            else { // move to left
+                return (tr, td, td2) => tr.insertBefore(td, td2);
+            }
+        })();
+
+        moveColumn(dropAt_th.parentElement, dragged_th, dropAt_th);
+
+        dropAt_th.closest('table').querySelectorAll('tbody > tr').forEach(tr => {
+            const td_from = tr.children[dragged_th_index];
+            const td_to = tr.children[dropped_th_index];
+            moveColumn(tr, td_from, td_to);
+        });
+
+    };
+
+    const handle_dragenter = e => {
+        if (dragged_th === e.target || dragged_th === null) return;
+        clearTimeout(dragenter_pid);
+        dragenter_pid = setTimeout(_ => {
+            handle_drop(e);
+        }, 160);
+    };
+    document.body.querySelectorAll('table > thead > tr > th').forEach(th => {
+        th.draggable = false;
+        th.addEventListener('mousedown', enableDrag);
+        th.addEventListener('dragstart', handle_dragstart);
+        th.addEventListener('dragend', handle_dragend);
+
+        th.addEventListener('dragover', handle_dragover);
+        // th.addEventListener('drop', handle_drop);
+        th.addEventListener('dragenter', handle_dragenter);
+    });
+
+});
+
+
+{  // highlight column on shift + drag selection
+    let otherColumns = [];
+    function stopColSelection() {
+        otherColumns.forEach(x => {
+            x.inert = false;
+        });
+        otherColumns = [];
+    }
+    document.body.addEventListener('mousedown', function (e) {
+        // assert: table > thead > tr
+        if (e.shiftKey === false) {
+            stopColSelection();
+            return;
+        }
+        if (e.target.matches('td') === false) return;
+        if (e.isTrusted === false) return;
+
+        /** @type HTMLElement */
+        const td = e.target;
+        const col = td.cellIndex + 1;
+        const table = td.closest('table');
+        otherColumns = table.querySelectorAll(`tr>*:not(:nth-child(${col})`);
+        otherColumns.forEach(x => {
+            x.inert = true;
+        });
+    }, { passive: true });
+
+
+    document.body.addEventListener('keyup', function (e) {
+        if (e.code === 'Escape' && e.isTrusted) {
+            stopColSelection();
+        }
+    }, { passive: true });
+
+    document.body.addEventListener('keydown', function (e) {
+        if (e.isTrusted === false) return;
+        if (e.ctrlKey === true) {  // Ctrl A to select whole table
+            if (e.code === 'KeyA') {
+                if (document.activeElement.matches('input,textarea') === true) {
+                    if (document.activeElement.readOnly !== true) return;
+                }
+
+                const selection = window.getSelection();
+                if (selection.anchorNode === null) return;
+
+                let tbl;
+                if (selection.anchorNode.tagName === 'TABLE') {
+                    stopColSelection();
+                    tbl = selection.anchorNode;
+                }
+                else {
+                    if (selection.anchorNode.parentElement === null || selection.anchorNode.parentElement.matches('td,tr') === false) return;
+                    tbl = selection.anchorNode.parentElement.closest('table');
+                }
+
+                const range = document.createRange();
+                range.selectNodeContents(tbl);
+                e.preventDefault();
+                selection.removeAllRanges();
+                setTimeout(selection => {
+                    selection.addRange(range);
+                }, 0, selection);
+            }
+        }
+    });
+}

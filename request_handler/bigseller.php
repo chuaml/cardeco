@@ -28,9 +28,6 @@ try {
             // echo($Data['notFound']);
             // echo($Data['orders']);
             // exit();
-
-            $jsonOrders = json_encode($L->getOrders());
-            $dailyOrderFile_Sha1Hash = sha1_file($_FILES['dailyOrders']['tmp_name']);
         } catch (Exception $e) {
             $msg = $e->getMessage();
         }

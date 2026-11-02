@@ -1,13 +1,6 @@
 <?php
 namespace Orders;
 
-require_once(__DIR__ . '/Record.php');
-require_once(__DIR__ . '/PaymentCharges/DirectCharges.php');
-require_once(__DIR__ . '/PaymentCharges/PlatformCharges.php');
-require_once(__DIR__ . '/../Product/Item.php');
-
-
-use \Orders\PaymentCharges;
 use \Orders\PaymentCharges\PlatformCharges;
 use \Orders\PaymentCharges\DirectCharges;
 use \Product\Item;

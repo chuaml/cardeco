@@ -199,20 +199,6 @@ function setTxtInput(){
 	}
 }
 
-function getTxtInput(){
-	var txtInput = document.getElementById('txtInput');
-	if(txtInput !== undefined){
-		if (typeof(Storage) !== undefined) {
-			var text = window.localStorage.getItem("txtInput");
-			if(text !== null){
-				txtInput.value = text;
-				txtInput.select();
-			} else {
-				window.localStorage.setItem("txtInput", '');
-			}
-		}
-	}
-}
 
 function setChkShowImage(){
 	var chkShowImage = document.getElementById('chkShowImage');
