@@ -11,6 +11,21 @@ use Orders\Factory\Excel\ExcelReader;
 
 class BigSellerOrderProcess
 {
+    private const COL_ORDER_NUM = 0;
+    private const COL_MARKETPLACE = 9;
+    private const COL_STORE_NAME = 10;
+    private const COL_SHIPPING_STATE = 18;
+    private const COL_SKU = 23;
+    private const COL_PRODUCT_NAME = 25;
+    private const COL_QUANTITY = 30;
+    private const COL_SELLING_PRICE = 31;
+    private const COL_PAID_PRICE = 32;
+    private const COL_SHIPPING_PROVIDER = 48;
+    private const COL_TRACKING_NUM = 50;
+    private const COL_SHIPPING_FEE = 51;
+    private const COL_VOUCHER = 62;
+    private const COL_ORDER_TIME = 64;
+
     private mysqli $con;
     private $file;
     private $Data = [
@@ -48,25 +63,25 @@ class BigSellerOrderProcess
         $line = 0;
         foreach ($orders as $r) {
             $line++;
-            $quantity = intval($r[30]);
+            $quantity = intval($r[self::COL_QUANTITY]);
             if($quantity === 0) throw new Exception("unknown quantity of item, at row: $line");
             for ($i = 0; $i < $quantity; ++$i) { // spread out 1 line to multiple line item
                 $list[] = [
-                    'orderNum' => trim($r[0]),
-                    'date' => trim($r[64]), // `Order Time`
-                    'sku' => trim($r[23]),
-                    'description' => trim($r[25]), // `Product Name`
-                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[31])), // `Price`
-                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[51])), // `Shipping Fee`
-                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[62])), // `Store Voucher`
-                    'trackingNum' => trim($r[50]), // `Tracking Number`
+                    'orderNum' => trim($r[self::COL_ORDER_NUM]),
+                    'date' => trim($r[self::COL_ORDER_TIME]), // `Order Time`
+                    'sku' => trim($r[self::COL_SKU]),
+                    'description' => trim($r[self::COL_PRODUCT_NAME]), // `Product Name`
+                    'sellingPrice' => floatval(preg_replace('/[^0-9\.]+/', '', $r[self::COL_SELLING_PRICE])), // `Price`
+                    'shippingFee' => floatval(preg_replace('/[^0-9\.]+/', '', $r[self::COL_SHIPPING_FEE])), // `Shipping Fee`
+                    'voucher' =>  floatval(preg_replace('/[^0-9\.]+/', '', $r[self::COL_VOUCHER])), // `Store Voucher`
+                    'trackingNum' => trim($r[self::COL_TRACKING_NUM]), // `Tracking Number`
 
-                    'paidPrice' => trim($r[32]), // `Product Subtotal`
-                    'shippingProvider' => trim($r[48]), // `Shipping Option`
-                    'shippingState' => trim($r[18]), // `Province (State)`
+                    'paidPrice' => trim($r[self::COL_PAID_PRICE]), // `Product Subtotal`
+                    'shippingProvider' => trim($r[self::COL_SHIPPING_PROVIDER]), // `Shipping Option`
+                    'shippingState' => trim($r[self::COL_SHIPPING_STATE]), // `Province (State)`
 
-                    'marketPlace' => trim($r[9]), // necessary for computation; grouping item counts
-                    'storeName_BigSeller' => trim($r[10]), // swapped to Marketplace Store
+                    'marketPlace' => trim($r[self::COL_MARKETPLACE]), // necessary for computation; grouping item counts
+                    'storeName_BigSeller' => trim($r[self::COL_STORE_NAME]), // swapped to Marketplace Store
 
                     'stock' => null
                 ];
@@ -147,7 +162,7 @@ class BigSellerOrderProcess
         });
         $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
 
-        $itemToCollect = $itemToRestock = array_filter($foundItems, function ($r) {
+        $itemToCollect = array_filter($foundItems, function ($r) {
             return $r['quantity'] <= $r['stock'];
         });
         $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
@@ -170,6 +185,16 @@ class BigSellerOrderProcess
 
     public function getToRestockHTML(array $items, array $keyedSku): string
     {
+        return $this->buildPlatformPackListHTML($items, $keyedSku);
+    }
+
+    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
+    {
+        return $this->buildPlatformPackListHTML($itemToCollect, $keyedSku);
+    }
+
+    private function buildPlatformPackListHTML(array $items, array $keyedSku): string
+    {
         $platforms = [
             'lazada' => [],
             'shopee' => [],
@@ -201,53 +226,13 @@ class BigSellerOrderProcess
                     $r[$col_platform] = 0;
                 }
             }
+            unset($r);
         }
 
         // output as HTML
         $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($items);
 
-        return $tblPackList->getTable();
-    }
-
-    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
-    {
-        $platforms = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
-        // group items by platform marketplace
-        foreach ($platforms as $col_platform => $dbItems) {
-            foreach ($keyedSku as $sku => $orders) {
-                foreach ($orders as $o) {
-                    if ($o['stock'] === null) continue; // skip not found sku item
-
-                    $marketPlace = strtolower($o['marketPlace']);
-                    if ($marketPlace !== $col_platform) continue;
-
-                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
-                        $platforms[$col_platform][$sku] = [];
-
-                    $platforms[$col_platform][$sku][] = $o;
-                }
-            }
-        }
-
-        // count by each column (platforms)
-        foreach ($platforms as $col_platform => $dbItems) {
-            foreach ($itemToCollect as &$r) {
-                if (array_key_exists($r['sku'], $dbItems) === true) {
-                    $r[$col_platform] = count($dbItems[$r['sku']]);
-                } else {
-                    $r[$col_platform] = 0;
-                }
-            }
-        }
-
-        // out put as HTML
-        $tblPackList = $this->newTablePackList_HTML_Maker();
-        $tblPackList->setBody($itemToCollect);
         return $tblPackList->getTable();
     }
 
@@ -269,6 +254,7 @@ class BigSellerOrderProcess
                     $r[$col_platform] = 0;
                 }
             }
+            unset($r);
         }
 
         // output as HTML

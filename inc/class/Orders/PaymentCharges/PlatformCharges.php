@@ -15,6 +15,8 @@ abstract class PlatformCharges extends PaymentCharges{
     ]; //keep track of child class for listing
     const NAMESPACE = '\Orders\PaymentCharges\\';
 
+    protected $platform = '';
+
     public final function getPlatform():string{
         return $this->platform;
     }

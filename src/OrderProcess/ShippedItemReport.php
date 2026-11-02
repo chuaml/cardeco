@@ -16,6 +16,9 @@ use Product\Manager\ItemManager;
 
 final class ShippedItemReport
 {
+    private const COL_ORDER_NUM = 0;
+    private const COL_TRACKING_NUM = 51;
+
     private mysqli $con;
     private ?ExcelReader $xlsx = null;
 
@@ -120,9 +123,9 @@ final class ShippedItemReport
             if ($x->ShippedItem->isShipped() === false) continue;
 
             $x->orderStatus = $x->ShippedItem->shippingStatus;
-            $x->trackingNumber = trim($row[51]);
+            $x->trackingNumber = trim($row[self::COL_TRACKING_NUM]);
             $x->dateOfSendOut = $now;
-            $x->orderNumber = trim($row[0]);
+            $x->orderNumber = trim($row[self::COL_ORDER_NUM]);
 
             $orders[] = $x;
         }

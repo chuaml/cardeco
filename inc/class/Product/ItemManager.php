@@ -41,17 +41,13 @@ class ItemManager{
                     $bigseller_sku_map['bigseller_sku'],
                     $Item->itemId
                 );
-                try{
-                    $stmt->execute();
-                } finally {
-                    $Item;
-                }
+                $stmt->execute();
             }
         }
         $stmt->close();
     }
 
-    public function getItemLikeItemCode(string &$itemCode):array{
+    public function getItemLikeItemCode(string $itemCode):array{
         $LIMIT = 200;
         $stmt = $this->con->prepare(
             'SELECT s.id, s.item_code, s.description, s.uom, s.item_group, b.id as bigseller_sku_map_id , b.bigseller_sku FROM stock_items as s '
@@ -68,18 +64,7 @@ class ItemManager{
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
-        $list = [];
-        foreach($result as $r){
-            $x = new Item(
-                $r['id'], $r['item_code'], $r['description'], $r['uom'], $r['item_group']
-            );
-            $x->bigseller_sku_map[] = [
-                'id' => $r['bigseller_sku_map_id'], 
-                'bigseller_sku' => $r['bigseller_sku']
-            ];
-            $list[] = $x;
-        }
-        return $list;
+        return $this->hydrateItems($result);
     }
 
     public function getItem():array{
@@ -96,6 +81,11 @@ class ItemManager{
         $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
         $stmt->close();
 
+        return $this->hydrateItems($result);
+    }
+
+    private function hydrateItems(array $result): array
+    {
         $list = [];
         foreach($result as $r){
             $x = new Item(

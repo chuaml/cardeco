@@ -20,6 +20,7 @@ class Record{
     private $shippingFeeByCust = 0.00;
     private $shippingState = '';
     private $shippingWeight = 0.00;
+    private $status = '';
 
     private $shippingFeeByWeight = 0.00; //1 orderNum has 1 trackingNum.shippingFeeByWeight, require refactor
     

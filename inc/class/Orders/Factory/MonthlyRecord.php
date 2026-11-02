@@ -125,21 +125,7 @@ class MonthlyRecord implements RecordFactory{
         }
 
         $result = $stmt->get_result();
-        $list = [];
-        while(($r = $result->fetch_assoc()) !== null){
-            $M = new \Orders\MonthlyRecord(
-                $r['id'],
-                $r['orderNum'],
-                new Item($r['itemId'], $r['sku'], $r['description'])
-            );
-
-            $this->setPlatformCharges($M, $r);
-            $this->setDirectCharges($M, $r);            
-
-            $this->setMonthlyRecordData($M, $r);
-           
-            $list[] = $M;
-        }
+        $list = $this->fetchMonthlyRecords($result);
         $stmt->close();
 
         //set total for pageNum
@@ -155,6 +141,26 @@ class MonthlyRecord implements RecordFactory{
         }
         $this->setRecordTotal($stmt);
 
+        return $list;
+    }
+
+    private function fetchMonthlyRecords(\mysqli_result $result): array
+    {
+        $list = [];
+        while (($r = $result->fetch_assoc()) !== null) {
+            $M = new \Orders\MonthlyRecord(
+                $r['id'],
+                $r['orderNum'],
+                new Item($r['itemId'], $r['sku'], $r['description'])
+            );
+
+            $this->setPlatformCharges($M, $r);
+            $this->setDirectCharges($M, $r);
+
+            $this->setMonthlyRecordData($M, $r);
+
+            $list[] = $M;
+        }
         return $list;
     }
 
@@ -244,22 +250,8 @@ class MonthlyRecord implements RecordFactory{
             throw new \Exception($this->con->error);
         }
 
-        $list = [];
         $result = $stmt->get_result();
-        while(($r = $result->fetch_assoc()) !== null){
-            $M = new \Orders\MonthlyRecord(
-                $r['id'],
-                $r['orderNum'],
-                new Item($r['itemId'], $r['sku'], $r['description'])
-            );
-
-            $this->setPlatformCharges($M, $r);
-            $this->setDirectCharges($M, $r);            
-
-            $this->setMonthlyRecordData($M, $r);
-           
-            $list[] = $M;
-        }
+        $list = $this->fetchMonthlyRecords($result);
         $stmt->free_result();
 
         //set total for pageNum

@@ -11,6 +11,17 @@ use Orders\Factory\Excel\ExcelReader;
 
 class LazadaOrderProcess
 {
+    private const COL_SKU = 5;
+    private const COL_DATE = 9;
+    private const COL_ORDER_NUM = 12;
+    private const COL_SHIPPING_STATE = 27;
+    private const COL_PAID_PRICE = 46;
+    private const COL_SELLING_PRICE = 47;
+    private const COL_SHIPPING_FEE = 49;
+    private const COL_DESCRIPTION = 51;
+    private const COL_SHIPPING_PROVIDER = 53;
+    private const COL_TRACKING_NUM = 58;
+
     private $con;
     private $file;
     private $Data = [
@@ -47,17 +58,17 @@ class LazadaOrderProcess
         $list = [];
         foreach($orders as $r){
             $list[] = [
-                'orderNum' => trim($r[12]),
-                'date' => trim($r[9]),
-                'sku' => trim($r[5]),
-                'description' => trim($r[51]),
-                'sellingPrice' => trim($r[47]),
-                'shippingFee' => trim($r[49]),
+                'orderNum' => trim($r[self::COL_ORDER_NUM]),
+                'date' => trim($r[self::COL_DATE]),
+                'sku' => trim($r[self::COL_SKU]),
+                'description' => trim($r[self::COL_DESCRIPTION]),
+                'sellingPrice' => trim($r[self::COL_SELLING_PRICE]),
+                'shippingFee' => trim($r[self::COL_SHIPPING_FEE]),
 
-                'paidPrice' => trim($r[46]),
-                'shippingProvider' => trim($r[53]),
-                'trackingNum' => trim($r[58]),
-                'shippingState' => trim($r[27]),
+                'paidPrice' => trim($r[self::COL_PAID_PRICE]),
+                'shippingProvider' => trim($r[self::COL_SHIPPING_PROVIDER]),
+                'trackingNum' => trim($r[self::COL_TRACKING_NUM]),
+                'shippingState' => trim($r[self::COL_SHIPPING_STATE]),
                 'stock' => null
             ];
         }

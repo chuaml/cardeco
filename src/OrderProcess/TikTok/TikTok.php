@@ -13,6 +13,18 @@ use Product\Manager\ItemManager;
 
 class TikTokOrder
 {
+    private const COL_ORDER_NUM = 0;
+    private const COL_SKU = 6;
+    private const COL_DESCRIPTION = 7;
+    private const COL_QUANTITY = 9;
+    private const COL_SELLING_PRICE = 11;
+    private const COL_VOUCHER = 14;
+    private const COL_SHIPPING_FEE = 16;
+    private const COL_DATE = 23;
+    private const COL_TRACKING_NUM = 33;
+    private const COL_SHIPPING_PROVIDER = 35;
+    private const COL_SHIPPING_STATE = 42;
+
     private $con;
     private $file;
     private $Data = [
@@ -53,23 +65,23 @@ class TikTokOrder
 
         $list = [];
         foreach ($orders as $r) {
-            $quantity = intval($r[9]);
-            $voucher = ((float) preg_replace('/[^0-9\.]+/', '', $r[14])) / $quantity;
-            $sellingPrice = ((float) preg_replace('/[^0-9\.]+/', '', $r[11])) - $voucher;
+            $quantity = intval($r[self::COL_QUANTITY]);
+            $voucher = ((float) preg_replace('/[^0-9\.]+/', '', $r[self::COL_VOUCHER])) / $quantity;
+            $sellingPrice = ((float) preg_replace('/[^0-9\.]+/', '', $r[self::COL_SELLING_PRICE])) - $voucher;
             for ($i = 0; $i < $quantity; ++$i) {
                 $x = new Record(
                     null,
-                    trim($r[0]),
-                    new Item(null, $r[6], null)
+                    trim($r[self::COL_ORDER_NUM]),
+                    new Item(null, $r[self::COL_SKU], null)
                 );
 
-                $x->setOrderNum(trim($r[0]));
-                $x->setDate(trim($r[23]));
+                $x->setOrderNum(trim($r[self::COL_ORDER_NUM]));
+                $x->setDate(trim($r[self::COL_DATE]));
                 $x->setVoucher($voucher);
                 $x->setSellingPrice($sellingPrice);
-                $x->setShippingFee((float) preg_replace('/[^0-9\.]+/', '', $r[16]));
-                $x->setShippingState(trim($r[42]));
-                $x->setTrackingNum(trim($r[33]));
+                $x->setShippingFee((float) preg_replace('/[^0-9\.]+/', '', $r[self::COL_SHIPPING_FEE]));
+                $x->setShippingState(trim($r[self::COL_SHIPPING_STATE]));
+                $x->setTrackingNum(trim($r[self::COL_TRACKING_NUM]));
 
                 if (preg_match('/[^0-9]+/', $x->trackingNum)) {
                     throw new Exception('invalid tracking number: ' . $x->trackingNum);
@@ -79,12 +91,12 @@ class TikTokOrder
                     'orderNum' => $x->orderNum,
                     'date' =>  $x->date,
                     'sku' =>  $x->getItem()->code,
-                    'description' => trim($r[7]),
+                    'description' => trim($r[self::COL_DESCRIPTION]),
                     'sellingPrice' => $x->sellingPrice,
                     'sellerVoucher' => 0.00,
                     'shippingFee' => $x->shippingFee,
 
-                    'shippingProvider' => trim($r[35]),
+                    'shippingProvider' => trim($r[self::COL_SHIPPING_PROVIDER]),
                     'trackingNum' => trim($x->trackingNum),
                     'shippingState' => trim($x->shippingState),
                     'stock' => null
