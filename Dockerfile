@@ -1,4 +1,5 @@
-FROM php:7.4-apache AS base_image
+ARG PHP_VERSION=8.3
+FROM php:${PHP_VERSION}-apache AS base_image
 WORKDIR /var/www/html
 
 # install system dependencies
@@ -58,9 +59,13 @@ CMD ["apache2-foreground"]
 # for development setup
 FROM base_image AS dev_app
 
-# xdebug
+# xdebug (3.1.6 for PHP 7.4, 3.3.2 for PHP 8.x)
 RUN pecl channel-update pecl.php.net \
-&& pecl install xdebug-3.1.6 \
+&& if php -r 'exit(PHP_MAJOR_VERSION < 8 ? 0 : 1);'; then \
+     pecl install xdebug-3.1.6; \
+   else \
+     pecl install xdebug-3.3.2; \
+   fi \
 && docker-php-ext-enable xdebug
 
 # install dev and app dependencies

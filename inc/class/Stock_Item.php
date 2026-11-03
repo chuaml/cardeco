@@ -22,7 +22,7 @@ final class Stock_Item
             $stmt->bind_param('i', $id);
             $stmt->execute();
             $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-            return $result[0];
+            return $result[0] ?? [];
         } finally {
             $stmt->close();
         }

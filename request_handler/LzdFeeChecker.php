@@ -46,6 +46,8 @@ try {
         $orders = OrdersManager::getForLzdFeeStmtByOrderNums($con, \array_keys($paymentAmounts));
         foreach ($orders as $i => $r) {
             $orders[$i]['grandTotal'] = $r['sellingPrice'] + $r['shippingFeeByCust'] - $r['voucher'] - $r['platformChargesAmount'];
+            $orders[$i]['stmtPaymentAmount'] = 0.00;
+            $orders[$i]['stmtShippingFeeByCust'] = 0.00;
 
             if (\array_key_exists($r['orderNum'], $paymentAmounts) === true) {
                 $orders[$i]['stmtPaymentAmount'] = $paymentAmounts[$r['orderNum']];

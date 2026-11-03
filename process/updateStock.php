@@ -24,7 +24,7 @@ try{
 
 	if(error_get_last() !== null){
 		trigger_error('some error has occure. process is stopped.');
-		throw new Exception(error_get_last());
+		throw new Exception(error_get_last()['message'] ?? 'Unknown error');
 	}
 
 	$msg = '<script>alert("Stock updated.");

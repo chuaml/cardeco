@@ -92,7 +92,7 @@ final class ShippedItemReport
         $now = (new DateTime())->format('m/d/Y');
         foreach ($item_group_by_sku as $x) {
             $r = new HtmlTableRow();
-            $r->setAttribute('is-empty-item-code', strlen($x->item->code) > 0 ? 'false' : 'true');
+            $r->setAttribute('is-empty-item-code', strlen($x->item->code ?? '') > 0 ? 'false' : 'true');
 
             $r->addCell(new Cell($now));
             $r->addCell(new Cell($x->item->code ?? $x->sku));

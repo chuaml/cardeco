@@ -15,9 +15,9 @@ class CSV_Table_Handler{
 		$table = [];
 		if($SKIP_HEADER){fgetcsv($file, $LIMIT_ROW, $FILEDS_DELIMITER);}
 		for($i=0;$i<$LIMIT_ROW;++$i){
-			if(($row = fgetcsv($file, $LIMIT_ROW, $FILEDS_DELIMITER)) === null){
+			$row = fgetcsv($file, $LIMIT_ROW, $FILEDS_DELIMITER);
+			if($row === null){
 				throw new Exception('fail to get csv data at: '. $i);
-				break;
 			}
 			if($row === false){
 				break;
@@ -91,7 +91,7 @@ class CSV_Table_Handler{
 	private function isEmptyLine(array $row){
 		$empty_col = 0;
 		foreach($row as $col){
-			if(strlen(trim($col)) <= 0){
+			if(strlen(trim((string)($col ?? ''))) <= 0){
 				++$empty_col;
 			}
 		}

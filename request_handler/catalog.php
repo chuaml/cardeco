@@ -64,7 +64,7 @@ function selectProducts($con, string $v){
 $words = '';
 $resultmsg = '';
 if(isset($_GET['submit'])){
-	$words = isset($_GET['txtDescription']) ? $_GET['txtDescription'] : false;
+	$words = isset($_GET['txtDescription']) ? $_GET['txtDescription'] : '';
 	$words = trim($words);
 }
 
@@ -107,7 +107,7 @@ $output = '';
 if($result !== false){
 	$output = '<div class="catalog_container">';
 	foreach($result as $row){
-	$row['color'] = strlen($row['color']) !== 0 ? $row['color'] : 'N/A';
+	$row['color'] = strlen($row['color'] ?? '') !== 0 ? $row['color'] : 'N/A';
 
 	$output .= '<div class="catalog_item">'
 	.'<img src="'	.$row['image1']	.'" alt="image"></image>'

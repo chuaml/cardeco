@@ -120,7 +120,7 @@ class Record{
     }
 
     public function getEscapedData(string $property):string{
-        return htmlspecialchars($this->__get($property), ENT_QUOTES, 'UTF-8');
+        return htmlspecialchars((string)($this->__get($property) ?? ''), ENT_QUOTES, 'UTF-8');
     }
 
     public function getItem():?Item{

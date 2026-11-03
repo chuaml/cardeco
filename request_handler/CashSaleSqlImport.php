@@ -12,7 +12,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 
 function validateFile(array $file): void
 {
-    if (count($file) !== 5) {
+    if (count($file) < 5 || count($file) > 6 || !isset($file['name'], $file['tmp_name'], $file['error'])) {
         throw new InvalidArgumentException('expected $_FILES[0]');
     }
 

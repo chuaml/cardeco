@@ -30,8 +30,8 @@ class Sql_Accounting_Export{
 		];
 	}
 
-	public function validateFile(array $file, string $fileType=null){
-		if(sizeof($file) !== 5){
+	public function validateFile(array $file, ?string $fileType = null){
+		if(sizeof($file) < 5 || sizeof($file) > 6 || !isset($file['name'], $file['tmp_name'], $file['error'], $file['size'])){
 			die('Error: Not $_FILES ??');
 		}
 		$errormsg = null;

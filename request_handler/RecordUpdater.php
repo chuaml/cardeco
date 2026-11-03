@@ -28,7 +28,7 @@ function getMRecordsToOverWrite(array $MRecordsToUpdate, array $MRecordsFromDB):
 
     $MRecordsToOverWrite = [];
     foreach($MRecordsFromDB as $r){
-        $dso = trim($r->dateStockOut);
+        $dso = trim($r->dateStockOut ?? '');
         if($dso !== '' && $dso !== $trackinNumKey[$r->trackingNum]){
             $MRecordsToOverWrite[] = $r;
         }

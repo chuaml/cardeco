@@ -16,7 +16,7 @@ class Courier_Record_Viewer{
 		foreach($this->db_result as $r){
 			$row = [];
 			foreach($r as $c => $col){
-				$row[$c] = htmlspecialchars(trim($col), ENT_QUOTES, 'UTF-8');
+				$row[$c] = htmlspecialchars(trim((string)($col ?? '')), ENT_QUOTES, 'UTF-8');
 			}
 			$result[] = $row;
 		}

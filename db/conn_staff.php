@@ -45,10 +45,10 @@ if(getenv('MYSQL_HOST') === false) {  // assume host still in old WAMP, i.e. Win
 $_isProduction = getenv('IS_PRODUCTION') === '1' ? true : false;
 define('IS_PRODUCTION', $_isProduction);
 
-define('DB_ADDRESS', getenv('MYSQL_HOST'));
-define('DB_USERNAME', getenv('MYSQL_USER'));
-define('DB_PASSWORD', getenv('MYSQL_PASSWORD'));
-define('DB_NAME', getenv('MYSQL_DB'));
+define('DB_ADDRESS', getenv('MYSQL_HOST') ?: 'localhost');
+define('DB_USERNAME', getenv('MYSQL_USER') ?: 'root');
+define('DB_PASSWORD', getenv('MYSQL_PASSWORD') !== false ? getenv('MYSQL_PASSWORD') : '');
+define('DB_NAME', getenv('MYSQL_DB') ?: 'cardeco_dev');
 
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 

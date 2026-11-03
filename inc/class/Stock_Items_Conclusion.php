@@ -33,7 +33,7 @@ class Stock_Items_Conclusion{
 		$output = [];
 		foreach($this->output as $r){
 			foreach($r as $c => $col){
-				$r[$c] = htmlspecialchars($col, ENT_QUOTES, 'UTF-8');
+				$r[$c] = htmlspecialchars((string)($col ?? ''), ENT_QUOTES, 'UTF-8');
 			}
 			unset($col); unset($c);
 			$output[] = $r;

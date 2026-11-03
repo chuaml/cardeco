@@ -166,7 +166,7 @@ class MonthlyRecord implements RecordFactory{
 
     private function setPlatformCharges(\Orders\MonthlyRecord $MonthlyRecord, array &$r):void{
         $platformCharges = &$r['platformCharges'];
-        if(strlen($platformCharges) === 0){return;}
+        if($platformCharges === null || strlen($platformCharges) === 0){return;}
         $amount = (double)$r['platformChargesAmount'];
         switch($platformCharges){
             case 'Lazada':

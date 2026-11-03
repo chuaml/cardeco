@@ -35,7 +35,7 @@ class catalog_generator{
 				$images_i[] = $row['image'];
 			}
 			
-			if(strlen(trim($row['comment'])) > 0){
+			if(isset($row['comment']) && strlen(trim($row['comment'])) > 0){
 				$comments[] = trim($row['comment']);
 			}
 		}
@@ -80,7 +80,7 @@ class catalog_generator{
 	}
 	
 	private function encodeResult(){
-		if(!is_array($this->items[0])){
+		if(!isset($this->items[0]) || !is_array($this->items[0])){
 			return false;
 		}
 		
@@ -92,7 +92,7 @@ class catalog_generator{
 			$comment = isset($this->comments[$k]) ? 
 			htmlspecialchars($this->comments[$k], ENT_QUOTES, 'UTF-8') : false;
 			foreach($row as $f => $col){
-				$temp_row[$f] = htmlspecialchars(trim($col), ENT_QUOTES, 'UTF-8');
+				$temp_row[$f] = htmlspecialchars(trim((string)($col ?? '')), ENT_QUOTES, 'UTF-8');
 			}
 			unset($col); unset($f);
 			if($comment !== false){

@@ -150,6 +150,7 @@ class LazyCollection implements ICollection
         unset($this->list[$offset]);
     }
 
+    #[\ReturnTypeWillChange]
     public function offsetGet($offset)
     {
         return isset($this->list[$offset]) ? $this->list[$offset] : null;

@@ -38,7 +38,7 @@ if(isset($_FILES['orders']) && isset($_POST['platform'])){
             throw new Exception('file has error.');
         }
 
-        $list;
+        $list = [];
         switch($_POST['platform']){
             case 'Lazada': 
                 $list = getRecords(new Lazada($File['tmp_name']));

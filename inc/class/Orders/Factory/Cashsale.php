@@ -163,6 +163,8 @@ class Cashsale implements RecordFactory{
 //lines of same orderNum as a cashsaletext
 class CashsaleText{
     private $data;
+    private $dataMaster = [];
+    private $dataDetail = [];
 
     const NUM_COL = 45;
     const DEFAULT_VALUE = '----';

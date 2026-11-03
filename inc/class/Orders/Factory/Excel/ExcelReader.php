@@ -77,9 +77,9 @@ class ExcelReader
             $r = [];
             foreach ($cellIterator as $cell) {
                 try {
-                    $r[] = trim($cell->getFormattedValue());
+                    $r[] = trim((string)($cell->getFormattedValue() ?? ''));
                 } catch (\PhpOffice\PhpSpreadsheet\Calculation\Exception $e) {
-                    $r[] = trim($cell->getValue());
+                    $r[] = trim((string)($cell->getValue() ?? ''));
                 }
             }
             yield $r;

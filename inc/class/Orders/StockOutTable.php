@@ -20,7 +20,7 @@ class StockOutTable extends TableDisplayer{
         $cleanRecord = [];
         foreach($list as $r){
             foreach ($r as $k => $v) {
-                $cleanRecord[$k] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                $cleanRecord[$k] = \htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8');
             }
             $this->records[] = $cleanRecord;
         }

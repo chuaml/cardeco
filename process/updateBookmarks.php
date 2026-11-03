@@ -24,7 +24,7 @@ $SUBMIT = strtolower(trim($_POST['btnSubmit']));
 $active = false;
 $bk_list = [];
 $Bookmark = new Bookmark($con);
-$action;
+$action = false;
 
 switch($SUBMIT){
 	case 'remove':
@@ -45,7 +45,7 @@ if($active === false){
 $action = $Bookmark->updateBookmarks($_POST['chkBookmarks'], $active);
 
 if($action === false){
-	trigger_error('Fail to create New Bookmark with name: ' .$name);
+	trigger_error('Fail to update Bookmarks');
 	die();
 }
 

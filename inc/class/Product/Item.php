@@ -36,7 +36,7 @@ class Item implements EscapableData
 
     public function getEscapedData(string $property):string
     {
-        return \htmlspecialchars($this->$property, ENT_QUOTES, 'UTF-8');
+        return \htmlspecialchars((string)($this->$property ?? ''), ENT_QUOTES, 'UTF-8');
     }
 
     public function getAll():array

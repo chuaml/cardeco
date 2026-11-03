@@ -20,7 +20,7 @@
         ],
 
         "tests": [
-            "php -d memory_limit=-1 -d error_reporting=-1 -d log_errors_max_len=0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.show_exception_trace=0  -d xdebug.mode=Off -d xdebug.show_local_vars=0 -d xdebug.log_level=0 -d xdebug.start_with_request=no ./vendor/bin/phpunit ./tests/ --colors=always"
+            "php -d memory_limit=-1 -d error_reporting=-1 -d log_errors_max_len=0 -d zend.assertions=1 -d xdebug.show_exception_trace=0 -d xdebug.mode=Off -d xdebug.show_local_vars=0 -d xdebug.log_level=0 -d xdebug.start_with_request=no ./vendor/bin/phpunit ./tests/ --colors=always"
         ],
         "debug-tests": [
             "composer dumpautoload",
@@ -36,9 +36,14 @@
         ]
     },
     "require": {
+        "php": "^7.4 || ^8.0",
         "phpoffice/phpspreadsheet": "^1.29"
     },
     "require-dev": {
-        "phpunit/phpunit": "9.5"
+        "phpunit/phpunit": "^9.6"
+    },
+    "config": {
+        "platform": {
+        }
     }
 }

@@ -32,7 +32,7 @@ class HtmlObject implements IHtml
 
     public function getAttribute(string $name)
     {
-        return $this->attribute[$name];
+        return $this->attribute[$name] ?? null;
     }
 
     public function getAllAttributes(): array
@@ -45,7 +45,7 @@ class HtmlObject implements IHtml
         $attribute = '';
         foreach ($this->attribute as $k => $v) {
             $attribute .=
-                htmlspecialchars($k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars($v, ENT_QUOTES, 'UTF-8') . '"';
+                htmlspecialchars((string)$k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8') . '"';
         }
         return $attribute;
     }

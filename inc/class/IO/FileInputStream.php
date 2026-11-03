@@ -6,7 +6,7 @@ use Generator;
 
 class FileInputStream{
     protected $IO;
-    private $file;
+    protected $file;
     private $bufferLength = 8192;
 
     const OPEN_MODE = 'rb';

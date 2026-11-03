@@ -95,7 +95,7 @@ class StockItem_detail extends StockManager{
 					unset($src); unset($i);
 					continue;
 				}
-				$new_row[$k] = htmlspecialchars($col, ENT_QUOTES, 'UTF-8');
+				$new_row[$k] = htmlspecialchars((string)($col ?? ''), ENT_QUOTES, 'UTF-8');
 			}
 			unset($col); unset($k);
 

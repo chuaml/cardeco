@@ -173,6 +173,7 @@ class RecordInserter implements Insertable, Updatable
         //update existing Record trackingNum & status
         $col = [
             'trackingNum' => 's',
+            'status' => 's',
         ];
         $whereCol = [
             'orderNum' => 's'

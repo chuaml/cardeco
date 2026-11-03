@@ -27,7 +27,7 @@ class Lzd_Fee_Matcher{
 			// 	$r['billno'] = $sum;
 			// }
 
-			$diff = doubleval(abs($r['amount'])) - doubleval(abs($recorded_amount));
+			$diff = doubleval(abs((float)$r['amount'])) - doubleval(abs((float)$recorded_amount));
 			$recorded_amount = $diff === 0.00 ? '' : $recorded_amount; 
 			$diff = $diff === 0.00 ? '' :abs($diff); 
 

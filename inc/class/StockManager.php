@@ -86,7 +86,7 @@ class StockManager{
 						$new_row[$k] .= '</div>';
 						continue;
 					} else {
-						if(strlen(trim($col)) === 0 || $col === null){
+						if($col === null || strlen(trim($col)) === 0){
 							$new_row[$k] = 0;
 							continue;
 						}
@@ -95,7 +95,7 @@ class StockManager{
 					}
 					
 				}
-				$new_row[$k] = htmlspecialchars($col, ENT_QUOTES, 'UTF-8');
+				$new_row[$k] = htmlspecialchars((string)($col ?? ''), ENT_QUOTES, 'UTF-8');
 			}
 			unset($col); unset($k);
 

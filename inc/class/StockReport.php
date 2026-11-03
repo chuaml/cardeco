@@ -42,7 +42,7 @@ class StockReport extends StockManager{
 			//1 china name
 			//2 sql accounting item code
 			for($c=0;$c<3;++$c){
-				$row[$keys[$c]] = isset($row[$c]) ? trim($row[$c]) : null;
+				$row[$keys[$c]] = isset($row[$c]) ? trim($row[$c]) : '';
 				unset($row[$c]);
 			}
 			
@@ -53,7 +53,7 @@ class StockReport extends StockManager{
 			}
 
 			$hash_table[$row['item_code']] = 1; 
-			$v = $row['item_code'];
+			$v = $row['item_code'] ?? '';
 			
 			if(strlen($v) > 0){
 				$input_items[] = $row;

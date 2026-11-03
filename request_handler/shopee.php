@@ -21,7 +21,7 @@ class ShopeeOrdersController
     public function __construct(mysqli $con, array $FILE)
     {
         if ($FILE['error'] !== 0) {
-            throw new Exception('error on file: ' .$_FILES['lzdOrders']['name']);
+            throw new Exception('error on file: ' . ($FILE['name'] ?? ''));
         }
         $file = $FILE['tmp_name'];
         if (!file_exists($file)) {

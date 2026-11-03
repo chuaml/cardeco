@@ -41,7 +41,7 @@ class AutoFilling{
     public static function getLargerWeight(array &$list):array{
         return array_map(function($r){
             $dimensionWeight = self::getDimensionToWeight(
-                $r['length'], $r['width'], $r['height']
+                (float)($r['length'] ?? 0), (float)($r['width'] ?? 0), (float)($r['height'] ?? 0)
             );
             $weight = (double) $r['weight'];
             return [
@@ -75,7 +75,7 @@ class AutoFilling{
     
                 $weight = (double) $item['weight'];
                 $weight2 = AutoFilling::getDimensionToWeight(
-                    $item['length'], $item['width'], $item['height']
+                    (float)($item['length'] ?? 0), (float)($item['width'] ?? 0), (float)($item['height'] ?? 0)
                 );
                 $r->setShippingWeight($weight > $weight2 ? $weight : $weight2);
             }

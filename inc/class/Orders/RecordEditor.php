@@ -26,7 +26,7 @@ class RecordEditor extends TableDisplayer
                 if (is_float($v) === true) {
                     $cleanRecord[$fieldName] = $v;
                 } else {
-                    $cleanRecord[$fieldName] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                    $cleanRecord[$fieldName] = \htmlspecialchars((string)($v ?? ''), ENT_QUOTES, 'UTF-8');
                 }
             }
             $this->records[] = $cleanRecord;
@@ -63,7 +63,7 @@ class RecordEditor extends TableDisplayer
 
             $r['platformChargesAmount'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][platformChargesAmount]" value="'
-                . number_format($r['platformChargesAmount'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . number_format((float)($r['platformChargesAmount'] ?: 0.0), 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
 
             $r['cash'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][cash]" value="'
@@ -100,7 +100,7 @@ class RecordEditor extends TableDisplayer
             case 'cash':
                 return '<td>' . $value . '</td>';
             default:
-                return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+                return '<td>' . htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8') . '</td>';
         }
     }
 

@@ -27,8 +27,8 @@ $st = ctime();
 <body>
 <?php 
 $Bookmark = new Bookmark($con);
-$pg;
-$sb;
+$pg = null;
+$sb = null;
 $bookmark_id = isset($_GET['id']) ? intval(trim($_GET['id'])) : false;
 if($bookmark_id === false){
 	$pg = new Page_Handler_Bookmark($Bookmark);

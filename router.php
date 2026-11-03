@@ -31,7 +31,9 @@ try {
 
     $err = error_get_last();
     if ($err !== null) {
-        if ($err['file'] !== 'xdebug://debug-eval') {
+        $isIgnoredDeprecation = ($_isProduction === true)
+            && ($err['type'] === E_DEPRECATED || $err['type'] === E_USER_DEPRECATED);
+        if ($err['file'] !== 'xdebug://debug-eval' && $isIgnoredDeprecation === false) {
             http_response_code(500);
             throw new RuntimeException('type=' . $err['type'] . "\n" . $err['message'] . "\n" . $err['file'] . "\nline: " . $err['line'] . "\n\n");
         }

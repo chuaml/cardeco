@@ -180,8 +180,8 @@ class Database_StockImages_Exporter extends Database_Manager implements select{
 	}
 
 	private function createFolder_Item_Group(string $dir_to_paste, array $row){
-		$item_group = trim($row['item_group']);
-		if($item_group === null || strlen($item_group) === 0){
+		$item_group = trim($row['item_group'] ?? '');
+		if(strlen($item_group) === 0){
 			$item_group = 'etc';
 		} else {
 			$item_group = preg_replace('/[^A-Za-z0-9\-]/', ' ', $item_group);
@@ -195,7 +195,7 @@ class Database_StockImages_Exporter extends Database_Manager implements select{
 	}
 	
 	private function replaceExisting_Filename(string $dir_to_paste, array $row){
-		$filename_only = preg_replace('/[^A-Za-z0-9\-]/', ' ', trim($row['description']));
+		$filename_only = preg_replace('/[^A-Za-z0-9\-]/', ' ', trim($row['description'] ?? ''));
 		$file_type = '.' .trim($row['file_type']);
 		$pasteTo = $dir_to_paste .$filename_only .$file_type;
 		if(!file_exists($pasteTo)){
