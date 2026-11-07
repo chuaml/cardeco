@@ -8,8 +8,10 @@ use Traversable;
 class LazyCollection implements ICollection
 {
 
-    private array $list;
-    private array $callbacks = [];
+    /** @var array */
+    private $list;
+    /** @var array */
+    private $callbacks = [];
 
     public function __construct(array $initalArray = [])
     {
@@ -23,14 +25,18 @@ class LazyCollection implements ICollection
         if (isset($this->callbacks[0]) === true) {
             foreach ($list as $key => $value) {
                 $i = -1;
+                $result = $value;
+                $passed = true;
                 while (isset($pendingCallbacks[++$i]) === true) {
                     // filter | map
-                    $result = $pendingCallbacks[$i]->evaluateValue($key, $value);
+                    $result = $pendingCallbacks[$i]->evaluateValue($key, $result);
                     if ($result === null) {
+                        $passed = false;
                         break;
-                    } else {
-                        yield $result;
                     }
+                }
+                if ($passed === true) {
+                    yield $result;
                 }
             }
         } else {
@@ -45,7 +51,7 @@ class LazyCollection implements ICollection
     {
         // return [...$this->list];
 
-        return [...$this->getList()];
+        return iterator_to_array($this->getList(), false);
     }
 
     public function remove(callable $callback): bool
@@ -158,7 +164,7 @@ class LazyCollection implements ICollection
 
     public function jsonSerialize(): array
     {
-        return [...$this->getList()];
+        return iterator_to_array($this->getList(), false);
     }
 }
 

@@ -49,10 +49,14 @@ class CollectionTest extends TestCase
    {
       $collection = new LazyCollection([1, 2, 3]);
 
-      $result = $collection->first(fn ($value) => $value === 2);
+      $result = $collection->first(function ($value) {
+         return $value === 2;
+      });
       $this->assertEquals(2, $result);
 
-      $result = $collection->first(fn ($value) => $value === 4);
+      $result = $collection->first(function ($value) {
+         return $value === 4;
+      });
       $this->assertNull($result);
    }
 
@@ -229,5 +233,18 @@ class CollectionTest extends TestCase
       });
       $this->assertEquals("[123456789,223456890,423456789]", json_encode($collection));
 
+   }
+
+   public function testChainedFilterAndMap()
+   {
+      $collection = new LazyCollection([1, 2, 3, 4, 5, 6]);
+      $collection
+         ->filter(function ($v) {
+            return $v % 2 === 0;
+         })
+         ->map(function ($v) {
+            return $v * 10;
+         });
+      $this->assertEquals([20, 40, 60], $collection->toArray());
    }
 }

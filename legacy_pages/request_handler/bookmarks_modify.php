@@ -1,5 +1,5 @@
  <div class="paper">
- 	<form name="Bookmark_create" method="POST" action="process/createBookmark">
+ 	<form name="Bookmark_create" method="POST" action="process/createBookmark.php">
  		<label for="txtBookmark">New Bookmark: </label>
  		<input type="search" id="txtBookmark" name="txtBookmark" class="txtInput" maxlength="255" placeholder="Name Bookmark...">
  		<input type="submit" name="btnSubmit" value="Create">
@@ -9,7 +9,7 @@
  <hr>
 
  <div class="paper">
- 	<form name="Form_removeBookmarks" method="POST" action="process/updateBookmarks">
+ 	<form name="Form_removeBookmarks" method="POST" action="process/updateBookmarks.php">
  		Remove Bookmarks:<br>
  		<input type="submit" name="btnSubmit" value="Remove" />
  		<br>
@@ -19,7 +19,7 @@
 			$temp = '<ul>';
 
 			foreach ($bookmarks as $row) {
-				$temp .= '<li><label for="' . $row['id'] . '">' . $row['name'] . '</lable> '
+				$temp .= '<li><label for="' . $row['id'] . '">' . text($row['name']) . '</lable> '
 					. '<input type="checkbox" name="chkBookmarks[]" id="' . $row['id'] . '" value="' . $row['id'] . '" /></li>';
 			}
 			unset($row);
@@ -30,7 +30,7 @@
  </div>
 
  <div class="paper">
- 	<form name="Form_restoreBookmarks" method="POST" action="process/updateBookmarks">
+ 	<form name="Form_restoreBookmarks" method="POST" action="process/updateBookmarks.php">
  		Restore Bookmarks:<br>
  		<input type="submit" name="btnSubmit" value="Restore" />
  		<br>
@@ -40,7 +40,7 @@
 			$temp = '<ul>';
 
 			foreach ($bookmarks as $row) {
-				$temp .= '<li><label for="' . $row['id'] . '">' . $row['name'] . '</lable> '
+				$temp .= '<li><label for="' . $row['id'] . '">' . text($row['name']) . '</lable> '
 					. '<input type="checkbox" name="chkBookmarks[]" id="' . $row['id'] . '" value="' . $row['id'] . '" /></li>';
 			}
 			unset($row);

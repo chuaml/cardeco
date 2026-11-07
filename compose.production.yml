@@ -30,6 +30,9 @@ services:
     ports:
       - 0.0.0.0:8080:80   # port mapping host:container
     working_dir: /var/www/html
+    volumes:
+      - ./public:/var/www/html/public
+      - ./upload:/var/www/html/upload
     environment:  #
       IS_PRODUCTION: 1
       MYSQL_HOST: mysql

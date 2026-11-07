@@ -1,7 +1,6 @@
 <?php 
-require_once('../db/conn_staff.php');
-require('../inc/class/Bookmark.php');
-require('../inc/class/catalog_generator.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/../db/conn_staff.php');
 header("Cache-Control: no-cache");
 
 if(!isset($_POST['row'])){

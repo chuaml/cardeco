@@ -4,7 +4,8 @@ use Exception\HttpException;
 
 final class Stock_Item
 {
-    private mysqli $con;
+    /** @var mysqli */
+    private $con;
     public function __construct(
         mysqli $con
     ) {

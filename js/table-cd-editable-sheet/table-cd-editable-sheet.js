@@ -41,6 +41,11 @@ body.querySelectorAll('table[cd-editable-sheet] > tbody').forEach(function (tbod
                 if (e.code === 'Delete') {
                     e.target.value = '';
                 }
+                else if (e.code === 'Enter' && e.target.matches('input') && e.target.readOnly === true) {
+                    e.preventDefault();
+                    e.target.removeAttribute('readonly');
+                    e.target.focus();
+                }
             }
         }
         else { // ctrlKey === false

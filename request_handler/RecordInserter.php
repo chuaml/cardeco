@@ -34,7 +34,6 @@ if (isset($_POST['r'])) {
         }
         try {
             $file = stream_get_meta_data($tmpFile)['uri'];
-            $listPath = explode('\\', $file);
             foreach ($Rows as $row) {
                 fwrite($tmpFile, implode('', $row));
             }
@@ -44,9 +43,10 @@ if (isset($_POST['r'])) {
                 $Inserter->insertLog(
                     $con,
                     $file,
-                    end($listPath)
+                    basename($file)
                 );
                 $Inserter->insert($con, $list);
+                $con->commit();
             } catch (Exception $e) {
                 $con->rollback();
                 throw $e;

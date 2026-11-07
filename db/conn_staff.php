@@ -28,6 +28,9 @@ if(getenv('MYSQL_HOST') === false) {  // assume host still in old WAMP, i.e. Win
     define('DB_USERNAME', 'root');
     define('DB_PASSWORD', '');
     define('DB_NAME', $_dbName);
+    if (!defined('IS_PRODUCTION')) {
+        define('IS_PRODUCTION', $_isProduction);
+    }
     
     mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
     $con = mysqli_connect(DB_ADDRESS, DB_USERNAME, DB_PASSWORD, DB_NAME);

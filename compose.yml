@@ -27,9 +27,10 @@ services:  ## for development environment
     # post_start:  # wait t seconds then backup db, remove old files and keep top n recent backup file
     #   - command: sh -c 'sleep 2 && mysqldump -h 127.0.0.1 -u root -ptoor cardeco_dev --lock-all-tables | gzip > /var/tmp/dump/cardeco_dev.db.dump.$(date --utc +"%Y-%m-%d_%H%M%S").sql.gz && cd /var/tmp/dump/ && ls -t | tail -n +6 | xargs -I {} rm -f "{}"'
     #     user: root
-    #   # upgrade database schema
-    #   - command: sh -c 'mysql -u root -ptoor cardeco_dev < /var/tmp/upgrade.sql' 
-    #     user: root
+    post_start:
+      # upgrade database schema
+      - command: sh -c 'sleep 3 && mysql -u root -ptoor cardeco_dev < /var/tmp/upgrade.sql'
+        user: root
 
 
   app: ## this will behave has dev env, not just app server

@@ -258,37 +258,21 @@ npx playwright test
 
 ---
 
-## 8. Known Misconfigurations & WAMP-to-LAMP Migration Landmines
+## 8. WAMP-to-LAMP Migration Notes & Production Upgrade Runbook
 
-Keep the following existing repository issues in mind when debugging, refactoring, or completing the Docker LAMP production migration:
+Keep the following repository details in mind when debugging, refactoring, or completing the Docker LAMP production migration:
 
-1. **Broken Hardcoded `inc/class/` Requires After Commit `f51a235`**:
-   - Commit `f51a235` moved 77 legacy classes from `inc/class/` to `src/Legacy/` and removed `./inc/class/` from `composer.json`.
-   - However, 10 files still contain hardcoded `require('inc/class/...')` or `require('../inc/class/...')` statements that will fail unless updated to use `vendor/autoload.php` or `src/Legacy/`:
-     - `src/Legacy/Orders/Factory/Cashsale.php` (lines 6–9)
-     - `process/RecordEditor/submit.php` (line 3)
-     - `process/shopee.php` (lines 2–8)
-     - `process/actionListstock.php` (lines 3–4)
-     - `process/actionBookmarks.php` (lines 3–4)
-     - `process/createBookmark.php` (line 3)
-     - `process/exportAll_StockImages.php` (line 2)
-     - `process/updateStock.php` (lines 4–5)
-     - `process/updateBookmarks.php` (line 3)
-     - `process/printCatalog.php` (line 3)
-   - Additionally, if `vendor/composer/autoload_classmap.php` was not regenerated after pulling commit `f51a235`, it will still point to `/inc/class/...` until `XDEBUG_MODE=off composer dumpautoload` is executed.
+1. **Safe Step-by-Step MyISAM-to-InnoDB Production Upgrade**:
+   - Live WAMP production historically used `MyISAM` for 9 tables (`bookmarks`, `bookmarks_items`, `cashsales`, `courier_record`, `lzd_fee_statements`, `orders`, `orders_insert_log`, `orders_temp`, `seller_sku`).
+   - [`db/upgrade.sql`](file:///home/mingliangc/cardeco/db/upgrade.sql) uses an idempotent stored procedure (`upgrade_myisam_to_innodb`) that queries `information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND ENGINE = 'MyISAM'` and only alters tables that are still on `MyISAM` (avoiding costly table rebuilds on subsequent runs).
+   - **Production Upgrade Steps**:
+     1. Deploy the latest PHP codebase (which includes `$con->commit()` in `request_handler/RecordInserter.php` and explicit column lists in `RecordInserter::commit()`, compatible with both `MyISAM` and `InnoDB`).
+     2. Run `backup.database.bat` on WAMP to create `db/cardeco.bak.sql`.
+     3. Execute `db/upgrade.sql` against the `cardeco` database during a maintenance window.
+     4. Verify all tables report `ENGINE = 'InnoDB'` in `information_schema.TABLES`.
 
-2. **Case-Sensitivity Bugs Between Windows WAMP and Linux Docker LAMP**:
-   - `js/RecordInserter.js` (line 25) requests `ajax/orders/getCountorderNum.php` (lowercase `o`), while the file on disk is `ajax/orders/getCountOrderNum.php` (uppercase `O`). This works on Windows WAMP (case-insensitive) but returns 404 on Linux Docker LAMP.
-   - `router.php` (lines 48–51) resolves `App\Handler\{$className}Handler` using the raw URL casing from `$path` (e.g., `/lazada` -> `App\Handler\lazadaHandler`). On Linux, the fallback PSR-4 closure in `router.php` checks `file_exists('src/Handler/lazadaHandler.php')`, which fails to match `LazadaHandler.php` unless Composer's classmap has already been generated.
-   - `request_handler/RecordInserter.php` (line 37) splits a temporary file path with `explode('\\', $file)` (Windows backslash) instead of `basename($file)`.
+2. **Missing Legacy `_*.php` Partials in `process/`**:
+   - `process/actionListstock.php`, `process/actionBookmarks.php`, `process/fee_statement.php`, and `process/lzd_fee_statement.php` include `_*.php` partial files (`_bookmarkListstock_items.php`, `_exportListstock_image.php`, `_printBookmarks_items.php`, `_removeBookmarks_items.php`, `_insertCourier_record.php`, etc.) that were historically excluded from Git. Check the WAMP production host for any untracked `process/_*.php` files before decommissioning the WAMP server.
 
-3. **Extensionless `process/*` Form Actions & Redirect Mismatches**:
-   - Legacy pages in `legacy_pages/request_handler/` (`updateStock.php`, `liststock.php`, `bookmarks.php`, `bookmarks_modify.php`, `fee_statement.php`, `lzd_fee_statement.php`) submit forms to `action="process/..."` **without `.php`**. Without Apache `Options +MultiViews`, `.htaccess` sees `!-f` and rewrites `/process/...` to `router.php`, which throws a 404 because `router.php` only looks in `request_handler/` and `legacy_pages/request_handler/`.
-   - Conversely, `request_handler/LzdFeeChecker.php` (line 39) redirects to `header('Location: fee_statement.php')` (with `.php`), which 404s through `router.php` because the route is `/fee_statement` (`legacy_pages/request_handler/fee_statement.php`).
-   - `process/actionListstock.php` and `process/actionBookmarks.php` include `_bookmarkListstock_items.php`, `_exportListstock_image.php`, `_printBookmarks_items.php`, and `_removeBookmarks_items.php`, which are missing from `process/`.
-
-4. **Docker & DevContainer Configuration Quirks**:
-   - `.devcontainer/devcontainer.json` specifies `"service": "app-dev"`, which in `compose.yml` is the Playwright container (`mcr.microsoft.com/playwright:v1.59.1-noble`, lacking PHP/Apache/Composer), whereas the PHP/Apache container service in `compose.yml` is named `"app"`.
-   - `compose.yml` (line 66) has a typo in `post_start`: `DEBUG_MODE=off composer dumpautoload --no-interaction && apache2-foreground` (`DEBUG_MODE` instead of `XDEBUG_MODE`, and starts a duplicate `apache2-foreground` process).
-   - `Dockerfile` (line 50) declares `EXPOSE 8080`, whereas Apache inside the container listens on port `80` (mapped in `compose*.yml` as `8082:80`, `8081:80`, and `8080:80`).
-   - `db/conn_staff.php` defines the `IS_PRODUCTION` constant only in the Docker branch (line 46) and omits `define('IS_PRODUCTION', $_isProduction)` before returning in the WAMP branch (line 38).
+3. **Persistent Volumes in Staging & Production Containers**:
+   - Because `.dockerignore` excludes `public/` and `upload/` from the Docker image build context, `compose.staging.yml` and `compose.production.yml` bind-mount `./public:/var/www/html/public` and `./upload:/var/www/html/upload` into the `app` container. Ensure those directories exist and are writable by `www-data` on the Docker host.

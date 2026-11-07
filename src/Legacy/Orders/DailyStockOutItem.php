@@ -7,12 +7,17 @@ use Product\Item;
 final class DailyStockOutItem
 {
     // public string $orderTime; // y-M-d
-    public string $sku;
-    public string $productName;
-    public int $quantity = 0;
-    public string $shippingStatus;
+    /** @var string */
+    public $sku;
+    /** @var string */
+    public $productName;
+    /** @var int */
+    public $quantity = 0;
+    /** @var string */
+    public $shippingStatus;
 
-    public Item $item; // reference to db item
+    /** @var Item */
+    public $item; // reference to db item
 
     public function __construct()
     {

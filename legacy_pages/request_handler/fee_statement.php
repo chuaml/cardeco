@@ -28,14 +28,14 @@ mysqli_close($con);
 <div class="paper">
 	Monthly Sales Record:
 	<span style="float: right;">
-		<form method="POST" action="process/fee_statement">
+		<form method="POST" action="process/fee_statement.php">
 			<?php echo $num_courier_records; ?>
 			<input type="submit" name="btnSubmit[view_courier_record]" value="View All">
 			<input type="submit" name="btnSubmit[clear_records][courier_record]" value="Clear Monthly Sales">
 		</form>
 	</span>
 	<hr>
-	<form method="POST" action="process/fee_statement" enctype="multipart/form-data">
+	<form method="POST" action="process/fee_statement.php" enctype="multipart/form-data">
 		<p>
 			Add new: <input type="file" name="file_MonthlySales" accept=".csv" required>
 		</p>
@@ -50,7 +50,7 @@ mysqli_close($con);
 <div class="paper">
 	Lazada Fee Statement:
 	<span style="float: right;">
-		<form method="POST" action="process/fee_statement">
+		<form method="POST" action="process/fee_statement.php">
 			<?php echo $num_lzd_fee_stmt; ?>
 			<input type="submit" name="btnSubmit[clear_records][lzd_fee_statements]" value="Clear Lzd Fees">
 		</form>
@@ -68,7 +68,7 @@ mysqli_close($con);
 	<form method="POST" action="LzdFeeChecker">
 		Check lazada fee statements: <input type="submit" name="btnSubmit[checkLzdFeeStmt]" value="Check Fees"> <br><br>
 	</form>
-	<form method="POST" action="process/fee_statement">
+	<form method="POST" action="process/fee_statement.php">
 		Match Monthly Record: <input type="submit" name="btnSubmit[match_fee_lzd]" value="Match Fees">
 	</form>
 </div>
@@ -79,7 +79,7 @@ mysqli_close($con);
 
 <div class="paper">
 	Shopee Fee Statement:
-	<form method="POST" action="process/fee_statement" enctype="multipart/form-data">
+	<form method="POST" action="process/fee_statement.php" enctype="multipart/form-data">
 		Shopee Statements: <input type="file" name="file_Shopee_Stmt" accept=".csv" required>
 		<input type="submit" name="btnSubmit[check_fee_shopee]" value="Check Payment">
 	</form>

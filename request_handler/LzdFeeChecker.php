@@ -36,7 +36,8 @@ try {
         Fee_StatementsManager::insertRecords($con, $records, $_SERVER['REMOTE_ADDR']);
         $con->commit();
 
-        header('Location: fee_statement.php');
+        header('Location: fee_statement');
+        exit();
     }
 
     if (isset($_POST['btnSubmit']['checkLzdFeeStmt'])) {
@@ -46,6 +47,8 @@ try {
         $orders = OrdersManager::getForLzdFeeStmtByOrderNums($con, \array_keys($paymentAmounts));
         foreach ($orders as $i => $r) {
             $orders[$i]['grandTotal'] = $r['sellingPrice'] + $r['shippingFeeByCust'] - $r['voucher'] - $r['platformChargesAmount'];
+            $orders[$i]['stmtPaymentAmount'] = 0.0;
+            $orders[$i]['stmtShippingFeeByCust'] = 0.0;
 
             if (\array_key_exists($r['orderNum'], $paymentAmounts) === true) {
                 $orders[$i]['stmtPaymentAmount'] = $paymentAmounts[$r['orderNum']];
@@ -73,8 +76,6 @@ try {
         $header['grantTotalDiff'] = 'Grand Total Difference';
 
         $tbl->setHead($header);
-
-        $tbl->setBody($orders);
 
         $tbl->setBody($orders);
     }

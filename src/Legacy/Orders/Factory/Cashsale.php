@@ -3,10 +3,6 @@ namespace Orders\Factory;
 
 require_once(__DIR__ .'/RecordFactory.php');
 require_once(__DIR__ .'/../PaymentCharges/PlatformCharges.php');
-require_once('inc/class/Orders/Lazada/AutoFilling.php');
-require_once('inc/class/Lazada/Manager/ItemManager.php');
-require_once('inc/class/Product/Item.php');
-require_once('inc/class/Orders/Record.php');
 
 use \Orders\Lazada\AutoFilling;
 use \Orders\Factory\RecordFactory;

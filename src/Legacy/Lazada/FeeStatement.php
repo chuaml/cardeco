@@ -52,7 +52,7 @@ class FeeStatement{
     public function setTransactionDate(string $date):void{
         $Date = date_create(str_replace(' ', '-', $date));
         if($date === null || $Date === null || $Date === false){
-            throw new UnexpectedValueException(
+            throw new \UnexpectedValueException(
                 'invalid date format ' .$date);
         }
 

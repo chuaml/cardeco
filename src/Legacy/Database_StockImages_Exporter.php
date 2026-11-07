@@ -1,5 +1,5 @@
 <?php 
-require('Database_Manager.php');
+require_once(__DIR__ . '/Database_Manager.php');
 
 class Database_StockImages_Exporter extends Database_Manager implements select{
 	private $target_items_id;

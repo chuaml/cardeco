@@ -6,13 +6,18 @@ use Orders\DailyStockOutItem;
 
 final class OrderLine
 {
-    public string $orderNumber;
-    public string $orderStatus;
-    public string $trackingNumber;
-    public string $dateOfSendOut; // dd/MM/yyyy
+    /** @var string */
+    public $orderNumber;
+    /** @var string */
+    public $orderStatus;
+    /** @var string */
+    public $trackingNumber;
+    /** @var string */
+    public $dateOfSendOut; // dd/MM/yyyy
 
 
-    public DailyStockOutItem $ShippedItem;
+    /** @var DailyStockOutItem */
+    public $ShippedItem;
     
     public function __construct() {}
 }

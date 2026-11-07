@@ -1,5 +1,5 @@
 <?php 
-require('StockManager.php');
+require_once(__DIR__ . '/StockManager.php');
 
 class StockItem_detail extends StockManager{
 	
@@ -13,8 +13,8 @@ class StockItem_detail extends StockManager{
 			return null;
 		}
 		
-		$item_id = mysqli_real_escape_string($this->con, intval(trim($id)));
-		$this->query_arg  = "WHERE stock_items.id = $id";
+		$item_id = intval(trim($id));
+		$this->query_arg  = "WHERE stock_items.id = $item_id";
 	}
 	
 	public function execute_query(int $current_page = 1, int $limit_result = 2, $showImage = true){

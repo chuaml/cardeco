@@ -22,7 +22,7 @@ function getCountOrderNum(e) {
     const input = $(this);
     $.ajax({
         type: "GET",
-        url: "ajax/orders/getCountorderNum.php",
+        url: "ajax/orders/getCountOrderNum.php",
         data: { orderNum: orderNum },
         success: function (c) {
             if (c > 0) {

@@ -15,11 +15,11 @@ try{
             if($_POST['submit'] === 'add'){
                 if(isset($_POST['itemCode']) && isset($_POST['sku'])){
                     $itemCode = trim($_POST['itemCode']);
-                    $sku = trim($_POST['itemCode']);
+                    $sku = trim($_POST['sku']);
                     if(!empty($itemCode) && !empty($sku)){
                         $M = new SkuManager();
                         $data = [
-                            $_POST['sku'] => $_POST['itemCode']
+                            $sku => $itemCode
                         ];
                         $M->insert($con, $data);    
                     }

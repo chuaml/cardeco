@@ -1,6 +1,6 @@
 <?php
-require_once('../db/conn_staff.php');
-require('../inc/class/catalog_generator.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/../db/conn_staff.php');
 //header("Cache-Control: no-cache");
 
 $errormsg = [];
@@ -39,9 +39,9 @@ $catalog = $cg->drawCatalog($watermark);
 
 	<title>Catalog <?php echo date('y-m-d',time()+28800) ?></title>
 	<link rel="stylesheet" href="../css/catalog.css">
-	<script src="js/jquery-3.3.1.min.js"></script>
-	<script src="js/myscript.js"></script>
-	<script src="js/function.js"></script>
+	<script src="../js/jquery-3.3.1.min.js"></script>
+	<script src="../js/myscript.js"></script>
+	<script src="../js/function.js"></script>
 </head>
 
 <body>

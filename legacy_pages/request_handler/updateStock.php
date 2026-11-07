@@ -1,4 +1,4 @@
- <form id="Form_Update" method="POST" action="process/updateStock" enctype="multipart/form-data">
+ <form id="Form_Update" method="POST" action="process/updateStock.php" enctype="multipart/form-data">
  	<label for="Form_Update">
  		<p>Enter text <b>.txt</b> data from SQL Accounting to Update <br />
  			<b>*Acculumative update, new items will be added to database stock.</b>

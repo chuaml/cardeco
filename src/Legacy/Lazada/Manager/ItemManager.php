@@ -44,7 +44,7 @@ class ItemManager{
         if(!($stmt->execute())){
             throw new Exception($stmt->error);
         }
-        return $stmt->fetch_all(MYSQLI_ASSOC);
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     public function insert(array $Items):void{

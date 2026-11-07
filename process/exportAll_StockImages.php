@@ -1,5 +1,5 @@
 <?php 
-require('inc/class/Database_StockImages_Exporter.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 header("Cache-Control: no-cache");
 
 $db = new Database_StockImages_Exporter($con);

@@ -6,7 +6,8 @@ use \Product\Item;
 
 class ItemManager{
 
-    private \mysqli $con;
+    /** @var \mysqli */
+    private $con;
 
     public function __construct(\mysqli $con){
         $this->con = $con;

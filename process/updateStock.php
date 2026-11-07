@@ -1,8 +1,7 @@
 <?php 
 header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
-require('../db/conn_staff.php');
-require('../inc/class/Sql_Accounting_Export.php');
-require('../inc/class/Database_Stock_Updater.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
+require_once(__DIR__ . '/../db/conn_staff.php');
 
 $msg = '';
 

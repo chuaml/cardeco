@@ -1,5 +1,5 @@
 <?php 
-require('Database_Manager.php');
+require_once(__DIR__ . '/Database_Manager.php');
 class Database_Updater extends Database_Manager{
 	private $itemsList;
 	private $filedata_totalItems;

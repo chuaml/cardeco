@@ -180,7 +180,7 @@ document.addEventListener('readystatechange', function (ev) {
         const td = e.target;
         const col = td.cellIndex + 1;
         const table = td.closest('table');
-        otherColumns = table.querySelectorAll(`tr>*:not(:nth-child(${col})`);
+        otherColumns = table.querySelectorAll(`tr>*:not(:nth-child(${col}))`);
         otherColumns.forEach(x => {
             x.inert = true;
         });

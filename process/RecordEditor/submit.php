@@ -1,6 +1,6 @@
 <?php 
-require_once('db/conn_staff.php');
-require_once('inc/class/Orders/MonthlyRecordUpdater.php');
+require_once(__DIR__ . '/../../vendor/autoload.php');
+require_once(__DIR__ . '/../../db/conn_staff.php');
 
 use Orders\MonthlyRecordUpdater;
 

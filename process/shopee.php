@@ -1,11 +1,5 @@
 <?php 
-require('inc/class/CSV_Table_Handler.php');
-require('inc/class/Shopee_Orders.php');
-require('inc/class/Shopee_Product_Info.php');
-require('inc/class/Stock_Items_Getter.php');
-require('inc/class/Stock_Items_Checker.php');
-require('inc/class/Orders_Result_Formatter.php');
-require('inc/class/Stock_Items_Conclusion.php');
+require_once(__DIR__ . '/../vendor/autoload.php');
 
 $Shopee = new Shopee_Orders($_FILES['file_dataFile']);
 $Stock_Getter = new Stock_Items_Getter();

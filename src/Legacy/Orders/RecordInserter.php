@@ -146,8 +146,9 @@ class RecordInserter implements Insertable, Updatable
     {
         //confirm insert new Record to orders from temp
         //duplicate orderNum is skipped for update to override
+        $cols = 'insertLogId, billno, orderNum, date, dateStockOut, sku, trackingNum, sellingPrice, status, transferCharges, shippingFee, shippingFeeByCust, shippingState, shippingWeight, voucher, platformCharges, platformChargesAmount, bankIn, cash, remark';
         $stmt = $con->prepare(
-            'INSERT orders SELECT * FROM orders_temp WHERE insertLogId = ? '
+            "INSERT INTO orders ({$cols}) SELECT {$cols} FROM orders_temp WHERE insertLogId = ? "
                 . "AND sku > '' "
                 . 'AND orderNum NOT IN (SELECT orderNum FROM orders);'
         );
@@ -173,6 +174,7 @@ class RecordInserter implements Insertable, Updatable
         //update existing Record trackingNum & status
         $col = [
             'trackingNum' => 's',
+            'status' => 's',
         ];
         $whereCol = [
             'orderNum' => 's'

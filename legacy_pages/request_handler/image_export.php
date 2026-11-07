@@ -9,7 +9,7 @@ if (isset($_POST['btnSubmit'])) {
 
 
 Export All products images: <br>
-<form method="POST" action="image_export.php">
+<form method="POST" action="image_export">
 	<input type="checkbox" id="chkConfirm" required />
 	<label for="chkConfirm">Export All Products Images</label>
 	<input type="submit" name="btnSubmit" value="Export" />

@@ -62,12 +62,12 @@ $bookmarks = $Bookmark->getBookmarks();
 $bookmarks_selection = '';
 foreach ($bookmarks as $row) {
     $bookmarks_selection .= '<option value="' . $row['id']
-        . '">' . $row['name'] . '</option>';
+        . '">' . text($row['name']) . '</option>';
 }
 unset($row);
 ?>
 <hr>
-<form name="Form_Bookmarks" method="POST" action="process/actionListstock">
+<form name="Form_Bookmarks" method="POST" action="process/actionListstock.php">
     <select name="bookmark_id" required>
         <option value="">PLEASE SELECT</option>
         <?php

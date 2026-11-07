@@ -45,7 +45,8 @@ try {
     }
 
     // Dynamic Class Handler resolution (PSR-4 App\Handler)
-    $className = str_replace('/', '\\', trim($path, '/'));
+    $segments = array_map('ucfirst', explode('/', trim($path, '/')));
+    $className = implode('\\', $segments);
     $handlerClass = "App\\Handler\\" . $className . "Handler";
 
     if (class_exists($handlerClass)) {
@@ -90,7 +91,7 @@ try {
     $statusCode = $ex->getStatusCode();
     http_response_code($statusCode);
     if ($statusCode === 400) {
-        echo $ex->getMessage();
+        echo text($ex->getMessage());
         exit();
     } else if ($statusCode === 404) {
         header("HTTP/1.1 404 Not Found");

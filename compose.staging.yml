@@ -29,6 +29,9 @@ services:
     ports:
       - 127.0.0.1:8081:80   # port mapping host:container
     working_dir: /var/www/html
+    volumes:
+      - ./public:/var/www/html/public
+      - ./upload:/var/www/html/upload
     environment:
       IS_PRODUCTION: 0
       MYSQL_HOST: mysql

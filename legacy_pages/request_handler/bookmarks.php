@@ -58,7 +58,7 @@ if ($bookmark_id === false) {
 	$bookmarks_selection = '';
 	foreach ($bookmarks as $row) {
 		$bookmarks_selection .= '<option value="' . $row['id']
-			. '">' . $row['name'] . '</option>';
+			. '">' . text($row['name']) . '</option>';
 	}
 	unset($row);
 ?>
@@ -68,7 +68,7 @@ if ($bookmark_id === false) {
 		<input type="submit" name="submit">
 	</form>
 	<hr>
-	<form name="Form_Bookmarks" method="POST" action="process/actionBookmarks">
+	<form name="Form_Bookmarks" method="POST" action="process/actionBookmarks.php">
 		<input type="hidden" name="id" value="<?php echo $bk_id; ?>" />
 		<input type="submit" name="btnPrint" value="Print" />
 

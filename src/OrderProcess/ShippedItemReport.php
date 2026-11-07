@@ -16,8 +16,10 @@ use Product\Manager\ItemManager;
 
 final class ShippedItemReport
 {
-    private mysqli $con;
-    private ?ExcelReader $xlsx = null;
+    /** @var mysqli */
+    private $con;
+    /** @var ExcelReader|null */
+    private $xlsx = null;
 
     public function __construct(
         mysqli $con,

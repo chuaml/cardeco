@@ -23,7 +23,7 @@
 
     <form method="GET">
         <span>Record Month: </span>
-        <input type="month" name="RecordMonth" min="2019-01" max="<?php echo date_format(date_create(),'Y-m'); ?>" value="<?php echo $_GET['RecordMonth'] ?? ''; ?>" />
+        <input type="month" name="RecordMonth" min="2019-01" max="<?php echo date_format(date_create(),'Y-m'); ?>" value="<?php echo text($_GET['RecordMonth'] ?? ''); ?>" />
         <input type="submit" name="exportCSV[default]" value="Export" />
         <input type="submit" name="exportCSV[sqlImport]" value="SQL Import" />
         <script>

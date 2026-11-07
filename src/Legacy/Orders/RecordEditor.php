@@ -146,8 +146,8 @@ class RecordEditor extends TableDisplayer
 
     public function getFloorPage(int $currentPage): string
     {
-        $searchField = $_GET['searchField'] ?? '';
-        $searchValue = $_GET['searchValue'] ?? '';
+        $searchField = text($_GET['searchField'] ?? '');
+        $searchValue = text($_GET['searchValue'] ?? '');
 
         $pg = '<form method="GET" id="floorPage">';
         $pg .= '<input type="hidden" name="searchField" value="' . $searchField . '">';

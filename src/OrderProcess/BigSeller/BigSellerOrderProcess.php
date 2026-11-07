@@ -11,7 +11,8 @@ use Orders\Factory\Excel\ExcelReader;
 
 class BigSellerOrderProcess
 {
-    private mysqli $con;
+    /** @var mysqli */
+    private $con;
     private $file;
     private $Data = [
         'toRestock' => '',

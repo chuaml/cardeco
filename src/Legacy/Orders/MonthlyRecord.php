@@ -68,10 +68,7 @@ class MonthlyRecord extends Record
 
     public function removeAllDirectCharges():void
     {
-        $last = count($this->DirectCharges) -1;
-        for ($i=$last;$i>0;--$i) {
-            unset($this->DirectCharges[$i]);
-        }
+        $this->DirectCharges = [];
     }
 
     public function getDirectCharges(string $paymentMethod):?DirectCharges
