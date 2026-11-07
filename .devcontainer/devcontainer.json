@@ -8,7 +8,7 @@
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
 	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
-	"service": "app-dev",
+	"service": "app",
 	//
 	"workspaceFolder": "/var/www/html", // align with  /.devcontainer/docker-compose.yml
 	// "postCreateCommand": "pwd && ls && php -v && whoami && XDEBUG_MODE=off composer dumpautoload",

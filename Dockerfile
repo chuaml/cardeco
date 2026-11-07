@@ -47,7 +47,7 @@ RUN composer dumpautoload --no-dev --optimize --no-interaction \
 
 COPY "./php-production-override.ini" "$PHP_INI_DIR/conf.d/php-production-override.ini"
 
-EXPOSE 8080
+EXPOSE 80
 
 # Start Apache in the foreground
 CMD ["apache2-foreground"]

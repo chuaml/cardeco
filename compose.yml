@@ -59,11 +59,11 @@ services:  ## for development environment
       - "host.docker.internal:host-gateway"  # for Linux machine to use Xdebug
 
     ## for single command only
-    command: apache2-foreground  ## keep container running, allow vscode to connect
+    command: sleep infinity  ## keep container running, allow vscode to connect
                              ## and stop Apache server from starting automatically in background
   
     post_start: ## addon subsequent commands to run
-      - command: DEBUG_MODE=off composer dumpautoload --no-interaction && apache2-foreground
+      - command: sh -c 'XDEBUG_MODE=off composer dumpautoload --no-interaction && apachectl start'
         user: root
     # develop: 
     #   watch:   ## only if run with `docker compose up --watch`  flag
@@ -86,11 +86,11 @@ services:  ## for development environment
     #       path: ./config.dev/
     #       target: /usr/local/etc/php/conf.d/php-dev-override.ini:ro
 
-  app-dev:
+  playwright:
     image: mcr.microsoft.com/playwright:v1.59.1-noble
     volumes:
       - ./:/var/www/html
-      - dev_devependencies_nodejs:/var/www/html/node_modules
+      - dev_dependencies_nodejs:/var/www/html/node_modules
     working_dir: /var/www/html
     command: sleep infinity
     ports:
@@ -104,4 +104,4 @@ volumes:
   cardeco-dev-data:
   dependencies_php:
   dependencies_nodejs:
-  dev_devependencies_nodejs:
+  dev_dependencies_nodejs:

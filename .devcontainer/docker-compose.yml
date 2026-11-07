@@ -2,7 +2,7 @@
 
 # services:
 #   # Update this to the name of the service you want to work with in your docker-compose.yml file
-#   app-dev:
+#   app:
 #     command: sleep infinity  ## keep container running, allow vscode to connect
 #                              ## and stop Apache server from starting automatically in background
 
@@ -24,13 +24,3 @@
 #     #   - SYS_PTRACE
 #     # security_opt:
 #     #   - seccomp:unconfined
-
-
-services:
-  gemini-cli:
-    # image: mcr.microsoft.com/devcontainers/javascript-node:24
-    image: us-docker.pkg.dev/gemini-code-dev/gemini-cli/sandbox:0.36.0
-    volumes:
-      - ./:/workspace:cached
-    working_dir: /workspace
-    command: sleep infinity
