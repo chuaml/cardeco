@@ -33,7 +33,7 @@
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
 		// "ghcr.io/devcontainers/features/common-utils:2.5.6": {}, // another 300MB just for zsh
-		"ghcr.io/devcontainers/features/git:1.3.5": {}
+		// "ghcr.io/devcontainers/features/git:1.3.5": {} // installed via apt-get in Dockerfile
 	}
 	//
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

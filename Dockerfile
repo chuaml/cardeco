@@ -1,9 +1,11 @@
 FROM php:7.4-apache AS base_image
 WORKDIR /var/www/html
 
-# install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
- zlib1g-dev curl libonig-dev libpng-dev libjpeg-dev libfreetype6-dev zlib1g-dev \ 
+# Point Debian 11 (Bullseye) EOL repositories to archive.debian.org and install system dependencies
+RUN sed -i 's|http://deb.debian.org|http://archive.debian.org|g; s|http://security.debian.org|http://archive.debian.org|g; /bullseye-updates/d' /etc/apt/sources.list \
+&& echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until \
+&& apt-get update && apt-get install -y --no-install-recommends \
+ zlib1g-dev curl git ca-certificates libonig-dev libpng-dev libjpeg-dev libfreetype6-dev \
  libzip-dev \
 && apt-get clean \
 && rm -rf /var/lib/apt/lists/*
