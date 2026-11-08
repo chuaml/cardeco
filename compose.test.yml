@@ -1,0 +1,55 @@
+## Disposable test stack - never touches the dev database (cardeco_dev) or its volume.
+##
+##   docker compose -f compose.test.yml run --rm phpunit [phpunit args]   # == composer run tests:docker
+##   docker compose -f compose.test.yml down -v                           # == composer run tests:docker:down
+##
+## - mysql-test : mysql:8.0.41 on tmpfs, database `cardeco_test`, seeded from the SAME files the dev
+##                stack uses (db/cardeco.sql.gz + db/upgrade.sql). Fresh on every `up`.
+## - phpunit    : PHP 7.4 image built from the existing Dockerfile `dev_app` target (mysqli/zip/gd/xdebug),
+##                runs ./dev.tool/run-tests.sh which installs deps, starts Apache (for tests/Smoke) and
+##                exec's PHPUnit so the container exit code is the PHPUnit exit code.
+services:
+  mysql-test:
+    image: mysql:8.0.41
+    tmpfs:
+      - /var/lib/mysql  # throw-away storage; re-seeded on every `up`
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: cardeco_test
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+    volumes:
+      - ./db/cardeco.sql.gz:/docker-entrypoint-initdb.d/01-cardeco.sql.gz:ro  # same seed as dev
+      - ./db/upgrade.sql:/docker-entrypoint-initdb.d/02-upgrade.sql:ro        # MyISAM -> InnoDB (needed for rollback isolation)
+    healthcheck:
+      # The entrypoint runs the seed on a socket-only temporary server; TCP ping only succeeds once seeding is done.
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -ptoor --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+      start_period: 20s
+
+  phpunit:
+    build:
+      dockerfile: ./Dockerfile
+      target: dev_app  # PHP 7.4 + mysqli/zip/gd, identical to the dev container
+    depends_on:
+      mysql-test:
+        condition: service_healthy
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - test_dependencies_php:/var/www/html/vendor  # keeps the host (PHP 8.3) vendor/ out of the container
+    environment:
+      IS_PRODUCTION: 0
+      MYSQL_HOST: mysql-test
+      MYSQL_USER: cardeco-app
+      MYSQL_PASSWORD: cardeco-app
+      MYSQL_DB: cardeco_test
+      XDEBUG_MODE: "off"
+      APP_BASE_URL: http://localhost  # Apache inside this container, used by tests/Smoke
+      COMPOSER_ALLOW_SUPERUSER: 1
+    entrypoint: ["sh", "./dev.tool/run-tests.sh"]
+
+volumes:
+  test_dependencies_php:

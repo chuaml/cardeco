@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<!--
+    PHP 7.3 compatibility guard (AGENTS.md section 2, rule 1): live production still runs PHP 7.3 on WAMP,
+    while the Docker stack runs 7.4. `composer run lint` fails on any syntax/function that 7.3 does not have.
+
+    testVersion "7.3-" = compatible with 7.3 AND every later version (also flags things removed in 8.x).
+-->
+<ruleset name="cardeco-php73">
+    <description>Fail on PHP syntax or functions that are not available in PHP 7.3.</description>
+
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility"/>
+    <config name="testVersion" value="7.3-"/>
+
+    <rule ref="PHPCompatibility"/>
+
+    <arg name="extensions" value="php"/>
+    <arg name="parallel" value="4"/>
+    <arg value="p"/>
+
+    <file>src</file>
+    <file>request_handler</file>
+    <file>legacy_pages</file>
+    <file>process</file>
+    <file>ajax</file>
+    <file>db</file>
+    <file>tests</file>
+    <file>router.php</file>
+    <file>index.php</file>
+
+    <exclude-pattern>*/vendor/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+</ruleset>

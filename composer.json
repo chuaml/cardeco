@@ -28,7 +28,29 @@
         ],
 
         "tests": [
-            "php -d memory_limit=-1 -d error_reporting=-1 -d log_errors_max_len=0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.show_exception_trace=0  -d xdebug.mode=Off -d xdebug.show_local_vars=0 -d xdebug.log_level=0 -d xdebug.start_with_request=no ./vendor/bin/phpunit ./tests/ --colors=always"
+            "php -d memory_limit=-1 -d error_reporting=-1 -d log_errors_max_len=0 -d zend.assertions=1 -d assert.exception=1 -d xdebug.show_exception_trace=0  -d xdebug.mode=Off -d xdebug.show_local_vars=0 -d xdebug.log_level=0 -d xdebug.start_with_request=no ./vendor/bin/phpunit --colors=always"
+        ],
+        "tests:unit": [
+            "php -d memory_limit=-1 -d xdebug.mode=Off ./vendor/bin/phpunit --testsuite unit --colors=always"
+        ],
+        "tests:integration": [
+            "php -d memory_limit=-1 -d xdebug.mode=Off ./vendor/bin/phpunit --testsuite integration --colors=always"
+        ],
+        "tests:smoke": [
+            "php -d memory_limit=-1 -d xdebug.mode=Off ./vendor/bin/phpunit --testsuite smoke --colors=always"
+        ],
+        "tests:known-bugs": [
+            "php -d memory_limit=-1 -d xdebug.mode=Off ./vendor/bin/phpunit --group known-bug --colors=always"
+        ],
+        "tests:docker": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm phpunit"
+        ],
+        "tests:docker:down": [
+            "docker compose -f compose.test.yml down -v"
+        ],
+        "lint": [
+            "./vendor/bin/phpcs --standard=phpcs.xml.dist"
         ],
         "debug-tests": [
             "XDEBUG_MODE=off composer dumpautoload --no-interaction",
@@ -47,6 +69,8 @@
         "phpoffice/phpspreadsheet": "^1.29"
     },
     "require-dev": {
-        "phpunit/phpunit": "9.5"
+        "phpunit/phpunit": "9.5",
+        "squizlabs/php_codesniffer": "^3.7",
+        "phpcompatibility/php-compatibility": "^9.3"
     }
 }

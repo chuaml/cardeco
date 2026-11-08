@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Committed PHPUnit configuration. `phpunit.xml` (gitignored) may be copied from this file for local overrides.
+
+    Suites
+      unit         pure tests: no database, no ext-zip  -> also runs on the host (`composer run tests:unit`)
+      integration  needs MYSQL_* env + ext-zip          -> run via `composer run tests:docker`
+      smoke        needs APP_BASE_URL (Apache inside the test container)
+
+    Groups
+      known-bug    tests that describe the INTENDED behaviour of a documented bug; excluded by default,
+                   run them with `composer run tests:known-bugs` (or `- -group known-bug`). A fix is complete
+                   when its test passes and the @group tag is removed.
+-->
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="tests/bootstrap.php"
+         colors="true"
+         convertDeprecationsToExceptions="false"
+         cacheResultFile=".phpunit.result.cache">
+    <testsuites>
+        <testsuite name="unit">
+            <directory>tests/Unit</directory>
+            <directory>tests/array_extension</directory>
+        </testsuite>
+        <testsuite name="integration">
+            <directory>tests/Integration</directory>
+            <!-- pre-existing DB-backed characterization tests, kept in place -->
+            <directory>tests/lazada</directory>
+            <directory>tests/bigseller</directory>
+            <directory>tests/tiktok</directory>
+            <directory>tests/monthly_cashsales_record</directory>
+        </testsuite>
+        <testsuite name="smoke">
+            <directory>tests/Smoke</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <exclude>
+            <group>known-bug</group>
+        </exclude>
+    </groups>
+
+    <php>
+        <ini name="error_reporting" value="-1"/>
+        <ini name="date.timezone" value="Asia/Kuala_Lumpur"/>
+    </php>
+
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+    </coverage>
+</phpunit>

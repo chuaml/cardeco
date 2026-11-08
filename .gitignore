@@ -2,6 +2,8 @@
 /analysis
 /vendor/
 /phpunit.xml
+/.phpunit.result.cache
+/.phpcs.cache
 dump-*.sql
 
 ## IDE support
