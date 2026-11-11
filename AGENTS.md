@@ -296,3 +296,8 @@ Keep the following repository details in mind when debugging, refactoring, or co
 
 3. **Persistent Volumes in Staging & Production Containers**:
    - Because `.dockerignore` excludes `public/` and `upload/` from the Docker image build context, `compose.staging.yml` and `compose.production.yml` bind-mount `./public:/var/www/html/public` and `./upload:/var/www/html/upload` into the `app` container. Ensure those directories exist and are writable by `www-data` on the Docker host.
+
+4. **MySQL 8 default `sql_mode` (`ONLY_FULL_GROUP_BY`, `STRICT_TRANS_TABLES`) in the containers**:
+   - The Docker MySQL services run with MySQL 8 defaults, whereas the WAMP `my.ini` historically did not enable `ONLY_FULL_GROUP_BY`. Three legacy queries used to fail with `ERROR 1055` on the containers only: `Orders\Factory\MonthlyRecord::getMonthlyRecordsByDate()` (RecordEditor month listing + both CSV exports), `getStockOutByDate()` (RecordUpdater summary) and `Orders\Factory\Cashsale::setMonthlyRecordByDateStockOut()`/`checkSku()` (`/Cashsale` export). They now wrap non-grouped columns in `ANY_VALUE()` (same "any row of the group" semantics as before) and are covered by `tests/Integration/Orders/Factory/*`.
+   - Any new `GROUP BY` query must either list every selected column or use `ANY_VALUE()`; the integration suite runs against MySQL 8 defaults, so a violation fails `composer run tests:docker`.
+   - `orders.platformCharges` is `char(16)`: `Lazada_Paling_Best` (18 chars) cannot be stored until `db/upgrade.sql` widens the column (documented by a `known-bug` test in `RecordInserterTest`).

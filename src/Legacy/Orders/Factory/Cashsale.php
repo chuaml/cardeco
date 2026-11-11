@@ -37,11 +37,30 @@ class Cashsale implements RecordFactory{
 
 
     const GROUP_BY_COL = 'orders.orderNum, orders.platformCharges, orders.trackingNum';
+
+    /**
+     * Selected columns that are neither aggregated nor part of the GROUP BY. They are wrapped in ANY_VALUE()
+     * (result alias => plain column name the consumers read) so the statement is valid under MySQL 8's default
+     * ONLY_FULL_GROUP_BY (ERROR 1055 otherwise) while keeping the legacy "any row of the group" semantics.
+     */
+    const ANY_VALUE_COL = [
+        'orders.date' => 'date',
+        'orders.sku' => 'sku',
+        'orders.sellingPrice' => 'sellingPrice',
+        'stock_items.description' => 'description',
+        'stock_items.uom' => 'uom',
+        'shippingState' => 'shippingState'
+    ];
     const DATE_FORMAT = 'Y/m/d';
 
     public function __construct(\mysqli $con){
         $this->con = $con;
-        $this->COL = implode(',', array_keys(self::FIELDS));
+        $this->COL = implode(',', array_map(function(string $field): string{
+            if(array_key_exists($field, self::ANY_VALUE_COL)){
+                return 'ANY_VALUE(' .$field .')AS ' .self::ANY_VALUE_COL[$field];
+            }
+            return $field;
+        }, array_keys(self::FIELDS)));
         $this->result = [];
     }
 
@@ -88,9 +107,10 @@ class Cashsale implements RecordFactory{
     }
 
     private function checkSku(string $date):void{
+        // `id` is not part of the GROUP BY: ANY_VALUE() keeps the statement valid under ONLY_FULL_GROUP_BY
         $stmt = $this->con->prepare(
             'SELECT COUNT(*) FROM '
-            .'(SELECT id FROM orders WHERE dateStockOut = ? GROUP BY orderNum, sku, platformCharges, trackingNum)AS o;'
+            .'(SELECT ANY_VALUE(id)AS id FROM orders WHERE dateStockOut = ? GROUP BY orderNum, sku, platformCharges, trackingNum)AS o;'
         );
         $stmt->bind_param('s', $date);
         if(!($stmt->execute())){

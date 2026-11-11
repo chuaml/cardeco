@@ -203,8 +203,16 @@ class MonthlyRecord implements RecordFactory{
         if($platformCharges !== null){
             $PARAM .= ' AND platformCharges = ?';
         }
+        // GROUP BY orders.id: every orders.* column is functionally dependent on the primary key, but the
+        // LEFT JOINed stock_items columns are not -> ANY_VALUE() keeps the legacy "any matching item" semantics
+        // and makes the statement valid under MySQL 8's default ONLY_FULL_GROUP_BY (ERROR 1055 otherwise).
+        $GROUPED_COL = str_replace(
+            ['(stock_items.id)AS itemId', 'stock_items.description'],
+            ['ANY_VALUE(stock_items.id)AS itemId', 'ANY_VALUE(stock_items.description)AS description'],
+            $this->COL
+        );
         $stmt = $this->con->prepare(
-            "SELECT {$this->COL} FROM orders "
+            "SELECT {$GROUPED_COL} FROM orders "
             ."JOIN (SELECT id FROM orders WHERE {$PARAM} ORDER BY id)AS o ON o.id = orders.id "
             .'LEFT JOIN seller_sku ON orders.sku = seller_sku.sku '
             .'LEFT JOIN stock_items ON orders.sku = stock_items.item_code '
@@ -272,8 +280,10 @@ class MonthlyRecord implements RecordFactory{
         }
 
         $date = \date_format($Date, self::DATE_FORMAT);
+        // stock_items.description is not functionally dependent on orders.id -> ANY_VALUE() for ONLY_FULL_GROUP_BY.
+        // (GROUP BY orders.id is kept as-is: one row per order line - see the known-bug test for the per-SKU intent.)
         $stmt = $this->con->prepare(
-            'SELECT orders.sku, stock_items.description, COUNT(orders.id)AS quantity FROM orders ' 
+            'SELECT orders.sku, ANY_VALUE(stock_items.description)AS description, COUNT(orders.id)AS quantity FROM orders ' 
             .'LEFT JOIN stock_items ON orders.sku = stock_items.item_code '
             .'WHERE orders.dateStockOut = ? '
             .'GROUP BY orders.id'
