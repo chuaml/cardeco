@@ -73,7 +73,7 @@ class Shopee implements RecordFactory
             $Record->setOrderNum(trim($row[0]));
             $Record->setStatus(trim($row[1]));
             $Record->setTrackingNum(trim($row[3]));
-            $Record->setDate(trim($row[8]));
+            $Record->setDate(self::normaliseDate(trim($row[8])));
             $Record->setSellingPrice((double) $row[15]);
             $Record->setShippingWeight((double)$row[21]);
             $Record->setVoucher((double)$row[25]);
@@ -84,5 +84,27 @@ class Shopee implements RecordFactory
         }
         
         return $list;
+    }
+
+    /** Date layouts of the Shopee order export, tried in order. */
+    const DATE_FORMATS = ['d-m-y H:i', 'd-m-y H:i:s', 'd-m-y'];
+
+    /**
+     * Shopee writes dates as dd-mm-yy (e.g. "11-02-23 0:47" = 11 Feb 2023). PHP's generic parser used by
+     * Record::setDate() reads a dashed two-digit-year string as yy-mm-dd (-> 23 Feb 2011), so the Shopee layout is
+     * parsed explicitly here; any other layout is handed through unchanged for the generic parser.
+     */
+    public static function normaliseDate(string $date): string
+    {
+        foreach (self::DATE_FORMATS as $format) {
+            $parsed = \DateTime::createFromFormat('!' . $format, $date);
+            $errors = \DateTime::getLastErrors();
+            $clean = $errors === false || ((int) $errors['warning_count'] === 0 && (int) $errors['error_count'] === 0);
+            if ($parsed !== false && $clean) {
+                return $parsed->format('Y-m-d H:i:s');
+            }
+        }
+
+        return $date;
     }
 }

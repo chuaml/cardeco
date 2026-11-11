@@ -85,21 +85,7 @@ final class AutoFillingTest extends TestCase
         $this->assertSame(0.0, AutoFilling::getShippingFeeByWeightAmount(-1.0, 'Selangor'));
     }
 
-    /**
-     * AutoFilling.php:128-135 - a parcel above the last WEIGHT_RANK entry (30 kg) matches no band, so
-     * `$weightIndex` stays 0 and the courier fee is RM 0.00. Locked so a refactor cannot change it silently.
-     */
-    public function testGetShippingFeeByWeightAmount_over30kg_documentsCurrentBehaviour(): void
-    {
-        $this->assertSame(0.0, AutoFilling::getShippingFeeByWeightAmount(30.01, 'Selangor'));
-        $this->assertSame(0.0, AutoFilling::getShippingFeeByWeightAmount(45.0, 'Kuala Lumpur'));
-    }
-
-    /**
-     * @group known-bug
-     * AutoFilling.php:128-135 - weight > 30 kg returns 0.00. Intended (chosen here): charge the top band
-     * (30 kg rate) rather than ship for free; raising an exception would be the other acceptable fix.
-     */
+    /** A parcel above the last WEIGHT_RANK entry (30 kg) is charged the top band (used to fall through to RM 0). */
     public function testGetShippingFeeByWeightAmount_over30kg_chargesTopBand(): void
     {
         $this->assertSame(20.0, AutoFilling::getShippingFeeByWeightAmount(30.01, 'Selangor'));

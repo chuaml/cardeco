@@ -55,8 +55,8 @@ final class PickListResult
     /**
      * Items whose ordered quantity is >= the stock on hand.
      *
-     * NOTE: the legacy rule is inclusive on both sides, so quantity == stock appears in BOTH
-     * toRestock() and toCollect(). Kept verbatim (see implementation plan, Open Question 2a).
+     * The rule is inclusive on both sides BY DESIGN: when quantity == stock the item is collected AND the stock
+     * is exactly used up, so it must be restocked as well - it appears in both toRestock() and toCollect().
      *
      * @return array<int, array<string, mixed>>
      */

@@ -125,7 +125,8 @@ class AutoFilling{
     }
 
     public static function getShippingFeeByWeightAmount(float $weight, string $state):float{
-        $weightIndex = 0;
+        // heavier than the last band (30 kg): charge the top band rather than RM 0
+        $weightIndex = count(self::WEIGHT_RANK) - 1;
         foreach(self::WEIGHT_RANK as $i => $w){
             if($weight <= $w){
                 $weightIndex = $i;

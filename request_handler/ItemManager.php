@@ -18,20 +18,10 @@ $error = '';
 try {
     if (isset($_POST['r']) === true) {
         $ItemM = new ItemManager($con);
-        $Items = [];
-        foreach ($_POST['r'] as $itemId => $description) {
-            $x = new Item($itemId, null, $description);
-            $Items[] = $x;
-        }
-
-        $i = 0;
-        foreach ($_POST['bigseller_sku_map'] as $id => $value) {
-            $Items[$i]->bigseller_sku_map[] = [
-                'id' => $id,
-                'bigseller_sku' => $value
-            ];
-            ++$i;
-        }
+        // mappings are matched to items by item id (bigseller_sku_map[<item id>][<mapping id>|new]) - the former
+        // positional pairing turned PHP's auto-index of new rows into the ids of other items' mappings
+        $mappings = isset($_POST['bigseller_sku_map']) && is_array($_POST['bigseller_sku_map']) ? $_POST['bigseller_sku_map'] : [];
+        $Items = ItemManager::itemsFromRequest(is_array($_POST['r']) ? $_POST['r'] : [], $mappings);
         $ItemM->update($Items);
         // header('HTTP/1.1 205');
     } else

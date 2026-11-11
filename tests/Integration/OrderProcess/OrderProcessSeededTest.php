@@ -18,7 +18,7 @@ use test\Support\XlsxFixture;
  *
  *   ZZTEST-A  stock 5, ordered 1  -> To Collect
  *   ZZTEST-B  stock 1, ordered 2  -> To Restock
- *   ZZTEST-C  stock 2, ordered 2  -> BOTH lists (legacy inclusive rule, see Open Question 2a)
+ *   ZZTEST-C  stock 2, ordered 2  -> BOTH lists by design (collected, and the stock is used up)
  *   ZZTEST-X  not in stock        -> Not Found
  *
  * The "Orders" table must show the DB description for known SKUs (the legacy by-reference back-fill).
@@ -229,7 +229,7 @@ final class OrderProcessSeededTest extends DatabaseTestCase
         $this->assertSame('1', $restock[$this->sku('B')]['Stock']);
         $this->assertArrayNotHasKey($this->sku('B'), $collect);
 
-        // legacy inclusive rule: quantity == stock appears in BOTH lists (documentsCurrentBehaviour)
+        // by design: quantity == stock appears in BOTH lists (collected, and the stock is exactly used up)
         $this->assertArrayHasKey($this->sku('C'), $collect);
         $this->assertArrayHasKey($this->sku('C'), $restock);
 

@@ -296,24 +296,10 @@ final class ShopeeFactoryTest extends TestCase
 
     // ---------------------------------------------------------------- date handling
 
-    public function testGenerateRecords_dateDdMmYyWithTime_documentsCurrentBehaviour_isReadAsYyMmDd(): void
-    {
-        // the current Shopee export writes 'dd-mm-yy H:mm' (e.g. 11-02-23 for 11 Feb 2023); Record::formatDate()
-        // hands it to date_create(), which reads a dashed two-digit-year string as yy-mm-dd -> 23 Feb 2011.
-        $path = $this->csv([$this->row([8 => '11-02-23 0:47'])]);
-
-        $records = (new Shopee($path))->generateRecords();
-
-        $this->assertSame('23-Feb-2011', $records[0]->date);
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testGenerateRecords_dateDdMmYyWithTime_isReadAsDayMonthYear(): void
     {
-        // Shopee.php:82 + Record.php formatDate(): 'dd-mm-yy H:mm' from the current export must become 11-Feb-2023,
-        // not 23-Feb-2011 (orders are persisted with a year-2011 date by RecordInserterCSV).
+        // Shopee::normaliseDate(): the export's 'dd-mm-yy H:mm' is parsed explicitly (PHP's generic parser used to
+        // read it as yy-mm-dd -> 23-Feb-2011, which RecordInserterCSV then persisted).
         $path = $this->csv([$this->row([8 => '11-02-23 0:47'])]);
 
         $records = (new Shopee($path))->generateRecords();

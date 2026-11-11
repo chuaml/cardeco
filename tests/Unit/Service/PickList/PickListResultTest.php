@@ -143,7 +143,7 @@ final class PickListResultTest extends TestCase
         $this->assertSame(['ZZTEST-002'], array_column($result->toCollect(), 'sku'));
     }
 
-    public function testToRestockAndToCollect_quantityEqualsStock_documentsCurrentBehaviour_appearsInBoth(): void
+    public function testToRestockAndToCollect_quantityEqualsStock_appearsInBothByDesign(): void
     {
         // PickListResult.php toRestock() uses >= and toCollect() uses <= (legacy rule kept verbatim)
         $result = $this->resultWithQuantityAndStock(['ZZTEST-001' => [4, 4]]);

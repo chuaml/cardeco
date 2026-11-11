@@ -151,23 +151,35 @@ final class ItemManagerTest extends DatabaseTestCase
     }
 
     /**
-     * The upsert keys on the PRIMARY KEY first: a posted `id` that belongs to ANOTHER item's mapping re-points that
-     * row (ON DUPLICATE KEY UPDATE ... item_id = ?). request_handler/ItemManager.php:28-33 posts PHP's auto-index
-     * (0, 1, 2, ...) as the id of every NEW mapping, so saving the page can hijack mappings with id 1, 2, ...
+     * The upsert is keyed on the PRIMARY KEY, so a posted mapping id that belongs to ANOTHER item used to re-point
+     * that row (the old controller posted PHP's auto-index 0, 1, 2, ... as the id of every new mapping). update()
+     * now refuses ids that do not belong to the item and leaves both items untouched.
      */
-    public function testUpdate_IdOfAnotherItemsMapping_HijacksThatMapping_documentsCurrentBehaviour(): void
+    public function testUpdate_IdOfAnotherItemsMapping_IsRejectedAndLeavesBothItemsUntouched(): void
     {
         $mapOfA = $this->insertBigSellerSkuMap($this->bsSku('A'), $this->idA);
 
-        $this->manager->update([$this->item($this->idB, 'DESC B', [['id' => $mapOfA, 'bigseller_sku' => $this->bsSku('B')]])]);
+        try {
+            $this->manager->update([$this->item($this->idB, 'DESC B', [['id' => $mapOfA, 'bigseller_sku' => $this->bsSku('B')]])]);
+            $this->fail('expected an exception');
+        } catch (\Exception $e) {
+            $this->assertStringContainsString("bigseller_sku_map {$mapOfA} does not belong to item {$this->idB}", $e->getMessage());
+        }
 
-        $this->assertSame([], $this->mappingsOf($this->idA), 'A lost its mapping');
-        $rows = $this->mappingsOf($this->idB);
-        $this->assertCount(1, $rows);
-        $this->assertSame($mapOfA, $rows[0]['id']);
-        $this->assertSame($this->bsSku('B'), $rows[0]['bigseller_sku']);
+        $rowsA = $this->mappingsOf($this->idA);
+        $this->assertCount(1, $rowsA, 'A keeps its mapping');
+        $this->assertSame($mapOfA, $rowsA[0]['id']);
+        $this->assertSame($this->bsSku('A'), $rowsA[0]['bigseller_sku']);
+        $this->assertSame([], $this->mappingsOf($this->idB));
     }
 
+    public function testUpdate_UnknownMappingId_IsRejected(): void
+    {
+        $this->expectException(\Exception::class);
+        $this->expectExceptionMessage('does not belong to item');
+
+        $this->manager->update([$this->item($this->idB, 'DESC B', [['id' => 999999999, 'bigseller_sku' => $this->bsSku('B')]])]);
+    }
     // ------------------------------------------------------------------ getItemLikeItemCode()
 
     public function testGetItemLikeItemCode_ContainsMatch_ReturnsItemsWithMappingPlaceholder(): void

@@ -58,13 +58,14 @@ final class ItemEditorTest extends TestCase
         $this->assertSame('ACCESSORIES', $cells[4]);
     }
 
-    public function testGetTable_MappingInput_IsNamedByMappingIdAndPrefilledWithTheSku(): void
+    public function testGetTable_MappingInput_IsNamedByItemIdAndMappingIdAndPrefilledWithTheSku(): void
     {
+        // bigseller_sku_map[<item id>][<mapping id>] - the controller pairs mappings with items by item id, never by position
         $html = self::render([self::item(5, 'ZZTEST-001', 'Test Seat Cover', 'PCS', 'ACC', 9, 'BS-001')]);
 
-        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[9\]"~', $html);
-        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[9\]"[^>]*value="BS-001"~', $html);
-        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[9\]"[^>]*maxlength="255"~', $html);
+        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[5\]\[9\]"~', $html);
+        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[5\]\[9\]"[^>]*value="BS-001"~', $html);
+        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[5\]\[9\]"[^>]*maxlength="255"~', $html);
     }
 
     public function testGetTable_DescriptionInput_IsNamedByItemIdAndPrefilledWithTheDescription(): void
@@ -82,8 +83,8 @@ final class ItemEditorTest extends TestCase
 
         $html = self::render([$item]);
 
-        $this->assertStringContainsString('bigseller_sku_map[9]', $html);
-        $this->assertStringNotContainsString('bigseller_sku_map[10]', $html);
+        $this->assertStringContainsString('bigseller_sku_map[5][9]', $html);
+        $this->assertStringNotContainsString('[10]', $html);
         $this->assertStringNotContainsString('BS-SECOND', $html);
     }
 
@@ -108,12 +109,12 @@ final class ItemEditorTest extends TestCase
         $this->assertSame('<i data-type="null"></i>', $cells[4]);
     }
 
-    public function testGetTable_MappingFromLeftJoinWithNulls_RendersEmptyIndexAndValue(): void
+    public function testGetTable_MappingFromLeftJoinWithNulls_RendersNewMappingKeyAndEmptyValue(): void
     {
         // Product\ItemManager::getItem() always appends one mapping, with NULLs when no bigseller_sku_map row exists
         $html = self::render([self::item(6, 'ZZTEST-002', 'Plain', 'PCS', 'ACC', null, null)]);
 
-        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[\]"[^>]*value=""~', $html);
+        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[6\]\[new\]"[^>]*value=""~', $html);
     }
 
     public function testGetTable_MultipleItems_KeepListOrder(): void
@@ -140,25 +141,12 @@ final class ItemEditorTest extends TestCase
         );
     }
 
-    public function testConstructor_ItemWithoutAnyMapping_documentsCurrentBehaviour_RaisesUndefinedOffset(): void
-    {
-        // ItemEditor.php:34 reads $x['bigseller_sku_map'][0] unconditionally (Notice on 7.x, Warning on 8.x)
-        $this->expectException(\ErrorException::class);
-        $this->expectExceptionMessageMatches('/Undefined (offset|array key)/');
-        self::callWithErrorsAsExceptions(function () {
-            new ItemEditor([new Item(7, 'ZZTEST-003', 'No mapping')], 0);
-        });
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testConstructor_ItemWithoutAnyMapping_RendersAnEmptyMappingInput(): void
     {
-        // ItemEditor.php:34-38 - an Item with an empty bigseller_sku_map should render like a NULL left-join mapping
+        // an Item with an empty bigseller_sku_map renders like a NULL left-join mapping (used to raise "Undefined offset")
         $html = self::render([new Item(7, 'ZZTEST-003', 'No mapping')]);
 
-        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[\]"[^>]*value=""~', $html);
+        $this->assertMatchesRegularExpression('~<input [^>]*name="bigseller_sku_map\[7\]\[new\]"[^>]*value=""~', $html);
         $this->assertMatchesRegularExpression('~<input [^>]*name="r\[7\]"[^>]*value="No mapping"~', $html);
     }
 
@@ -173,7 +161,7 @@ final class ItemEditorTest extends TestCase
             . '<thead><tr><th >Item Code</th><th >Big Seller SKU</th><th >Description</th><th >UOM</th><th >Group</th></tr></thead>'
             . '<tbody><tr>'
             . '<td>ZZTEST-001</td>'
-            . '<td><input name="bigseller_sku_map[9]" value="BS-001" maxlength="255"/></td>'
+            . '<td><input name="bigseller_sku_map[5][9]" value="BS-001" maxlength="255"/></td>'
             . '<td><input name="r[5]" value="Test Seat Cover" maxlength="255"/></td>'
             . '<td>PCS</td>'
             . '<td>ACCESSORIES</td>'
