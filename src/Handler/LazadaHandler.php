@@ -2,48 +2,25 @@
 
 namespace App\Handler;
 
-use mysqli;
-use Exception;
 use OrderProcess\LazadaOrderProcess;
 
-class LazadaHandler
+/**
+ * Routes: `/` (default), `/lazada` and, via IndexHandler, `/index`.
+ */
+class LazadaHandler extends AbstractDailyOrderHandler
 {
-    private $con;
-
-    public function __construct(mysqli $con)
+    protected function fileField(): string
     {
-        $this->con = $con;
+        return 'lzdOrders';
     }
 
-    public function handle(array $request, array $files): Response
+    protected function viewPath(): string
     {
-        $data = [
-            'Data' => [
-                'toRestock' => '',
-                'toCollect' => '',
-                'notFound' => '',
-                'orders' => ''
-            ],
-            'msg' => '',
-            'jsonOrders' => '',
-            'dailyOrderFile_Sha1Hash' => ''
-        ];
+        return 'view/lazada.php';
+    }
 
-        try {
-            if (isset($files['lzdOrders'])) {
-                try {
-                    $L = new LazadaOrderProcess($this->con, $files['lzdOrders']['tmp_name']);
-                    $data['Data'] = $L->getData();
-                    $data['jsonOrders'] = json_encode($L->getOrders());
-                    $data['dailyOrderFile_Sha1Hash'] = sha1_file($files['lzdOrders']['tmp_name']);
-                } catch (Exception $e) {
-                    $data['msg'] = $e->getMessage();
-                }
-            }
-        } finally {
-            // $this->con->close(); // avoid closing here if other handlers or view might need it, but the original did it.
-        }
-
-        return new Response('view/lazada.php', $data);
+    protected function newOrderProcess(string $filePath)
+    {
+        return new LazadaOrderProcess($this->con, $filePath);
     }
 }

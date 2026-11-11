@@ -1,18 +1,25 @@
-<?php 
+<?php
 
 namespace OrderProcess;
 
 use mysqli;
-use Exception;
+use App\Service\PickList\PickListBuilder;
+use App\Service\PickList\PickListTables;
+use App\Service\Shipping\ShippingFeeByWeight;
 use HTML\TableDisplayer;
-use Orders\Lazada\AutoFilling;
 use Product\Manager\ItemManager;
 use Orders\Factory\Excel\ExcelReader;
 
+/**
+ * Lazada daily order export (.xlsx) -> pick-list tables (To Restock / To Collect / Not Found / Orders).
+ */
 class LazadaOrderProcess
 {
+    /** @var mysqli */
     private $con;
+    /** @var string */
     private $file;
+    /** @var array<string, string> */
     private $Data = [
         'toRestock' => '',
         'toCollect' => '',
@@ -26,26 +33,30 @@ class LazadaOrderProcess
         $this->file = $filePath;
     }
 
-    public function getData():array
+    public function getData(): array
     {
         $orders = $this->getOrders();
-        $keyedSku = $this->getKeyedSku($orders);
-        $keyeditemCodeStock = $this->getKeyedItemCode($keyedSku);
-        $this->joinItemCodeToSku($keyedSku, $keyeditemCodeStock);
-        $this->setItemsToData($keyedSku);
 
-        $this->setShippingFeeByWeight($orders);
+        $pickList = (new PickListBuilder(new ItemManager($this->con)))->build($orders);
+        $this->Data = array_merge($this->Data, PickListTables::render($pickList));
+
+        ShippingFeeByWeight::apply($this->con, $orders);
         $this->setOrdersToData($orders);
-        
+
         return $this->Data;
     }
 
-    public function getOrders():array
+    /**
+     * One row per unit sold, read by column position from the Lazada export.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function getOrders(): array
     {
         $orders = (new ExcelReader($this->file))->read();
-        
+
         $list = [];
-        foreach($orders as $r){
+        foreach ($orders as $r) {
             $list[] = [
                 'orderNum' => trim($r[12]),
                 'date' => trim($r[9]),
@@ -65,121 +76,7 @@ class LazadaOrderProcess
         return $list;
     }
 
-    private function getKeyedSku(array &$orders):array
-    {
-        //sku from all orders as index
-        $keyedSku = [];
-        foreach ($orders as $i => $r) {
-            if (!array_key_exists($r['sku'], $keyedSku)) {
-                $keyedSku[$r['sku']] = [];
-            }
-            $keyedSku[$r['sku']][] = &$orders[$i];
-        }
-        return $keyedSku;
-    }
-
-    private function getKeyedItemCode(array &$keyedSku):array
-    {
-        //item code from stock as index
-        $IM = new ItemManager($this->con);
-        $stockItems = $IM->selectByItemCode(array_keys($keyedSku));
-        $keyItemCode = [];
-        foreach ($stockItems as $r) {
-            $keyItemCode[$r['item_code']] = [
-                'description' => $r['description'],
-                'stock' => (int)$r['quantity']
-            ];
-        }
-        return $keyItemCode;
-    }
-
-    private function joinItemCodeToSku(array &$keyedSku, array &$keyedItemCode):void
-    {
-        foreach ($keyedItemCode as $itemCode => $r) {
-            if (\array_key_exists($itemCode, $keyedSku)) {
-                foreach ($keyedSku[$itemCode] as $i => $order) {
-                    $keyedSku[$itemCode][$i]['description'] = $r['description'];
-                    $keyedSku[$itemCode][$i]['stock'] = $r['stock'];
-                }
-            }
-        }
-    }
-
-    private function setItemsToData(array &$keyedSku):void
-    {
-        $HEADER = [
-            'sku' => 'Item Code',
-            'description' => 'Description',
-            'quantity' => 'Quantity',
-            'stock' => 'Stock'
-        ];
-        $foundItems = [];
-        $notFoundItems = [];
-        foreach ($keyedSku as $r) {
-            $order = $r[0];
-            $order['quantity'] = count($r);
-            if ($order['stock'] === null) {
-                $notFoundItems[] = $order;
-            } else {
-                $foundItems[] = $order;
-            }
-        }
-
-        $itemToRestock = [];
-        $itemToCollect = [];
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] >= $r['stock']) {
-                $itemToRestock[] = $r;
-            }
-        }
-        foreach ($foundItems as $r) {
-            if ($r['quantity'] <= $r['stock']) {
-                $itemToCollect[] = $r;
-            }
-        }
-
-        $Tbl = new TableDisplayer();
-        $Tbl->setHead($HEADER, true);
-
-        $Tbl->setBody($itemToRestock);
-        $this->Data['toRestock'] = $Tbl->getTable();
-
-        $Tbl->setBody($itemToCollect);
-        $this->Data['toCollect'] = $Tbl->getTable();
-
-        $Tbl->setBody($notFoundItems);
-        $this->Data['notFound'] = $Tbl->getTable();
-    }
-
-    private function setShippingFeeByWeight(array &$orders):void
-    {
-        $Records = array_map(function (array $r) {
-            $Record = new \Orders\Record(
-                null,
-                $r['orderNum'],
-                new \Product\Item(null, $r['sku'], null)
-            );
-            $Record->setShippingFee((double) $r['shippingFee']);
-            $Record->setShippingState($r['shippingState']);
-            $Record->setTrackingNum($r['trackingNum']);
-
-            $Record->setDate($r['date']);
-            return $Record;
-        }, $orders);
-        AutoFilling::setShippingWeightByLzdProduct($this->con, $Records);
-        AutoFilling::setShippingFeeByWeight($Records);
-
-        foreach ($Records as $i => $r) {
-            if ($orders[$i]['orderNum'] !== $r->orderNum) {
-                throw new Exception("cannot map shippingFeeByWeight to orders. iteration: {$i}");
-            }
-            $orders[$i]['shippingFeeByWeight'] = $r->shippingFeeByWeight;
-            $orders[$i]['shippingWeight'] = $r->shippingWeight;
-            $orders[$i]['date'] = $r->date;
-        }
-    }
-
-    private function setOrdersToData(array &$orders):void
+    private function setOrdersToData(array &$orders): void
     {
         $Tbl = new TableDisplayer();
 

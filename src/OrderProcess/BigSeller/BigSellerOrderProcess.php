@@ -4,16 +4,25 @@ namespace OrderProcess;
 
 use mysqli;
 use Exception;
+use App\Service\PickList\PickListBuilder;
+use App\Service\Shipping\ShippingFeeByWeight;
 use HTML\TableDisplayer;
-use Orders\Lazada\AutoFilling;
 use Product\Manager\ItemManager;
 use Orders\Factory\Excel\ExcelReader;
 
+/**
+ * BigSeller daily order export (.xlsx, all marketplaces) -> pick-list tables with a per-marketplace
+ * unit count (Lazada / Shopee / TikTok columns) and the Orders table grouped by store.
+ */
 class BigSellerOrderProcess
 {
+    const PLATFORM_COLUMNS = ['lazada', 'shopee', 'tiktok'];
+
     /** @var mysqli */
     private $con;
+    /** @var string */
     private $file;
+    /** @var array<string, string> */
     private $Data = [
         'toRestock' => '',
         'toCollect' => '',
@@ -30,17 +39,23 @@ class BigSellerOrderProcess
     public function getData(): array
     {
         $orders = $this->getOrders();
-        $keyedSku = $this->getKeyedSku($orders);
-        $keyeditemCodeStock = $this->getKeyedItemCode($keyedSku);
-        $this->joinItemCodeToSku($keyedSku, $keyeditemCodeStock);
-        $this->setItemsToData($keyedSku);
 
-        $this->setShippingFeeByWeight($orders);
+        $pickList = (new PickListBuilder(new ItemManager($this->con)))->build($orders);
+        $this->Data['notFound'] = $this->getNotFoundHTML($pickList->notFound);
+        $this->Data['toRestock'] = $this->getToRestockHTML($pickList->toRestock(), $pickList->keyedSku);
+        $this->Data['toCollect'] = $this->getToCollectHTML($pickList->toCollect(), $pickList->keyedSku);
+
+        ShippingFeeByWeight::apply($this->con, $orders);
         $this->Data['orders'] = $this->getOrdersToData($orders);
 
         return $this->Data;
     }
 
+    /**
+     * One row per unit sold (the Quantity column is expanded), sorted by store name with Lazada stores first.
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function getOrders(): array
     {
         $orders = (new ExcelReader($this->file))->read();
@@ -50,7 +65,7 @@ class BigSellerOrderProcess
         foreach ($orders as $r) {
             $line++;
             $quantity = intval($r[30]);
-            if($quantity === 0) throw new Exception("unknown quantity of item, at row: $line");
+            if ($quantity === 0) throw new Exception("unknown quantity of item, at row: $line");
             for ($i = 0; $i < $quantity; ++$i) { // spread out 1 line to multiple line item
                 $list[] = [
                     'orderNum' => trim($r[0]),
@@ -81,77 +96,7 @@ class BigSellerOrderProcess
         }, $storeName_BigSeller);
         array_multisort($storeName_BigSeller, SORT_ASC, $list);
 
-        // exit(json_encode($list));
-
         return $list;
-    }
-
-    private function getKeyedSku(array &$orders): array
-    {
-        //sku from all orders as index
-        $keyedSku = [];
-        foreach ($orders as $i => $r) {
-            if (!array_key_exists($r['sku'], $keyedSku)) {
-                $keyedSku[$r['sku']] = [];
-            }
-            $keyedSku[$r['sku']][] = &$orders[$i];
-        }
-        return $keyedSku;
-    }
-
-    private function getKeyedItemCode(array &$keyedSku): array
-    {
-        //item code from stock as index
-        $IM = new ItemManager($this->con);
-        $stockItems = $IM->selectByItemCode(array_keys($keyedSku));
-        $keyItemCode = [];
-        foreach ($stockItems as $r) {
-            $keyItemCode[$r['item_code']] = [
-                'description' => $r['description'],
-                'stock' => (int)$r['quantity']
-            ];
-        }
-        return $keyItemCode;
-    }
-
-    private function joinItemCodeToSku(array &$keyedSku, array &$keyedItemCode): void
-    {
-        foreach ($keyedItemCode as $itemCode => $r) {
-            if (\array_key_exists($itemCode, $keyedSku)) {
-                foreach ($keyedSku[$itemCode] as $i => $order) {
-                    $keyedSku[$itemCode][$i]['description'] = $r['description'];
-                    $keyedSku[$itemCode][$i]['stock'] = $r['stock'];
-                }
-            }
-        }
-    }
-
-    private function setItemsToData(array &$keyedSku): void
-    {
-        // split items to found and notFound group
-        $foundItems = [];
-        $notFoundItems = [];
-        foreach ($keyedSku as $r) {
-            $order = $r[0];
-            $order['quantity'] = count($r);
-            if ($order['stock'] === null) {
-                $notFoundItems[] = $order;
-            } else {
-                $foundItems[] = $order;
-            }
-        }
-        $this->Data['notFound'] = $this->getNotFoundHTML($notFoundItems);
-
-
-        $itemToRestock = array_filter($foundItems, function ($r) {
-            return $r['quantity'] >= $r['stock'];
-        });
-        $this->Data['toRestock'] = $this->getToRestockHTML($itemToRestock, $keyedSku);
-
-        $itemToCollect = $itemToRestock = array_filter($foundItems, function ($r) {
-            return $r['quantity'] <= $r['stock'];
-        });
-        $this->Data['toCollect'] = $this->getToCollectHTML($itemToCollect, $keyedSku);
     }
 
     private function newTablePackList_HTML_Maker(): TableDisplayer
@@ -169,13 +114,31 @@ class BigSellerOrderProcess
         return $tblPackList;
     }
 
+    /**
+     * @param array<int, array<string, mixed>> $items one row per SKU (first order + 'quantity')
+     * @param array<string|int, array<int, array<string, mixed>>> $keyedSku sku => order rows
+     */
     public function getToRestockHTML(array $items, array $keyedSku): string
     {
-        $platforms = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
+        return $this->renderWithPlatformCounts($items, $keyedSku);
+    }
+
+    /**
+     * @param array<int, array<string, mixed>> $itemToCollect one row per SKU (first order + 'quantity')
+     * @param array<string|int, array<int, array<string, mixed>>> $keyedSku sku => order rows
+     */
+    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
+    {
+        return $this->renderWithPlatformCounts($itemToCollect, $keyedSku);
+    }
+
+    /**
+     * Adds one column per marketplace holding the number of units of that SKU ordered there
+     * (only SKUs known to stock are counted), then renders the table.
+     */
+    private function renderWithPlatformCounts(array $items, array $keyedSku): string
+    {
+        $platforms = array_fill_keys(self::PLATFORM_COLUMNS, []);
         // group items by platform marketplace
         foreach ($platforms as $col_platform => $dbItems) {
             foreach ($keyedSku as $sku => $orders) {
@@ -202,66 +165,19 @@ class BigSellerOrderProcess
                     $r[$col_platform] = 0;
                 }
             }
+            unset($r);
         }
 
-        // output as HTML
         $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($items);
 
         return $tblPackList->getTable();
     }
 
-    public function getToCollectHTML(array $itemToCollect, array $keyedSku): string
-    {
-        $platforms = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
-        // group items by platform marketplace
-        foreach ($platforms as $col_platform => $dbItems) {
-            foreach ($keyedSku as $sku => $orders) {
-                foreach ($orders as $o) {
-                    if ($o['stock'] === null) continue; // skip not found sku item
-
-                    $marketPlace = strtolower($o['marketPlace']);
-                    if ($marketPlace !== $col_platform) continue;
-
-                    if (array_key_exists($sku, $platforms[$col_platform]) === false)
-                        $platforms[$col_platform][$sku] = [];
-
-                    $platforms[$col_platform][$sku][] = $o;
-                }
-            }
-        }
-
-        // count by each column (platforms)
-        foreach ($platforms as $col_platform => $dbItems) {
-            foreach ($itemToCollect as &$r) {
-                if (array_key_exists($r['sku'], $dbItems) === true) {
-                    $r[$col_platform] = count($dbItems[$r['sku']]);
-                } else {
-                    $r[$col_platform] = 0;
-                }
-            }
-        }
-
-        // out put as HTML
-        $tblPackList = $this->newTablePackList_HTML_Maker();
-        $tblPackList->setBody($itemToCollect);
-        return $tblPackList->getTable();
-    }
-
     public function getNotFoundHTML(array $items): string
     {
-        $platforms = [
-            'lazada' => [],
-            'shopee' => [],
-            'tiktok' => [],
-        ];
-        // group items by platform marketplace
         // add columns counts; count by each column (marketplace platforms)
-        foreach ($platforms as $col_platform => $itemList) {
+        foreach (self::PLATFORM_COLUMNS as $col_platform) {
             foreach ($items as &$r) {
                 $marketPlace = strtolower($r['marketPlace']);
                 if ($marketPlace === $col_platform) {
@@ -270,42 +186,13 @@ class BigSellerOrderProcess
                     $r[$col_platform] = 0;
                 }
             }
+            unset($r);
         }
 
-        // output as HTML
         $tblPackList = $this->newTablePackList_HTML_Maker();
         $tblPackList->setBody($items);
 
         return $tblPackList->getTable();
-    }
-
-
-    private function setShippingFeeByWeight(array &$orders): void
-    {
-        $Records = array_map(function (array $r) {
-            $Record = new \Orders\Record(
-                null,
-                $r['orderNum'],
-                new \Product\Item(null, $r['sku'], null)
-            );
-            $Record->setShippingFee((float) $r['shippingFee']);
-            $Record->setShippingState($r['shippingState']);
-            $Record->setTrackingNum($r['trackingNum']);
-
-            $Record->setDate($r['date']);
-            return $Record;
-        }, $orders);
-        AutoFilling::setShippingWeightByLzdProduct($this->con, $Records);
-        AutoFilling::setShippingFeeByWeight($Records);
-
-        foreach ($Records as $i => $r) {
-            if ($orders[$i]['orderNum'] !== $r->orderNum) {
-                throw new Exception("cannot map shippingFeeByWeight to orders. iteration: {$i}");
-            }
-            $orders[$i]['shippingFeeByWeight'] = $r->shippingFeeByWeight;
-            $orders[$i]['shippingWeight'] = $r->shippingWeight;
-            $orders[$i]['date'] = $r->date;
-        }
     }
 
     public function getOrdersToData(array &$orders): string
