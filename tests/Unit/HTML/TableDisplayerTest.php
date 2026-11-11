@@ -158,16 +158,7 @@ final class TableDisplayerTest extends TestCase
         $this->assertStringStartsWith('<table><thead>', $table->getTable());
     }
 
-    public function testConstructor_TableId_documentsCurrentBehaviour_IdAttributeIsUnquoted(): void
-    {
-        $table = new TableDisplayer([], 'myId');
 
-        $this->assertStringStartsWith('<table id=myId>', $table->getTable());
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testConstructor_TableId_RendersQuotedIdAttribute(): void
     {
         // TableDisplayer.php:32 concatenates 'id=' . $tableId without quotes
@@ -213,20 +204,7 @@ final class TableDisplayerTest extends TestCase
         $this->assertStringEndsWith('</tbody></table>', $table->getTable());
     }
 
-    public function testSetFoot_documentsCurrentBehaviour_ClosingTrAndTfootAreNeverEmitted(): void
-    {
-        $table = new TableDisplayer([['v' => 1]]);
-        $table->setFoot(['Total', 3]);
 
-        $html = $table->getTable();
-
-        $this->assertStringEndsWith('</tbody><tfoot><tr><td>Total</td><td>3</td></table>', $html);
-        $this->assertSame(['<tfoot><tr>', '<td>Total</td>', '<td>3</td>'], iterator_to_array($table->getFoot(), false));
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testSetFoot_OutputEndsWithClosedTfoot(): void
     {
         // TableDisplayer.php:164 `return '</tr></tfoot>'` inside a generator is never yielded (also :156)
@@ -244,17 +222,7 @@ final class TableDisplayerTest extends TestCase
         $this->assertStringContainsString('<tfoot><tr><td><b></td><td>1234.5</td>', $table->getTable());
     }
 
-    public function testGetHead_HeaderLabels_documentsCurrentBehaviour_AreNotEscaped(): void
-    {
-        $table = new TableDisplayer();
-        $table->setHead(['a' => '<b>Bold & Co</b>']);
 
-        $this->assertStringContainsString('<th id="a"><b>Bold & Co</b></th>', $table->getTable());
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testGetHead_HeaderLabelsAreHtmlEscaped(): void
     {
         // TableDisplayer.php:137 and :141 interpolate $v into <th> without htmlspecialchars

@@ -42,12 +42,11 @@ class HtmlObject implements IHtml
 
     final public function getAllAttributesString(): string
     {
-        $attribute = '';
+        $pairs = [];
         foreach ($this->attribute as $k => $v) {
-            $attribute .=
-                htmlspecialchars($k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars($v, ENT_QUOTES, 'UTF-8') . '"';
+            $pairs[] = htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . '="' . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . '"';
         }
-        return $attribute;
+        return implode(' ', $pairs);
     }
 
     public function toHtmlText(): string
@@ -64,6 +63,7 @@ class HtmlObject implements IHtml
         if ($count === 0) {
             $output .= '/>';
         } else {
+            $output .= '>';
             for ($i = 0; $i < $count; $i++) {
                 $output .= $this->childNodes[$i]->toHtmlText();
             }

@@ -62,7 +62,7 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 ### `router.php` Execution Flow
 1. Loads Composer autoloader (`require 'vendor/autoload.php'`) and registers a fallback PSR-4 autoloader for the `App\` namespace (`src/`).
 2. Connects to MySQL by requiring `db/conn_staff.php`, which initializes `$con` (`mysqli`) and `$_isProduction` (`bool`).
-3. Resolves `$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)` across three handler tiers:
+3. Resolves `$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)` with [`App\Routing\RouteResolver`](file:///home/mingliangc/cardeco/src/Routing/RouteResolver.php) (pure, unit-tested in `tests/Unit/Routing/RouteResolverTest.php`; paths containing `..` or NUL resolve to 404) across three handler tiers:
 
 | Tier | Resolution Condition | Execution Contract | View Rendering |
 | :--- | :--- | :--- | :--- |
@@ -87,9 +87,11 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 ### Directory Map
 | Directory / File | Purpose |
 | :--- | :--- |
-| `router.php` / `index.php` | Front controller and single web entry point (`index.php` simply requires `router.php`). |
-| `src/Handler/` | Modern PSR-4 request handlers under namespace `App\Handler` (`LazadaHandler.php`, `Response.php`). |
-| `src/OrderProcess/` | Core order processing engines (`OrderProcess\LazadaOrderProcess`, `OrderProcess\BigSellerOrderProcess`, `OrderProcess\TikTokOrder`, `Report\ShippedItemReport`). |
+| `router.php` / `index.php` | Front controller and single web entry point (`index.php` simply requires `router.php`). Tier resolution lives in `src/Routing/RouteResolver.php`. |
+| `src/Routing/` | `App\Routing\RouteResolver` + `Route`: the Tier 1/2/3/404 precedence as a pure function (unit-tested). |
+| `src/Handler/` | Modern PSR-4 request handlers under namespace `App\Handler`: `AbstractDailyOrderHandler` (shared upload -> pick-list flow) with `LazadaHandler`, `IndexHandler`, `BigsellerHandler`, `TiktokHandler`, `ShopeeHandler`; `ShippedItemReportHandler`; `Response`. |
+| `src/Service/` | Business services shared by several pages: `App\Service\PickList\{PickListBuilder,PickListResult,PickListTables}` (keyed-SKU -> stock join -> To Restock / To Collect / Not Found) and `App\Service\Shipping\ShippingFeeByWeight`. |
+| `src/OrderProcess/` | Platform order parsers (`OrderProcess\LazadaOrderProcess`, `BigSellerOrderProcess`, `TikTokOrder`, `ShopeeOrderProcess`) that turn an upload into the four pick-list tables via `src/Service/`, plus `Report\ShippedItemReport`. |
 | `src/Exception/` | Custom exceptions (`Exception\HttpException`). |
 | `src/require_core/` | Collection utilities (` LazyCollection`, `ICollection` under ` require_core\ArrayExtension` / `ArrayExtension`). |
 | `src/Legacy/` | Legacy classes migrated from the former `inc/class/` directory (loaded via Composer `classmap` on `./src/`). Includes namespaces like `Orders\*`, `Product\*`, `Lazada\*`, `HTML\*`, `IO\*`, `Database\*`, and global-namespace classes (`StockManager`, `Bookmark`, `Database_Manager`, `Sql_Accounting_Export`, etc.). |
@@ -110,10 +112,10 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 | URL Route | Active Handler | View / Output | Key Domain Classes |
 | :--- | :--- | :--- | :--- |
 | `/` | `src/Handler/LazadaHandler.php` (Tier 1) | `view/lazada.php` | `OrderProcess\LazadaOrderProcess` |
-| `/index`, `/lazada` | `request_handler/index.php` -> `request_handler/lazada.php` (Tier 2, or Tier 1 if PSR-4 resolved) | `view/lazada.php` | `OrderProcess\LazadaOrderProcess` |
-| `/shopee` | `request_handler/shopee.php` (Tier 2) | `view/shopee.html` | `Orders\Factory\Shopee`, `Product\Manager\ItemManager` |
-| `/tiktok` | `request_handler/tiktok.php` (Tier 2) | `view/tiktok.html` | `OrderProcess\TikTokOrder` |
-| `/bigseller` | `request_handler/bigseller.php` (Tier 2) | `view/bigseller.html` | `OrderProcess\BigSellerOrderProcess` |
+| `/index`, `/lazada` | `src/Handler/IndexHandler.php` (extends `LazadaHandler`) / `LazadaHandler.php` (Tier 1) | `view/lazada.php` | `OrderProcess\LazadaOrderProcess` |
+| `/shopee` | `src/Handler/ShopeeHandler.php` (Tier 1) | `view/shopee.html` | `OrderProcess\ShopeeOrderProcess`, `Orders\Factory\Shopee` |
+| `/tiktok` | `src/Handler/TiktokHandler.php` (Tier 1) | `view/tiktok.html` | `OrderProcess\TikTokOrder` |
+| `/bigseller` | `src/Handler/BigsellerHandler.php` (Tier 1) | `view/bigseller.html` | `OrderProcess\BigSellerOrderProcess` |
 | `/ItemManager` | `request_handler/ItemManager.php` (Tier 2) | `view/ItemManager.html` | `Product\ItemManager`, `Product\ItemEditor`, `Product\Item` |
 | `/itemdetail` | `request_handler/itemdetail.php` (Tier 2) | `view/itemdetail.html.php` | `Stock_Item` |
 | `/RecordInserter` | `request_handler/RecordInserter.php` (Tier 2) | `view/RecordInserter.html` | `Orders\RecordInserter`, `Orders\Factory\Record` |
@@ -122,7 +124,7 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 | `/RecordUpdater` | `request_handler/RecordUpdater.php` (Tier 2) | `view/RecordUpdater.html` | `Orders\RecordUpdater`, `Orders\Factory\DateStockOut`, `Orders\StockOutTable` |
 | `/SkuManager` | `request_handler/SkuManager.php` (Tier 2) | `view/SkuManager.html` | `Orders\SkuManager` |
 | `/CashSaleSqlImport` | `request_handler/CashSaleSqlImport.php` (Tier 2) | `view/CashsaleSqlImport.html` | `Orders\Factory\Excel\CashSales`, `Orders\Factory\Excel\SqlImport` |
-| `/ShippedItemReport` | `request_handler/ShippedItemReport.php` (Tier 2) | `view/ShippedItemReport.html` | `Report\ShippedItemReport` |
+| `/ShippedItemReport` | `src/Handler/ShippedItemReportHandler.php` (Tier 1; the view calls `$handler->...()` while rendering, so `$con` must stay open) | `view/ShippedItemReport.html` | `Report\ShippedItemReport` |
 | `/LzdFeeChecker` | `request_handler/LzdFeeChecker.php` (Tier 2) | `view/LzdFeeChecker.html` | `Lazada\Manager\Fee_StatementsManager`, `Lazada\Manager\OrdersManager` |
 | `/LzdItemManager` | `request_handler/LzdItemManager.php` (Tier 2) | `view/LzdItemManager.html` | `Lazada\Factory\LzdItemFactory`, `Lazada\Manager\ItemManager` |
 | `/liststock` | `legacy_pages/request_handler/liststock.php` (Tier 3) | Inline + `process/actionListstock` | `StockManager`, `Bookmark` |
@@ -170,8 +172,24 @@ In the Docker dev environment, Xdebug is configured with `xdebug.start_with_requ
 # Regenerate Composer PSR-4 and classmap autoloader (required after adding/moving classes in src/ or tests/)
 XDEBUG_MODE=off composer dumpautoload --no-interaction
 
-# Run full PHPUnit 9.5 test suite (with Xdebug disabled for speed)
-composer run tests
+# FULL test suite on the real runtime: PHP 7.4 + throwaway MySQL 8 seeded from db/cardeco.sql.gz (compose.test.yml).
+# Never touches cardeco_dev. First run builds the image (~5 min). Extra args are passed to PHPUnit.
+composer run tests:docker
+composer run tests:docker -- --testsuite integration
+composer run tests:docker -- --filter RecordInserter
+composer run tests:docker -- --group known-bug      # documented bugs (expected to fail until fixed)
+composer run tests:docker:down                       # remove the throwaway database
+
+# Pure unit tests (no DB, no ext-zip) - also run on the host PHP
+composer run tests:unit
+
+# PHP 7.3 compatibility lint (PHPCompatibility via phpcs, config in phpcs.xml.dist)
+composer run lint
+
+# Inside the dev container (MYSQL_* env set): run the suites directly
+composer run tests                 # everything in phpunit.xml.dist (known-bug group excluded)
+composer run tests:integration
+composer run tests:smoke           # needs APP_BASE_URL, e.g. APP_BASE_URL=http://localhost
 
 # Reload Composer autoloader and run PHPUnit test suite
 composer run reload
@@ -195,7 +213,7 @@ php -d memory_limit=-1 -d xdebug.mode=Off ./vendor/bin/phpunit ./tests/lazada/La
 npx playwright test
 ```
 
-> **Note on Running PHPUnit Tests**: Tests in `tests/` obtain a database connection via [`tests/db.connection.php`](file:///home/mingliangc/cardeco/tests/db.connection.php), which reads `getenv('MYSQL_HOST')`, `getenv('MYSQL_USER')`, `getenv('MYSQL_PASSWORD')`, and `getenv('MYSQL_DB')`. Ensure those environment variables are set and the MySQL dev service (`mysql-dev` / port `3308`) is reachable when running DB-dependent tests.
+> **Note on Running PHPUnit Tests**: see [`tests/README.md`](file:///home/mingliangc/cardeco/tests/README.md). Suites are defined in `phpunit.xml.dist`: `unit` (`tests/Unit/`), `integration` (`tests/Integration/` + the pre-existing `tests/{lazada,bigseller,tiktok,monthly_cashsales_record}/`) and `smoke` (`tests/Smoke/`, GETs every nav route over HTTP). DB tests extend [`test\Support\DatabaseTestCase`](file:///home/mingliangc/cardeco/tests/Support/DatabaseTestCase.php): one shared connection from `MYSQL_HOST/USER/PASSWORD/DB`, every test inside a rolled-back transaction, fixtures prefixed `ZZTEST-`, automatic skip when the env is missing and refusal to run against the production DB name. Tests tagged `@group known-bug` describe the *intended* behaviour of a documented bug and are excluded from the default run; fixing the bug = making the test pass and dropping the tag. Golden HTML of the four daily-order processors lives in `tests/Integration/OrderProcess/golden/` (`CARDECO_UPDATE_GOLDEN=1` regenerates - review the diff).
 
 ---
 
@@ -241,6 +259,8 @@ npx playwright test
     ```
 - **Testing Mandate**:
   - Always check `tests/` for existing test cases when modifying core logic. New features or bug fixes should include corresponding PHPUnit tests in `tests/` (or Playwright tests in `e2e/`).
+  - **Characterize before you change**: when touching legacy code, first lock its current output with a test (pure classes -> `tests/Unit/`, DB classes -> `tests/Integration/` on `DatabaseTestCase`, page output -> golden/smoke tests), then refactor, then run `composer run tests:docker` and `composer run lint`.
+  - Page controllers no longer call `$con->close()`; `router.php` owns the connection and views may query during rendering.
 
 ### Git Branching & Protected Local Configs
 - **Git Branching Model**:

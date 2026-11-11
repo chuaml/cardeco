@@ -29,7 +29,7 @@ class TableDisplayer
             $this->setHead([]);
         }
         if ($tableId !== null) {
-            $this->attribute .= 'id=' . $tableId;
+            $this->attribute .= 'id="' . htmlspecialchars($tableId, ENT_QUOTES, 'UTF-8') . '"';
         }
         $this->setBody($listOfRows);
     }
@@ -127,18 +127,20 @@ class TableDisplayer
     public function getHead(): Generator
     {
         if ($this->headData === null) {
-            return '<thead></thead>';
+            yield '<thead></thead>';
+            return;
         }
 
         yield '<thead><tr>';
 
         if ($this->isHeadWithId === true) {
             foreach ($this->headData as $k => $v) {
-                yield "<th id=\"{$k}\">{$v}</th>";
+                yield '<th id="' . htmlspecialchars((string) $k, ENT_QUOTES, 'UTF-8') . '">'
+                    . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . '</th>';
             }
         } else {
             foreach ($this->headData as $v) {
-                yield "<th>{$v}</th>";
+                yield '<th>' . htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8') . '</th>';
             }
         }
 
@@ -153,7 +155,7 @@ class TableDisplayer
     public function getFoot(): Generator
     {
         if ($this->footData === null) {
-            return '';
+            return;
         }
 
         yield '<tfoot><tr>';
@@ -161,7 +163,7 @@ class TableDisplayer
             yield  "<td>{$v}</td>";
         }
 
-        return  '</tr></tfoot>';
+        yield '</tr></tfoot>';
     }
 
     public function setAttributes(?string $htmlAttributes): void

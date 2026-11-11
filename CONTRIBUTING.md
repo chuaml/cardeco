@@ -23,6 +23,7 @@ use App\Handler\Response;
 
 class MyNewHandler
 {
+    /** @var mysqli */
     private $con;
 
     public function __construct(mysqli $con)
@@ -38,6 +39,8 @@ class MyNewHandler
     }
 }
 ```
+Upload-driven pages that produce the four pick-list tables should extend `App\Handler\AbstractDailyOrderHandler`
+(see `BigsellerHandler` – three one-line methods).
 
 ### **Routing:**
 The `router.php` automatically attempts to resolve paths to classes:
@@ -52,4 +55,12 @@ The `router.php` automatically attempts to resolve paths to classes:
 
 ## 4. Database Access
 
-Use the global `$con` (mysqli) injected into the handler's constructor. Avoid using `global $con` inside classes; prefer dependency injection.
+Use the global `$con` (mysqli) injected into the handler's constructor. Avoid using `global $con` inside classes; prefer dependency injection. Never call `$con->close()` from a handler or controller: `router.php` owns the connection and views may query while rendering.
+
+## 5. Tests First
+
+- Lock existing behaviour before changing it: pure classes -> `tests/Unit/`, database classes -> `tests/Integration/`
+  (extend `test\Support\DatabaseTestCase`, prefix fixtures with `ZZTEST-`), page output -> golden/smoke tests.
+- Run `composer run tests:docker` (full suite on PHP 7.4 + seeded MySQL) and `composer run lint` (PHP 7.3 compatibility) before opening a PR.
+- A bug you cannot fix right away becomes a `@group known-bug` test describing the intended behaviour (excluded from the default run).
+- See [tests/README.md](tests/README.md) for details.

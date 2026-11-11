@@ -50,20 +50,7 @@ final class HtmlObjectTest extends TestCase
         $this->assertSame('<table cd-editable-sheet=""/>', $table->toHtmlText());
     }
 
-    public function testGetAllAttributesString_documentsCurrentBehaviour_NoSeparatorBetweenAttributes(): void
-    {
-        $input = (new HtmlObject('input'))
-            ->setAttribute('name', 'r[42]')
-            ->setAttribute('value', 'v')
-            ->setAttribute('maxlength', '255');
 
-        $this->assertSame('name="r[42]"value="v"maxlength="255"', $input->getAllAttributesString());
-        $this->assertSame('<input name="r[42]"value="v"maxlength="255"/>', $input->toHtmlText());
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testGetAllAttributesString_SeparatesAttributesWithASpace(): void
     {
         // HtmlObject.php:46-49 concatenates `k="v"` pairs with no separator
@@ -142,17 +129,7 @@ final class HtmlObjectTest extends TestCase
         $this->assertSame([], (new HtmlObject('div'))->getChildNodes());
     }
 
-    public function testToHtmlText_WithChildren_documentsCurrentBehaviour_OpeningTagIsNeverClosed(): void
-    {
-        $parent = (new HtmlObject('div'))->setAttribute('id', 'x');
-        $parent->addChild(new HtmlObject('span'));
 
-        $this->assertSame('<div id="x"<span/></div>', $parent->toHtmlText());
-    }
-
-    /**
-     * @group known-bug
-     */
     public function testToHtmlText_WithChildren_ClosesTheOpeningTagBeforeChildren(): void
     {
         // HtmlObject.php:57-71: when childNodes is non-empty the '>' of the opening tag is never appended

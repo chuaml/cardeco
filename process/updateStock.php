@@ -22,8 +22,14 @@ try{
 	}
 
 	if(error_get_last() !== null){
+		$lastError = error_get_last();
 		trigger_error('some error has occure. process is stopped.');
-		throw new Exception(error_get_last());
+		// Exception::__construct() takes a string; passing the error_get_last() array was a TypeError
+		// that escaped the catch(Exception) below and produced a blank 500 instead of the message.
+		throw new Exception(
+			'type=' . $lastError['type'] . ' ' . $lastError['message']
+			. ' in ' . $lastError['file'] . ':' . $lastError['line']
+		);
 	}
 
 	$msg = '<script>alert("Stock updated.");
