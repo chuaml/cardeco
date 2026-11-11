@@ -2,8 +2,6 @@
 
 namespace Product;
 
-require_once(__DIR__ . '/../HTML/TableDisplayer.php');
-
 use Generator;
 use HTML\HtmlObject;
 use HTML\HtmlTable;

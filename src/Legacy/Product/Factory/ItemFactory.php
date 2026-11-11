@@ -1,8 +1,6 @@
 <?php 
 namespace Product\Factory;
 
-require_once(__DIR__ .'/../Item.php');
-
 use Product\Item;
 
 class ItemFactory{

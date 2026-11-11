@@ -1,9 +1,6 @@
 <?php 
 namespace Orders;
 
-require_once(__DIR__ .'/../HTML/EscapableData.php');
-require_once(__DIR__ . '/../Product/Item.php');
-
 use \HTML\EscapableData;
 use \Exception;
 use \InvalidArgumentException;
@@ -14,6 +11,8 @@ class Record{
     private $orderNum = '';
     private $date = '';
     private $trackingNum = '';
+    /** @var string upper-cased order status, see setStatus(); '' until set */
+    private $status = '';
     private $sellingPrice = 0.00;
     private $voucher = 0.00;
     private $shippingFee = 0.00; //paid by seller

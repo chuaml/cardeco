@@ -1,12 +1,6 @@
 <?php
 namespace Orders\Factory;
 
-require_once(__DIR__ .'/../Record.php');
-require_once(__DIR__ .'/../../Product/Item.php');
-require_once(__DIR__ .'/RecordFactory.php');
-require_once(__DIR__ .'/../../IO/FileInputStream.php');
-require_once(__DIR__ .'/../../IO/CSVInputStream.php');
-
 use \Orders\Record;
 use \UnexpectedValueException;
 use \Exception;

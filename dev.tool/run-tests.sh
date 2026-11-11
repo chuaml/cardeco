@@ -16,6 +16,8 @@ cd /var/www/html
 export XDEBUG_MODE="${XDEBUG_MODE:-off}"
 
 HOST_OWNER="$(stat -c '%u:%g' composer.json)"
+# the bind-mounted project is owned by the host user, not root: stop git/composer from complaining
+git config --global --add safe.directory /var/www/html >/dev/null 2>&1 || true
 restore_ownership() {
     chown -R "$HOST_OWNER" tests composer.json composer.lock 2>/dev/null || true
     for f in .phpunit.result.cache phpunit.xml; do

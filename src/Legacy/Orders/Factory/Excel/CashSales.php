@@ -7,14 +7,22 @@ use Orders\PaymentCharges\PaymentCharges;
 //transform Monthly Record to Cash Sales entry list
 final class CashSales
 {
-    public static function transformToCashSales(\mysqli $con, string $paymentChargesName, array $list):array
+    /**
+     * @param array<int, array<string, mixed>> $list rows as produced by ExcelReader::read() (upper-cased header names)
+     * @param array<string, string|null>|null $uomByItemCode item_code => uom; when null it is looked up in stock_items
+     *                                                        (injectable so the transformation can be unit-tested without a DB)
+     */
+    public static function transformToCashSales(\mysqli $con, string $paymentChargesName, array $list, ?array $uomByItemCode = null):array
     {
         if (count($list) === 0) {
             return $list;
         }
         $list = self::fillBlank($list, 'TRACKING NUMBER', 'DATE', 'SQL NO', 'ORDER NUMBER', 'SELLER SKU');
 
-        $list = self::setItemUOM(self::selectUomByItemCodes($con, array_column($list, 'SELLER SKU')), $list);
+        if ($uomByItemCode === null) {
+            $uomByItemCode = self::selectUomByItemCodes($con, array_column($list, 'SELLER SKU'));
+        }
+        $list = self::setItemUOM($uomByItemCode, $list);
 
         $cashSales = self::groupByKey('ORDER NUMBER', $list);
         $cashSales = self::sumBySameItemEntries($cashSales);

@@ -1,9 +1,6 @@
 <?php 
 namespace Orders\Factory;
 
-require_once(__DIR__ .'/RecordFactory.php');
-require_once(__DIR__ .'/../PaymentCharges/PlatformCharges.php');
-
 use \Orders\Lazada\AutoFilling;
 use \Orders\Factory\RecordFactory;
 use \Orders\PaymentCharges\PlatformCharges;
@@ -158,7 +155,10 @@ class Cashsale implements RecordFactory{
 //private class
 //lines of same orderNum as a cashsaletext
 class CashsaleText{
-    private $data;
+    /** @var array<int, string|float> the single MASTER line (NUM_COL columns) */
+    private $dataMaster = [];
+    /** @var array<int, array<int, string|float>> one DETAIL line per item */
+    private $dataDetail = [];
 
     const NUM_COL = 45;
     const DEFAULT_VALUE = '----';

@@ -1,9 +1,6 @@
 <?php 
 namespace Orders;
 
-require_once(__DIR__ .'/../Database/Insertable.php');
-require_once(__DIR__ .'/../Database/Deletable.php');
-
 use \mysqli;
 use \Exception;
 use \InvalidArgumentException;

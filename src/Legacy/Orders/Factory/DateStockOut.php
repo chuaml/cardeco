@@ -1,9 +1,6 @@
 <?php 
 namespace Orders\Factory;
 
-require_once(__DIR__ .'/../MonthlyRecord.php');
-require_once(__DIR__ .'/RecordFactory.php');
-
 use \Orders\MonthlyRecord;
 use \UnexpectedValueException;
 use \Exception;

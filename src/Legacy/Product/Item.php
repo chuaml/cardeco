@@ -1,8 +1,6 @@
 <?php
 namespace Product;
 
-require_once(__DIR__ .'/../HTML/EscapableData.php');
-
 use \HTML\EscapableData;
 
 class Item implements EscapableData

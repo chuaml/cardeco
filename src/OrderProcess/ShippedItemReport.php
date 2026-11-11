@@ -20,12 +20,16 @@ final class ShippedItemReport
     private $con;
     /** @var ExcelReader|null */
     private $xlsx = null;
+    /** @var \DateTimeInterface "today" for the report's date columns (injectable for deterministic tests) */
+    private $now;
 
     public function __construct(
         mysqli $con,
-        array $files
+        array $files,
+        ?\DateTimeInterface $now = null
     ) {
         $this->con = $con;
+        $this->now = $now !== null ? $now : new DateTime();
 
         if (isset($files['bigseller_all_status_orders']) === true) { // has file uploaded
             if ($files['bigseller_all_status_orders']['error'] !== 0)
@@ -88,7 +92,7 @@ final class ShippedItemReport
         $tbl->setHeader(3, new Cell('Quantity'));
 
         $totalCount = 0;
-        $now = (new DateTime())->format('m/d/Y');
+        $now = $this->now->format('m/d/Y');
         foreach ($item_group_by_sku as $x) {
             $r = new HtmlTableRow();
             $r->setAttribute('is-empty-item-code', strlen($x->item->code) > 0 ? 'false' : 'true');
@@ -115,7 +119,7 @@ final class ShippedItemReport
         $iterator = $this->xlsx->read();
 
         $orders = [];
-        $now = (new DateTime())->format('m/d/Y');
+        $now = $this->now->format('m/d/Y');
         foreach ($iterator as $row) {
             $x = new OrderLine();
             $x->ShippedItem = DailyStockOutItem_Factory::map($row);

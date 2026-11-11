@@ -1,8 +1,6 @@
 <?php 
 namespace Orders;
 
-require_once(__DIR__ .'/../Database/Updatable.php');
-
 use \Database\Updatable;
 
 class MonthlyRecordUpdater implements Updatable{

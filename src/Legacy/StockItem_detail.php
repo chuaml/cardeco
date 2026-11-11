@@ -1,5 +1,4 @@
 <?php 
-require_once(__DIR__ . '/StockManager.php');
 
 class StockItem_detail extends StockManager{
 	

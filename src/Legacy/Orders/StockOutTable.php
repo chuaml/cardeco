@@ -1,11 +1,6 @@
 <?php 
 namespace Orders;
 
-require_once(__DIR__ .'/Factory/MonthlyRecord.php');
-require_once(__DIR__ .'/../HTML/TableDisplayer.php');
-require_once(__DIR__ .'/../Product/Factory/ItemFactory.php');
-require_once(__DIR__ .'/PaymentCharges/PlatformCharges.php');
-
 use \HTML\TableDisplayer;
 
 class StockOutTable extends TableDisplayer{

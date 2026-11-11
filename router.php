@@ -12,8 +12,9 @@ spl_autoload_register(function ($class) {
     if (file_exists($file)) require $file;
 });
 
+use App\Routing\Route;
+use App\Routing\RouteResolver;
 use Exception\HttpException;
-use App\Handler\LazadaHandler;
 
 $_exception = null;
 try {
@@ -22,55 +23,37 @@ try {
     $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
     $_view_html_path = ''; // *.html view to be loaded, if any
 
-    // default route
-    if ($path === '/' || $path === '') {
-        $handler = new LazadaHandler($con);
-        $response = $handler->handle($_REQUEST, $_FILES);
-        $_view_html_path = $response->viewPath;
-        extract($response->data);
+    // Tier resolution (see AGENTS.md section 3): Tier 1 App\Handler class > Tier 2 request_handler/ script
+    // > Tier 3 legacy_pages/ page > 404. The rules live in App\Routing\RouteResolver so they are unit-tested.
+    $_route = (new RouteResolver(__DIR__))->resolve($path);
 
-        if ($_view_html_path !== '') {
+    switch ($_route->tier) {
+        case Route::TIER_HANDLER:
+            $handlerClass = $_route->target;
+            $handler = new $handlerClass($con);
+            $response = $handler->handle($_REQUEST, $_FILES);
+            $_view_html_path = $response->viewPath;
+            extract($response->data);
+
+            if ($_view_html_path !== '') {
+                require 'view/_layout.main.html';
+            }
+            break;
+
+        case Route::TIER_SCRIPT:
+            require $_route->target;  // runs in this scope: sees $con, $_isProduction; sets $_view_html_path
+            if ($_view_html_path !== '') {
+                require 'view/_layout.main.html';
+            }
+            break;
+
+        case Route::TIER_LEGACY:
+            $_view_html_path = $_route->target;  // these legacy pages run and output in <body> part after <head>
             require 'view/_layout.main.html';
-        }
+            break;
 
-        return;
-    }
-
-    // other route
-    $_requestUri = 'request_handler' . $path;
-    if (is_dir($_requestUri) === true) {
-        $_requestUri .= 'index.php';
-    } else {
-        $_requestUri .= '.php';
-    }
-
-    // Dynamic Class Handler resolution (PSR-4 App\Handler)
-    $segments = array_map('ucfirst', explode('/', trim($path, '/')));
-    $className = implode('\\', $segments);
-    $handlerClass = "App\\Handler\\" . $className . "Handler";
-
-    if (class_exists($handlerClass)) {
-        $handler = new $handlerClass($con);
-        $response = $handler->handle($_REQUEST, $_FILES);
-        $_view_html_path = $response->viewPath;
-        extract($response->data);
-
-        if ($_view_html_path !== '') {
-            require 'view/_layout.main.html';
-        }
-    } else if (file_exists($_requestUri) === true) {
-        require $_requestUri;
-        if ($_view_html_path !== '') {
-            require 'view/_layout.main.html';
-        }
-    } else {
-        $legacy_page = 'legacy_pages/' . $_requestUri;  // try remap to legacy pages, if any
-        if (file_exists($legacy_page) === true) {
-            $_view_html_path = $legacy_page;  // these legacy pages run and output in <body> part after <head>
-            require 'view/_layout.main.html';
-        } else {
-            throw new HttpException(404, 'page not found: ' . $_requestUri);
-        }
+        default:
+            throw new HttpException(404, 'page not found: ' . $_route->target);
     }
 
     $err = error_get_last();
