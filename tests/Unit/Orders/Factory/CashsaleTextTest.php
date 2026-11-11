@@ -113,30 +113,6 @@ final class CashsaleTextTest extends TestCase
 
     // ---------------------------------------------------------------- platform registry (PlatformCharges::getPlatformCharges)
 
-    /** @return array<string, array<int, string>> */
-    public function provideUnresolvablePlatformValues(): array
-    {
-        return [
-            'Lazada_Eplus' => ['Lazada_Eplus'],
-            'Shopee_Eplus' => ['Shopee_Eplus'],
-            'TikTok_Eplus' => ['TikTok_Eplus'],
-            'Lazada_Paling_Best' => ['Lazada_Paling_Best'],
-            '11Street (registry key is Street11)' => ['11Street'],
-        ];
-    }
-
-    /**
-     * @dataProvider provideUnresolvablePlatformValues
-     */
-    public function testConstructor_platformValueStoredInOrders_documentsCurrentBehaviour_throwsForEplusAndPalingBest(string $platform): void
-    {
-        // Cashsale.php:177 -> PlatformCharges::getPlatformCharges() looks the DB value up as a KEY of
-        // TYPE_OF_CHARGES (PlatformCharges.php:7-15: typo keys *_Eplush, no TikTok_Eplus / Lazada_Paling_Best)
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No such PlatformCharges: ' . $platform);
-
-        new CashsaleText($this->row(['platformCharges' => $platform]));
-    }
 
     /** @return array<string, array<int, string>> */
     public function provideEplusAndPalingBestAccountCodes(): array
@@ -150,7 +126,6 @@ final class CashsaleTextTest extends TestCase
     }
 
     /**
-     * @group known-bug
      * @dataProvider provideEplusAndPalingBestAccountCodes
      */
     public function testConstructor_eplusAndPalingBestPlatforms_useTheirOwnAccountCodes(string $platform, string $custId, string $paymentInto): void

@@ -162,25 +162,11 @@ class MonthlyRecord implements RecordFactory{
         $platformCharges = &$r['platformCharges'];
         if(strlen($platformCharges) === 0){return;}
         $amount = (double)$r['platformChargesAmount'];
-        switch($platformCharges){
-            case 'Lazada':
-                $PlatformCharges = new PaymentCharges\Lazada($amount);
-                break;
-            case '11Street':
-                $PlatformCharges = new PaymentCharges\Street11($amount);
-                break;
-            case 'Netpay':
-                $PlatformCharges = new PaymentCharges\Netpay($amount);
-                break;
-            case 'GHL':
-                $PlatformCharges = new PaymentCharges\GHL($amount);
-                break;
-            case 'Shopee':
-                $PlatformCharges = new PaymentCharges\Shopee($amount);
-                break;
-            default:
-                throw new \Exception('undefined PlatformCharges type: ' .$platformCharges);
-            
+        // resolve through the single registry so every PlatformCharges subclass (incl. *_Eplus) can be read back
+        try{
+            $PlatformCharges = PaymentCharges\PlatformCharges::getPlatformCharges($platformCharges, $amount);
+        }catch(\InvalidArgumentException $e){
+            throw new \Exception('undefined PlatformCharges type: ' .$platformCharges);
         }
         $MonthlyRecord->setPlatformCharges($PlatformCharges);
     }

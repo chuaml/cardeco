@@ -7,13 +7,13 @@ use OrderProcess\TikTokOrder;
 use Orders\Factory\Excel\CashSales;
 use Orders\Factory\Excel\ExcelReader;
 use Orders\PaymentCharges\TikTok_Eplus;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 
-final class TikTokTest extends TestCase
+final class TikTokTest extends DatabaseTestCase
 {
     public function testListOrder_OrderFile_OrderSummary(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $q = new TikTokOrder($con, 'tests/tiktok/data.input/tiktok.input.order.sample.csv');
 
         $data = $q->getData();
@@ -29,7 +29,7 @@ final class TikTokTest extends TestCase
 
     public function testListOrder_OrderFile_ExpandQuantityToMultipleItems(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $filePath = 'tests/tiktok/data.input/tiktok.input.order.multiple_quantity.sample.csv';
         $q = new TikTokOrder($con, $filePath);
         $rawRecords = (new CSVInputStream($filePath, ','))->readLines();
@@ -41,7 +41,7 @@ final class TikTokTest extends TestCase
 
     public function testListOrder_OrderFile_ExpectedOutputList(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $filePath = 'tests/tiktok/data.input/tiktok.input.order.multiple_quantity.sample.csv';
         $q = new TikTokOrder($con, $filePath);
         $expectedResult = file_get_contents('tests/tiktok/data.input/tiktok.output.order.multiple_quantity.expected.json');
@@ -56,7 +56,7 @@ final class TikTokTest extends TestCase
 
     private function getMonthlyCashSalesRecord_As_SqlImport($testInputFilePath, $platformName): array
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $xlsx = new ExcelReader($testInputFilePath);
         $startRowPos = 1;
         $lastRowPos = -1;

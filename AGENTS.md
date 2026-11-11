@@ -104,7 +104,7 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 | `ajax/` | Direct JSON AJAX endpoints (`ajax/orders/`, `ajax/stock_items/`, `ajax/seller_sku/`). |
 | `inc/` | Shared navigation HTML (`inc/html/nav.html`) and legacy include (`inc/items_detail.php`). Note: `inc/class/` was moved to `src/Legacy/`. |
 | `db/` | Database connection (`db/conn_staff.php`), initial seed dump (`db/cardeco.sql.gz`), and schema migrations (`db/upgrade.sql`). |
-| `tests/` | PHPUnit 9.5 test suite, test DB connector (`tests/db.connection.php`), and sample `.xlsx`/`.csv`/`.json` fixtures. |
+| `tests/` | PHPUnit 9.5 suites (`Unit/`, `Integration/`, `Smoke/`), shared support classes (`tests/Support/`, incl. `DatabaseTestCase`), golden files and sample `.xlsx`/`.csv`/`.json` fixtures - see `tests/README.md`. |
 | `e2e/` | Playwright end-to-end browser tests (`e2e/example.spec.js`, configured in `playwright.config.js`). |
 | `config.dev/` | Local PHP and Xdebug INI overrides (`php-dev-override.ini`, `xdebug.ini`) mounted read-only into the dev container. |
 

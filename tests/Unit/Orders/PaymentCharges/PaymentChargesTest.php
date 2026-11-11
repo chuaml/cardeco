@@ -135,8 +135,8 @@ final class PaymentChargesTest extends TestCase
         $this->assertSame(Lazada::PLATFORM, PlatformCharges::TYPE_OF_CHARGES['Lazada']);
     }
 
-    /** PlatformCharges.php:7-15 - the registry as it is today (typo keys, two subclasses missing). */
-    public function testTypeOfCharges_documentsCurrentBehaviour(): void
+    /** The registry: key = class short name, value = PLATFORM constant persisted in orders.platformCharges. */
+    public function testTypeOfCharges_registryContents(): void
     {
         $this->assertSame([
             'Lazada' => 'Lazada',
@@ -144,11 +144,14 @@ final class PaymentChargesTest extends TestCase
             'Netpay' => 'Netpay',
             'GHL' => 'GHL',
             'Shopee' => 'Shopee',
-            'Lazada_Eplush' => 'Lazada_Eplus',
-            'Shopee_Eplush' => 'Shopee_Eplus',
+            'Lazada_Eplus' => 'Lazada_Eplus',
+            'Shopee_Eplus' => 'Shopee_Eplus',
+            'TikTok_Eplus' => 'TikTok_Eplus',
+            'Lazada_Paling_Best' => 'Lazada_Paling_Best',
         ], PlatformCharges::TYPE_OF_CHARGES);
         $this->assertSame('\Orders\PaymentCharges\\', PlatformCharges::NAMESPACE);
     }
+
 
     public function testGetPlatformCharges_registryKey_buildsSubclassWithAmount(): void
     {
@@ -168,39 +171,26 @@ final class PaymentChargesTest extends TestCase
         PlatformCharges::getPlatformCharges('Zalora');
     }
 
-    /**
-     * PlatformCharges.php:25-31 - the lookup is by registry KEY, so the PLATFORM value stored in
-     * `orders.platformCharges` for 11Street ('11Street') is rejected although the class is registered.
-     */
-    public function testGetPlatformCharges_street11PlatformValue_documentsCurrentBehaviour(): void
+    /** The PLATFORM value stored in `orders.platformCharges` for 11Street ('11Street') resolves to Street11. */
+    public function testGetPlatformCharges_street11PlatformValue_resolvesToStreet11(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No such PlatformCharges: 11Street.');
-        PlatformCharges::getPlatformCharges(Street11::PLATFORM);
+        $this->assertInstanceOf(Street11::class, PlatformCharges::getPlatformCharges(Street11::PLATFORM));
     }
 
-    /** PlatformCharges.php:13 - the typo key resolves to a class that does not exist -> PHP Error. */
-    public function testGetPlatformCharges_typoKeyLazadaEplush_documentsCurrentBehaviour(): void
+    /** The former typo key 'Lazada_Eplush' is rejected like any unknown platform (no PHP Error any more). */
+    public function testGetPlatformCharges_formerTypoKey_isRejected(): void
     {
-        $this->expectException(\Error::class);
-        $this->expectExceptionMessage('Lazada_Eplush');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('No such PlatformCharges: Lazada_Eplush.');
         PlatformCharges::getPlatformCharges('Lazada_Eplush');
     }
 
-    /** PlatformCharges.php:7-15 - TikTok_Eplus / Lazada_Paling_Best are not registered at all. */
-    public function testGetPlatformCharges_unregisteredSubclass_documentsCurrentBehaviour(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('No such PlatformCharges: TikTok_Eplus.');
-        PlatformCharges::getPlatformCharges(TikTok_Eplus::PLATFORM);
-    }
 
-    // ---------------------------------------------------------------- known bugs
+    // ---------------------------------------------------------------- registry consistency
 
     /**
-     * @group known-bug
-     * PlatformCharges.php:7-15 - every TYPE_OF_CHARGES key must be the short name of an existing subclass
-     * (getPlatformCharges() builds the class name from the key). 'Lazada_Eplush' / 'Shopee_Eplush' are typos.
+     * Every TYPE_OF_CHARGES key is the short name of an existing subclass (getPlatformCharges() builds the
+     * class name from the key) and its value is that class's PLATFORM constant.
      */
     public function testTypeOfCharges_keysAreExistingClassShortNames(): void
     {
@@ -212,9 +202,7 @@ final class PaymentChargesTest extends TestCase
     }
 
     /**
-     * @group known-bug
-     * PlatformCharges.php:7-15 - every concrete PlatformCharges subclass must be listed (TikTok_Eplus and
-     * Lazada_Paling_Best are missing, so RecordEditor / Cashsale cannot map rows stored with those platforms).
+     * Every concrete PlatformCharges subclass is listed in the registry (RecordEditor / Cashsale map rows by it).
      * @dataProvider providePlatformCharges
      */
     public function testTypeOfCharges_listsEveryConcreteSubclass(string $class, string $platform): void
@@ -226,10 +214,8 @@ final class PaymentChargesTest extends TestCase
     }
 
     /**
-     * @group known-bug
-     * PlatformCharges.php:25-31 - getPlatformCharges() must resolve the PLATFORM constant of every concrete
-     * subclass, because that is the value persisted in `orders.platformCharges` and read back by
-     * CashsaleText (Cashsale.php:177). Today only Lazada / Netpay / GHL / Shopee (key == value) work.
+     * getPlatformCharges() resolves the PLATFORM constant of every concrete subclass, because that is the
+     * value persisted in `orders.platformCharges` and read back by CashsaleText / MonthlyRecord factory.
      * @dataProvider providePlatformCharges
      */
     public function testGetPlatformCharges_everyPlatformConstant_isResolvable(string $class, string $platform): void

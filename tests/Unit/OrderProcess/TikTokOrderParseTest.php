@@ -272,36 +272,14 @@ final class TikTokOrderParseTest extends TestCase
     /**
      * @dataProvider provideZeroQuantities
      */
-    public function testGetOrders_zeroQuantity_documentsCurrentBehaviour_dividesByZero(string $quantity): void
-    {
-        // TikTok.php getOrders(): `$voucher = ... / $quantity` with intval() = 0 -> DivisionByZeroError on PHP 8,
-        // "Division by zero" warning on PHP 7 (where the row would then be silently skipped by the for loop)
-        $path = $this->csv([$this->row([9 => $quantity])]);
-
-        $e = PhpErrors::capture(function () use ($path) {
-            $this->orders($path);
-        });
-
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertInstanceOf(\DivisionByZeroError::class, $e);
-        } else {
-            $this->assertInstanceOf(\ErrorException::class, $e);
-        }
-        $this->assertSame('Division by zero', $e->getMessage());
-    }
-
-    /**
-     * @group known-bug
-     * @dataProvider provideZeroQuantities
-     */
     public function testGetOrders_zeroQuantity_throwsAClearException(string $quantity): void
     {
-        // TikTok.php getOrders(): a row whose Quantity column is 0 / blank must be rejected with a message that
-        // names the problem (like BigSellerOrderProcess does), not crash with a division by zero
+        // TikTok.php getOrders(): a row whose Quantity column is 0 / blank is rejected with a message that
+        // names the problem (like BigSellerOrderProcess does) instead of dividing by zero
         $path = $this->csv([$this->row([9 => $quantity])]);
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessageMatches('/quantity/i');
+        $this->expectExceptionMessage('unknown quantity of item, at row: 2');
 
         $this->orders($path);
     }

@@ -4,6 +4,9 @@ namespace Lazada\Manager;
 class OrdersManager{
     public static function getForLzdFeeStmtByOrderNums(\mysqli $con, array $orderNums):array{
         $count = count($orderNums);
+        if($count === 0){
+            return []; // `IN()` with no placeholders is a SQL syntax error (reachable from /LzdFeeChecker with no statement)
+        }
         $dataType = implode('',\array_fill(0,$count,'s'));
         $placeHolders = implode(',', \array_fill(0,$count,'?'));
         $stmt = $con->prepare('SELECT `billno`,`orderNum`,`sellingPrice`,`shippingFeeByCust`,`voucher`, '

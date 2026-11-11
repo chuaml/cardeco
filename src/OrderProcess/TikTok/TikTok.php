@@ -62,8 +62,14 @@ class TikTokOrder
         array_splice($orders, 0, 1); // skip 1st line header
 
         $list = [];
+        $line = 1; // header
         foreach ($orders as $r) {
+            $line++;
             $quantity = intval($r[9]);
+            if ($quantity === 0) {
+                // a 0 / blank Quantity used to divide by zero below (warning on PHP 7, DivisionByZeroError on 8)
+                throw new Exception("unknown quantity of item, at row: $line");
+            }
             $voucher = ((float) preg_replace('/[^0-9\.]+/', '', $r[14])) / $quantity;
             $sellingPrice = ((float) preg_replace('/[^0-9\.]+/', '', $r[11])) - $voucher;
             for ($i = 0; $i < $quantity; ++$i) {

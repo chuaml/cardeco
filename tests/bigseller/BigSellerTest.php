@@ -4,13 +4,13 @@ namespace test\bigseller;
 
 use DOMDocument;
 use OrderProcess\BigSellerOrderProcess;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 
-final class BigSellerTest extends TestCase
+final class BigSellerTest extends DatabaseTestCase
 {
     public function testListOrder_OrderFile_OrderSummary(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $q = new BigSellerOrderProcess($con, 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx');
         $data = $q->getData();
         $data['toRestock'];
@@ -25,7 +25,7 @@ final class BigSellerTest extends TestCase
 
     public function testListOrder_OrderFile_ExpectedOutputList(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx';
         $q = new BigSellerOrderProcess($con, $filePath);
         $expectedResult = file_get_contents('tests/bigseller/data.input/bigseller.output.order.expected.json');
@@ -41,7 +41,7 @@ final class BigSellerTest extends TestCase
 
     public function testListOrder_OrderFile_ExpectedOutputHtml(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $filePath = 'tests/bigseller/data.input/bigseller.input.order.sample.2025-04-02.xlsx';
         $q = new BigSellerOrderProcess($con, $filePath);
 

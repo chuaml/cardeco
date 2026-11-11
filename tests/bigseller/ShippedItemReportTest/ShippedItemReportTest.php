@@ -3,11 +3,11 @@
 namespace test\bigseller\ShippedItemTest;
 
 use DOMDocument;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 use Report\ShippedItemReport;
 use test\Mock;
 
-final class ShippedItemReportTest extends TestCase
+final class ShippedItemReportTest extends DatabaseTestCase
 {
     public function testShippedItem_AllOrderFile_ShippedItemReport(): void
     {
@@ -16,7 +16,7 @@ final class ShippedItemReportTest extends TestCase
             __DIR__ . '/input.bigseller.all_order.sample.2025-02-01.xlsx'
         );
 
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
 
         $q = new ShippedItemReport($con, $_FILES);
 

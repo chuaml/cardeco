@@ -5,13 +5,13 @@ namespace test\MonthlyCashSalesRecordTest;
 use Orders\Factory\Excel\CashSales;
 use Orders\Factory\Excel\ExcelReader;
 use Orders\Factory\Excel\SqlImport;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 
-final class MonthlyCashSalesRecordTest extends TestCase
+final class MonthlyCashSalesRecordTest extends DatabaseTestCase
 {
     public function testConvertToSqlImportEntries_MonthlyCashSalesRecord_ExpectedHeaderName(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
         $xlsx = new ExcelReader($testInputFilePath);
         $paymentType = 'Lazada';
@@ -56,7 +56,7 @@ final class MonthlyCashSalesRecordTest extends TestCase
 
     public function testConvertToSqlImportEntries_MonthlyCashSalesRecord_EntriesWithValidConstantValue(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
         $xlsx = new ExcelReader($testInputFilePath);
         $paymentType = 'Lazada';
@@ -79,7 +79,7 @@ final class MonthlyCashSalesRecordTest extends TestCase
 
     public function testConvertToSqlImportEntries_MonthlyCashSalesRecord_ExpectedOutput(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
         $xlsx = new ExcelReader($testInputFilePath);
         $paymentType = 'Lazada';
@@ -103,7 +103,7 @@ final class MonthlyCashSalesRecordTest extends TestCase
 
     public function testMultipleSameItemSkuButDifferentPrice_MonthlyCashSalesRecord_SameItemSkuButDifferentPriceAreSeparatedUnit(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $testInputFilePath = 'tests/monthly_cashsales_record/data.input/monthly.cashsales.record.sample.xlsx';
         $xlsx = new ExcelReader($testInputFilePath);
         $paymentType = 'Lazada';

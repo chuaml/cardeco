@@ -358,10 +358,8 @@ final class RecordTest extends TestCase
     // ---------------------------------------------------------------- known bugs
 
     /**
-     * @group known-bug
-     * Record.php:68-70 - setStatus() writes an UNDECLARED property, so a record that never had setStatus()
-     * called emits "Undefined property" on read (and a dynamic-property deprecation on PHP 8.2+).
-     * Intended: `status` is a declared property defaulting to '' like the other string fields.
+     * Record.php - `status` is a declared property defaulting to '' like the other string fields
+     * (it used to be created dynamically by setStatus(), emitting "Undefined property" on read before that).
      */
     public function testStatus_freshRecord_isDeclaredAndDefaultsToEmptyString(): void
     {

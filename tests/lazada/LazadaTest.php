@@ -3,13 +3,13 @@
 namespace test\lazada;
 
 use OrderProcess\LazadaOrderProcess;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 
-final class LazadaTest extends TestCase
+final class LazadaTest extends DatabaseTestCase
 {
     public function testListOrder_OrderFile_OrderSummary(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $q = new LazadaOrderProcess($con, 'tests/lazada/data.input/lazada.input.order.sample.xlsx');
         $data = $q->getData();
         $data['toRestock'];
@@ -24,7 +24,7 @@ final class LazadaTest extends TestCase
 
     public function testListOrder_OrderFile_ExpectedOutputList(): void
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $filePath = 'tests/lazada/data.input/lazada.input.order.sample.xlsx';
         $q = new LazadaOrderProcess($con, $filePath);
         $expectedResult = file_get_contents('tests/lazada/data.input/lazada.output.order.expected.json');

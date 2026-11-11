@@ -6,13 +6,13 @@ use Orders\Factory\Excel\CashSales;
 use Orders\Factory\Excel\ExcelReader;
 use Orders\PaymentCharges\BankIn;
 use Orders\PaymentCharges\Lazada;
-use PHPUnit\Framework\TestCase;
+use test\Support\DatabaseTestCase;
 
-final class Lazada_MonthlyCashSales_ConvertToSqlImportTest extends TestCase
+final class Lazada_MonthlyCashSales_ConvertToSqlImportTest extends DatabaseTestCase
 {
     private function getMonthlyCashSalesRecord_As_SqlImport($testInputFilePath, $platformName): array
     {
-        $con = require 'tests/db.connection.php';
+        $con = $this->con;
         $xlsx = new ExcelReader($testInputFilePath);
         $startRowPos = 1;
         $lastRowPos = -1;

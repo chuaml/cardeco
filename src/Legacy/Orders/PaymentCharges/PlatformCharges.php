@@ -4,14 +4,20 @@ namespace Orders\PaymentCharges;
 //for specifying PlateformCharges object
 abstract class PlatformCharges extends PaymentCharges{
     const PAYMENT_METHOD = 'Platform';
+    /**
+     * Registry of concrete subclasses: key = class short name (used to instantiate), value = PLATFORM constant
+     * (the string persisted in `orders.platformCharges`). Both must stay in sync with the classes below.
+     */
     const TYPE_OF_CHARGES = [
         'Lazada' => 'Lazada',
         'Street11' => '11Street', 
         'Netpay' => 'Netpay', 
         'GHL' => 'GHL', 
         'Shopee' => 'Shopee',
-        'Lazada_Eplush' => 'Lazada_Eplus',
-        'Shopee_Eplush' => 'Shopee_Eplus'
+        'Lazada_Eplus' => 'Lazada_Eplus',
+        'Shopee_Eplus' => 'Shopee_Eplus',
+        'TikTok_Eplus' => 'TikTok_Eplus',
+        'Lazada_Paling_Best' => 'Lazada_Paling_Best'
     ]; //keep track of child class for listing
     const NAMESPACE = '\Orders\PaymentCharges\\';
 
@@ -22,9 +28,17 @@ abstract class PlatformCharges extends PaymentCharges{
         return $this->platform;
     }
 
+    /**
+     * @param string $platform a PLATFORM constant as stored in `orders.platformCharges` (e.g. '11Street',
+     *                         'Lazada_Eplus'); the class short name (e.g. 'Street11') is accepted as well
+     */
     public static final function getPlatformCharges(string $platform, float $amount = 0.00):PlatformCharges{
-        if(\array_key_exists($platform, self::TYPE_OF_CHARGES)){
-            $Platform = self::NAMESPACE .$platform;
+        $className = \array_search($platform, self::TYPE_OF_CHARGES, true);
+        if($className === false && \array_key_exists($platform, self::TYPE_OF_CHARGES)){
+            $className = $platform;
+        }
+        if($className !== false){
+            $Platform = self::NAMESPACE .$className;
             return new $Platform($amount);
         }
         throw new \InvalidArgumentException("No such PlatformCharges: {$platform}.");
