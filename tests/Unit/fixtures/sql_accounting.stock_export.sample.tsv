@@ -1,0 +1,43 @@
+ZZ TEST SDN BHD
+Stock Take Listing
+
+Item Code			Description							UOM		Book Qty	Physical Qty			Remarks
+ACCESSORIES
+ZZTEST-0001			Test Seat Cover Black							PCS	1,250
+ZZTEST-0002			Test Steering Wheel Cover							SET	12
+ZZTEST-0003			Test Floor Mat (5 pcs)							SET	0
+Sub-Total for	ACCESSORIES										1,262
+CAR CARE
+ZZTEST-0004			Test Wax 250ml							BTL	-3
+ZZTEST-0005			Test Microfiber Cloth							PCS	48
+ZZTEST-0006			Test Filler Item 6							PCS	6
+ZZTEST-0007			Test Filler Item 7							PCS	7
+ZZTEST-0008			Test Filler Item 8							PCS	8
+ZZTEST-0009			Test Filler Item 9							PCS	9
+ZZTEST-0010			Test Filler Item 10							PCS	10
+ZZTEST-0011			Test Filler Item 11							PCS	11
+ZZTEST-0012			Test Filler Item 12							PCS	12
+ZZTEST-0013			Test Filler Item 13							PCS	13
+ZZTEST-0014			Test Filler Item 14							PCS	14
+ZZTEST-0015			Test Filler Item 15							PCS	15
+ZZTEST-0016			Test Filler Item 16							PCS	16
+ZZTEST-0017			Test Filler Item 17							PCS	17
+ZZTEST-0018			Test Filler Item 18							PCS	18
+ZZTEST-0019			Test Filler Item 19							PCS	19
+ZZTEST-0020			Test Filler Item 20							PCS	20
+ZZTEST-0021			Test Filler Item 21							PCS	21
+ZZTEST-0022			Test Filler Item 22							PCS	22
+ZZTEST-0023			Test Filler Item 23							PCS	23
+ZZTEST-0024			Test Filler Item 24							PCS	24
+ZZTEST-0025			Test Filler Item 25							PCS	25
+ZZTEST-0026			Test Filler Item 26							PCS	26
+ZZTEST-0027			Test Filler Item 27							PCS	27
+ZZTEST-0028			Test Filler Item 28							PCS	28
+ZZTEST-0029			Test Filler Item 29							PCS	29
+Item Code			Description							UOM		Book Qty	Physical Qty			Remarks
+CAR CARE
+ZZTEST-0030			Test Tyre Shine 500ml							BTL	7
+ZZTEST-0031			Test Glass Cleaner							BTL	9
+Sub-Total for	CAR CARE										98
+Grand Total											1,360
+Total Items  :	31
