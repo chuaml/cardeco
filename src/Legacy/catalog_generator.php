@@ -80,7 +80,8 @@ class catalog_generator{
 	}
 	
 	private function encodeResult(){
-		if(!is_array($this->items[0])){
+		// no row at all (none of the posted ids exists any more): nothing to encode
+		if(!isset($this->items[0]) || !is_array($this->items[0])){
 			return false;
 		}
 		
@@ -92,7 +93,8 @@ class catalog_generator{
 			$comment = isset($this->comments[$k]) ? 
 			htmlspecialchars($this->comments[$k], ENT_QUOTES, 'UTF-8') : false;
 			foreach($row as $f => $col){
-				$temp_row[$f] = htmlspecialchars(trim($col), ENT_QUOTES, 'UTF-8');
+				// `image` is NULL for an item without images (GROUP_CONCAT over the LEFT JOIN); trim(null) is deprecated since PHP 8.1
+				$temp_row[$f] = htmlspecialchars(trim((string) $col), ENT_QUOTES, 'UTF-8');
 			}
 			unset($col); unset($f);
 			if($comment !== false){

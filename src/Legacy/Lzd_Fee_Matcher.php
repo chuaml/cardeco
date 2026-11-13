@@ -27,7 +27,8 @@ class Lzd_Fee_Matcher{
 			// 	$r['billno'] = $sum;
 			// }
 
-			$diff = doubleval(abs($r['amount'])) - doubleval(abs($recorded_amount));
+			// (float): abs('') and abs(null) are 0 on PHP 7 but a TypeError / deprecation on PHP 8
+			$diff = doubleval(abs((float) $r['amount'])) - doubleval(abs((float) $recorded_amount));
 			$recorded_amount = $diff === 0.00 ? '' : $recorded_amount; 
 			$diff = $diff === 0.00 ? '' :abs($diff); 
 

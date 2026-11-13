@@ -355,6 +355,15 @@ final class RecordTest extends TestCase
         $this->assertSame('12.5', $record->getEscapedData('sellingPrice'));
     }
 
+    public function testGetEscapedData_unsetProperty_isAnEmptyString(): void
+    {
+        // recordId is null until the record is loaded from the database; null must not reach htmlspecialchars()
+        // (deprecated since PHP 8.1) - same contract as Product\Item::getEscapedData()
+        $record = new Record();
+
+        $this->assertSame('', $record->getEscapedData('recordId'));
+    }
+
     // ---------------------------------------------------------------- known bugs
 
     /**

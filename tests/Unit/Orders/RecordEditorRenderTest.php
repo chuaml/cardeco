@@ -14,9 +14,6 @@ use Orders\RecordEditor;
 use PHPUnit\Framework\TestCase;
 use Product\Item;
 use test\Support\HtmlTableReader;
-use test\Unit\Support\PhpErrors;
-
-require_once __DIR__ . '/../Support/PhpErrors.php';
 
 /**
  * Characterization of the rendering side of Orders\RecordEditor (src/Legacy/Orders/RecordEditor.php): monthly
@@ -308,22 +305,21 @@ final class RecordEditorRenderTest extends TestCase
         $this->assertFalse($sku->hasAttribute('data-value'));
     }
 
-    public function testGetTable_recordWithoutPlatformCharges_documentsCurrentBehaviour_failsInNumberFormat(): void
+    public function testGetTable_recordWithoutPlatformCharges_rendersAnEmptyPlatformChargesAmountInput(): void
     {
-        // platformChargesAmount is null -> htmlspecialchars(null) = '' -> number_format(''): TypeError on PHP 8,
-        // warning on PHP 7. Reachable only for records that Orders\Factory\MonthlyRecord could not map to a platform.
-        $record = $this->record(101, ['withPlatformCharges' => false]);
+        // platformChargesAmount is null -> '' after escaping. number_format('') used to be a warning on PHP 7 (which
+        // then rendered value="") but a TypeError on PHP 8, so /RecordEditor crashed on 8.x only.
+        // RecordEditor::moneyValue() renders the PHP 7 cell on every version, without the warning.
+        // Reachable for orders whose platformCharges column is NULL or '' (Orders\Factory\MonthlyRecord sets none).
+        $html = $this->render([$this->record(101, ['withPlatformCharges' => false])]);
 
-        $e = PhpErrors::capture(function () use ($record) {
-            $this->render([$record]);
-        });
-
-        if (PHP_VERSION_ID >= 80000) {
-            $this->assertInstanceOf(\TypeError::class, $e);
-        } else {
-            $this->assertInstanceOf(\ErrorException::class, $e);
-        }
-        $this->assertStringContainsString('number_format()', $e->getMessage());
+        $values = $this->inputValuesByName($html);
+        $this->assertSame('', $values['r[101][platformChargesAmount]']);
+        $this->assertSame('4.90', $values['r[101][shippingFee]']);
+        $this->assertSame('0.00', $values['r[101][shippingFeeByCust]']);
+        $this->assertSame('1.25', $values['r[101][voucher]']);
+        $this->assertSame('10.00', $values['r[101][bankIn]']);
+        $this->assertSame('', (new HtmlTableReader($html))->assocRows()[0]['Platform Charges']);
     }
 
     // ---------------------------------------------------------------- getFloorPage ($_GET is empty under the CLI)

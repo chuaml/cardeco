@@ -54,7 +54,8 @@ class StockReport extends StockManager{
 			$hash_table[$row['item_code']] = 1; 
 			$v = $row['item_code'];
 			
-			if(strlen($v) > 0){
+			// item_code is null for a pasted line with fewer than 3 columns; strlen(null) is deprecated since PHP 8.1
+			if(strlen((string) $v) > 0){
 				$input_items[] = $row;
 				$clean_items[] = mysqli_real_escape_string($this->con, $v);
 			} else {

@@ -28,7 +28,8 @@ function getMRecordsToOverWrite(array $MRecordsToUpdate, array $MRecordsFromDB):
 
     $MRecordsToOverWrite = [];
     foreach($MRecordsFromDB as $r){
-        $dso = trim($r->dateStockOut);
+        // dateStockOut is NULL until an order is stocked out (the normal case here); trim(null) is deprecated since PHP 8.1
+        $dso = trim((string) $r->dateStockOut);
         if($dso !== '' && $dso !== $trackinNumKey[$r->trackingNum]){
             $MRecordsToOverWrite[] = $r;
         }

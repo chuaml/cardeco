@@ -14,7 +14,7 @@ class TableDisplayer
     private $bodyData;
     private $footData;
 
-    public function __construct(array $listOfRows = [], string $tableId = null)
+    public function __construct(array $listOfRows = [], ?string $tableId = null)
     {
         if (array_key_exists(0, $listOfRows) === true) {
             // use default row keys as table head
@@ -92,7 +92,7 @@ class TableDisplayer
         if (is_float($value) === true) {
             return '<td>' . number_format($value, 2, '.', ',') . '</td>';
         } else {
-            return '<td>' . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . '</td>';
+            return '<td>' . htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8') . '</td>';
         }
     }
 
@@ -120,7 +120,8 @@ class TableDisplayer
     public function setHead(?array $data, bool $setId = true): void
     {
         $this->headData =  $data;
-        $this->theadKeys = array_keys($this->headData);
+        // no head: PHP 7's array_keys(null) left the keys null (after a warning); PHP 8 would throw a TypeError
+        $this->theadKeys = $data === null ? null : array_keys($data);
         $this->isHeadWithId = $setId;
     }
 
@@ -168,7 +169,7 @@ class TableDisplayer
 
     public function setAttributes(?string $htmlAttributes): void
     {
-        $this->attribute = $htmlAttributes;
+        $this->attribute = (string) $htmlAttributes;
     }
 
     protected function getReNamedHeader(): array

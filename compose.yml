@@ -38,6 +38,9 @@ services:  ## for development environment
     build:
       dockerfile: ./Dockerfile
       target: dev_app  # image variant
+      args:
+        PHP_VERSION: "8.3"     # dev runtime; live production still runs PHP 7.3 (AGENTS.md section 2)
+        FLOOR_PHP_CLI: "7.3"   # adds /usr/bin/php7.3 next to PHP 8.3 for `composer run lint:php73`; "" to skip
     ports:
       - 127.0.0.1:8082:80
       - 127.0.0.1:9003:9003  ## this must be mapped, other all `php` and `composer` command would stuck if no active debug session
@@ -64,7 +67,9 @@ services:  ## for development environment
                              ## and stop Apache server from starting automatically in background
   
     post_start: ## addon subsequent commands to run
-      - command: sh -c 'XDEBUG_MODE=off composer dumpautoload --no-interaction && apachectl start'
+      ## `composer install` (not just dumpautoload): the dependencies_php volume outlives the image, so after
+      ## composer.lock changes it would keep the old packages. Nothing is downloaded when vendor/ is in sync.
+      - command: sh -c 'XDEBUG_MODE=off composer install --no-interaction --no-progress --ignore-platform-req=ext-zip || XDEBUG_MODE=off composer dumpautoload --no-interaction; apachectl start'
         user: root
     # develop: 
     #   watch:   ## only if run with `docker compose up --watch`  flag

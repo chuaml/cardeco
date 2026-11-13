@@ -24,13 +24,14 @@ This project is mid-migration from a legacy Windows **WAMP** stack to a containe
 | Environment | Stack & OS | PHP Version | Database | How Configured / Started |
 | :--- | :--- | :--- | :--- | :--- |
 | **Live Production (`main`)** | **Windows WAMP64** (`\wamp64`), Apache 2.4 | **PHP 7.3** | MySQL 8 (`localhost`, user `root`, password `""`, DB `cardeco`) | Native Windows WAMP server; DB backup via `backup.database.bat`. |
-| **Development (`dev`)** | **Docker LAMP** (`Dockerfile` target `dev_app`, Debian + Apache 2.4 + Xdebug 3.1.6) | **PHP 7.4** (`php:7.4-apache`) | MySQL 8.0.41 (`mysql-dev:3306`, host port `3308`, DB `cardeco_dev`) | `compose.yml` + `.devcontainer/devcontainer.json` (HTTP on host `127.0.0.1:8082`). |
-| **Staging / Planned Prod Containers** | **Docker LAMP** (`Dockerfile` target `production_app`) | **PHP 7.4** (`php:7.4-apache`) | MySQL 8.0.41 (`mysql:3306`, DB `cardeco`) | `compose.staging.yml` (port `8081`) / `compose.production.yml` (port `8080`). Not yet fully cut over in live production. |
+| **Development (`dev`)** | **Docker LAMP** (`Dockerfile` target `dev_app`, Debian + Apache 2.4 + Xdebug 3.4.7) | **PHP 8.3** (`php:8.3-apache`, build arg `PHP_VERSION=8.3`), plus `/usr/bin/php7.3` as a second CLI (build arg `FLOOR_PHP_CLI=7.3`) | MySQL 8.0.41 (`mysql-dev:3306`, host port `3308`, DB `cardeco_dev`) | `compose.yml` + `.devcontainer/devcontainer.json` (HTTP on host `127.0.0.1:8082`). |
+| **Staging / Planned Prod Containers** | **Docker LAMP** (`Dockerfile` target `production_app`) | **PHP 7.4** (`php:7.4-apache`, the `PHP_VERSION` default) | MySQL 8.0.41 (`mysql:3306`, DB `cardeco`) | `compose.staging.yml` (port `8081`) / `compose.production.yml` (port `8080`). Not yet fully cut over in live production. |
+| **Test matrix** | **Docker LAMP** (`Dockerfile` target `dev_app`, one image per PHP version) | **PHP 7.3, 7.4 and 8.3** | Throwaway MySQL 8.0.41 (`mysql-test`, DB `cardeco_test`, `mysql_native_password`) | `compose.test.yml`: services `phpunit73`, `phpunit74`, `phpunit` (8.3). See section 6. |
 
 ### Critical Cross-Environment Compatibility Rules
 
 1. **Strict PHP 7.3 Syntax Compatibility**:
-   - Even though the Docker container runs PHP 7.4 (and `.idx/dev.nix` specifies PHP 8.1), **live production still runs PHP 7.3 on WAMP**.
+   - The dev container runs PHP 8.3 and the staging/production images run PHP 7.4 (`.idx/dev.nix` specifies PHP 8.1), but **live production still runs PHP 7.3 on WAMP**.
    - **DO NOT use PHP 7.4+ syntax**, or live production will suffer fatal parse errors:
      - **No typed class properties** (use `/** @var Type */ private $prop;` instead of `private Type $prop;`).
      - **No arrow functions** (use `function ($x) { return $x; }` instead of `fn($x) => $x`).
@@ -42,6 +43,16 @@ This project is mid-migration from a legacy Windows **WAMP** stack to a containe
    - Always ensure URL paths, `require`/`include` statements, AJAX endpoints, and PSR-4 class/file names match exact casing on disk.
 3. **Cross-Platform File Paths**:
    - Never hardcode Windows backslashes (`\`) when parsing file paths or stream URIs. Always use `__DIR__`, `basename()`, `dirname()`, or `DIRECTORY_SEPARATOR`.
+4. **Same Behaviour on PHP 7.3 and PHP 8.3**:
+   - Passing the 7.3 syntax rule is not enough: PHP 8 turned several PHP 7 warnings into `TypeError`s and deprecations. The PHPUnit suites run on 7.3, 7.4 and 8.3 and **a deprecation fails the run** (`convertDeprecationsToExceptions="true"` in `phpunit.xml.dist`).
+   - **`null` into a string function** (`trim`, `strlen`, `htmlspecialchars`, `explode`, ...) is deprecated since 8.1. Values from nullable columns (`orders.dateStockOut`, `orders.platformCharges`, ..., `lzd_products.weight/length/width/height`) and from `LEFT JOIN`s (`GROUP_CONCAT(...) AS image`) are `null`: cast explicitly, e.g. `trim((string) $value)`. On PHP 7.3 the cast changes nothing.
+   - **Non-numeric strings into number functions** (`number_format('')`, `abs('')`) and `count()` / `array_keys()` on a non-array are a warning on 7.3 but a `TypeError` on 8.x. Guard them so that 8.x renders what 7.3 rendered.
+   - **Internal interfaces** (`ArrayAccess`, `IteratorAggregate`, `Countable`, `JsonSerializable`): a method that cannot declare the 8.1 return type in 7.3 syntax (`offsetGet(): mixed`) gets `#[\ReturnTypeWillChange]` on its own line directly above it; PHP 7.3 reads that line as a comment.
+   - Do not call functions that only exist in PHP 8 (`str_contains()`, ...); no polyfill packages are installed on purpose, so `composer run lint` stays meaningful.
+5. **Dependencies Are Resolved For The Production Floor**:
+   - `composer.json` pins `config.platform.php` to `7.3.33`. `composer update` / `composer require` therefore only pick versions that run on PHP 7.3, no matter which PHP runs Composer. Never bypass it with `--ignore-platform-reqs`.
+   - The pin cannot see a package that excludes a *newer* PHP, so every test run also executes `composer check-platform-reqs` against the real runtime (`dev.tool/run-tests.sh`).
+   - `phpoffice/phpspreadsheet` is held at 1.25.2, the last release that supports PHP 7.3. It has known security advisories that are only fixed in 1.30.7+ (PHP >= 7.4), which is why `config.audit.block-insecure` is `false`. **As soon as production runs PHP 7.4 or later** (check `php -v` on the WAMP host): set `config.platform.php` to that version, remove the `audit` block, run `composer update`, and drop the `phpunit73` leg.
 
 ---
 
@@ -104,7 +115,7 @@ RewriteRule ^(.*)$ router.php [QSA,L]
 | `ajax/` | Direct JSON AJAX endpoints (`ajax/orders/`, `ajax/stock_items/`, `ajax/seller_sku/`). |
 | `inc/` | Shared navigation HTML (`inc/html/nav.html`) and legacy include (`inc/items_detail.php`). Note: `inc/class/` was moved to `src/Legacy/`. |
 | `db/` | Database connection (`db/conn_staff.php`), initial seed dump (`db/cardeco.sql.gz`), and schema migrations (`db/upgrade.sql`). |
-| `tests/` | PHPUnit 9.5 suites (`Unit/`, `Integration/`, `Smoke/`), shared support classes (`tests/Support/`, incl. `DatabaseTestCase`), golden files and sample `.xlsx`/`.csv`/`.json` fixtures - see `tests/README.md`. |
+| `tests/` | PHPUnit 9.6 suites (`Unit/`, `Integration/`, `Smoke/`), shared support classes (`tests/Support/`, incl. `DatabaseTestCase`), golden files and sample `.xlsx`/`.csv`/`.json` fixtures - see `tests/README.md`. |
 | `e2e/` | Playwright end-to-end browser tests (`e2e/example.spec.js`, configured in `playwright.config.js`). |
 | `config.dev/` | Local PHP and Xdebug INI overrides (`php-dev-override.ini`, `xdebug.ini`) mounted read-only into the dev container. |
 
@@ -172,19 +183,33 @@ In the Docker dev environment, Xdebug is configured with `xdebug.start_with_requ
 # Regenerate Composer PSR-4 and classmap autoloader (required after adding/moving classes in src/ or tests/)
 XDEBUG_MODE=off composer dumpautoload --no-interaction
 
-# FULL test suite on the real runtime: PHP 7.4 + throwaway MySQL 8 seeded from db/cardeco.sql.gz (compose.test.yml).
-# Never touches cardeco_dev. First run builds the image (~5 min). Extra args are passed to PHPUnit.
-composer run tests:docker
+# FULL test suite on a real runtime + throwaway MySQL 8 seeded from db/cardeco.sql.gz (compose.test.yml).
+# Never touches cardeco_dev. The first run of each leg builds its image (~5 min). Extra args are passed to PHPUnit.
+composer run tests:docker           # PHP 8.3 - the dev container runtime
+composer run tests:docker:74        # PHP 7.4 - the staging / planned production image
+composer run tests:docker:73        # PHP 7.3 - the WAMP production floor
+composer run tests:matrix           # all three in sequence (7.3, 7.4, 8.3): THE gate before merging to staging / main
 composer run tests:docker -- --testsuite integration
 composer run tests:docker -- --filter RecordInserter
 composer run tests:docker -- --group known-bug      # documented bugs (expected to fail until fixed)
-composer run tests:docker:down                       # remove the throwaway database
+composer run tests:docker:down                       # remove the throwaway database and vendor volumes
 
 # Pure unit tests (no DB, no ext-zip) - also run on the host PHP
 composer run tests:unit
 
-# PHP 7.3 compatibility lint (PHPCompatibility via phpcs, config in phpcs.xml.dist)
-composer run lint
+# Static gates. Inside the dev container (or on any PHP with vendor/ installed):
+composer run check                 # = lint + lint:syntax + lint:case + stan + stan:83
+composer run lint                  # PHPCompatibility 7.3 - 8.3 via phpcs (phpcs.xml.dist), incl. the *.html views
+composer run lint:syntax           # real `php -l` with the PHP that runs Composer
+composer run lint:php73            # real `php7.3 -l` on first-party code + production vendor packages (dev container)
+composer run lint:case             # WAMP vs LAMP case-sensitivity audit of include/require targets and local URLs
+composer run stan                  # PHPStan level 2, code read as PHP 7.3 (phpstan.neon)
+composer run stan:83               # PHPStan level 2, code read as PHP 8.3 (phpstan-83.neon)
+composer run audit:php83           # writes audit-php83-blockers.txt (gitignored)
+# The same gates from the host, inside the test images:
+composer run check:docker          # `composer run check` in the PHP 8.3 image
+composer run lint:docker:73        # `php -l` in the PHP 7.3 image
+composer run audit:docker          # `composer run audit:php83` in the PHP 8.3 image
 
 # Inside the dev container (MYSQL_* env set): run the suites directly
 composer run tests                 # everything in phpunit.xml.dist (known-bug group excluded)

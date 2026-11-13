@@ -1,0 +1,55 @@
+#!/bin/sh
+# Opt-in pre-commit gate for the dual-runtime rule: every line must work on PHP 7.3 (production) AND PHP 8.3 (dev).
+#
+#   git config core.hooksPath .githooks      # enable, once per clone
+#   git config --unset core.hooksPath        # disable
+#   git commit --no-verify                   # skip for one commit
+#
+# For every staged *.php file and every staged *.html file that embeds PHP:
+#   1. `php -l` with each PHP that is installed: php7.3 (the secondary CLI of the dev container) and php
+#   2. PHPCompatibility 7.3-8.3 (phpcs.xml.dist) when vendor/bin/phpcs is installed
+# The checks read the working-tree copy of each staged file.
+# The full gates are `composer run check` and `composer run tests:matrix`.
+set -u
+
+cd "$(git rev-parse --show-toplevel)" || exit 1
+
+IFS='
+'
+staged=$(git diff --cached --name-only --diff-filter=ACMR -- '*.php' '*.html' | grep -vE '^(vendor|node_modules|public|upload)/' || true)
+
+files=""
+for f in $staged; do
+    [ -f "$f" ] || continue
+    case "$f" in
+        *.html) grep -qE '<\?(php|=)' "$f" || continue ;;
+    esac
+    files="$files$f
+"
+done
+[ -z "$files" ] && exit 0
+
+status=0
+linted=0
+for bin in php7.3 php; do
+    command -v "$bin" >/dev/null 2>&1 || continue
+    linted=1
+    for f in $files; do
+        if ! out=$("$bin" -d display_errors=1 -d error_reporting=-1 -d log_errors=0 -l "$f" 2>&1); then
+            echo "pre-commit: '$bin -l' failed for $f"
+            echo "$out" | sed 's/^/    /'
+            status=1
+        fi
+    done
+done
+[ "$linted" = "0" ] && echo "pre-commit: no php binary found, syntax check skipped"
+
+if [ -x vendor/bin/phpcs ]; then
+    # $files is split on newlines only (IFS above)
+    vendor/bin/phpcs --standard=phpcs.xml.dist -q $files || status=1
+fi
+
+if [ "$status" != "0" ]; then
+    echo "pre-commit: commit aborted. Fix the findings above, or bypass once with 'git commit --no-verify'."
+fi
+exit $status

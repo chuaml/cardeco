@@ -1,0 +1,726 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: ajax/orders/getCountOrderNum.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: ajax/orders/getOrdersByInsertLogId.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: ajax/seller_sku/getItemCodeBySku.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: ajax/seller_sku/getItemCodeSku.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: ajax/stock_items/getItemCode.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: legacy_pages/request_handler/Cashsale.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 3
+			path: legacy_pages/request_handler/bookmarks.php
+
+		-
+			message: "#^Variable \\$pg might not be defined\\.$#"
+			count: 1
+			path: legacy_pages/request_handler/bookmarks.php
+
+		-
+			message: "#^Variable \\$sb might not be defined\\.$#"
+			count: 1
+			path: legacy_pages/request_handler/bookmarks.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: legacy_pages/request_handler/bookmarks_modify.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: legacy_pages/request_handler/catalog.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 4
+			path: legacy_pages/request_handler/fee_statement.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: legacy_pages/request_handler/liststock.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: legacy_pages/request_handler/stockreport.php
+
+		-
+			message: "#^Variable \\$csvData might not be defined\\.$#"
+			count: 1
+			path: process/RecordEditor/exportCSV.php
+
+		-
+			message: "#^Variable \\$csvData might not be defined\\.$#"
+			count: 1
+			path: process/RecordEditor/exportCSV_sqlImport.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: process/RecordEditor/submit.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: process/actionBookmarks.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 3
+			path: process/createBookmark.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 3
+			path: process/exportAll_StockImages.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: process/fee_statement.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: process/printCatalog.php
+
+		-
+			message: "#^Variable \\$action might not be defined\\.$#"
+			count: 1
+			path: process/updateBookmarks.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 3
+			path: process/updateBookmarks.php
+
+		-
+			message: "#^Variable \\$name might not be defined\\.$#"
+			count: 1
+			path: process/updateBookmarks.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 4
+			path: process/updateStock.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 10
+			path: process/updateStock_image.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 14
+			path: process/uploadStock_image.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: request_handler/CashSaleSqlImport.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 4
+			path: request_handler/ItemManager.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 8
+			path: request_handler/LzdFeeChecker.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 5
+			path: request_handler/LzdItemManager.php
+
+		-
+			message: "#^Access to private property \\$orderNum of parent class Orders\\\\Record\\.$#"
+			count: 1
+			path: request_handler/RecordEditor.php
+
+		-
+			message: "#^Access to private property Orders\\\\MonthlyRecord\\:\\:\\$DirectCharges\\.$#"
+			count: 7
+			path: request_handler/RecordEditor.php
+
+		-
+			message: "#^Access to private property Orders\\\\MonthlyRecord\\:\\:\\$PlatformCharges\\.$#"
+			count: 2
+			path: request_handler/RecordEditor.php
+
+		-
+			message: "#^Result of function header \\(void\\) is used\\.$#"
+			count: 1
+			path: request_handler/RecordEditor.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 6
+			path: request_handler/RecordEditor.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 2
+			path: request_handler/RecordInserter.php
+
+		-
+			message: "#^Result of function header \\(void\\) is used\\.$#"
+			count: 1
+			path: request_handler/RecordInserterCSV.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 6
+			path: request_handler/RecordInserterCSV.php
+
+		-
+			message: "#^Variable \\$list might not be defined\\.$#"
+			count: 1
+			path: request_handler/RecordInserterCSV.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 5
+			path: request_handler/RecordUpdater.php
+
+		-
+			message: "#^Result of function header \\(void\\) is used\\.$#"
+			count: 1
+			path: request_handler/SkuManager.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 3
+			path: request_handler/SkuManager.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: request_handler/itemdetail.php
+
+		-
+			message: "#^Variable \\$con might not be defined\\.$#"
+			count: 1
+			path: router.php
+
+		-
+			message: "#^Undefined variable\\: \\$color$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$height$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$id$#"
+			count: 1
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$image1$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$image2$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$image3$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$image4$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$image5$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$length$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$lzdSku$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$name$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$price$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$sellerSku$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$status$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$weight$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$width$#"
+			count: 3
+			path: src/Legacy/Lazada/Manager/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$r$#"
+			count: 1
+			path: src/Legacy/Orders/Factory/DateStockOut.php
+
+		-
+			message: "#^Access to private property \\$orderNum of parent class Orders\\\\Record\\.$#"
+			count: 1
+			path: src/Legacy/Orders/Lazada/AutoFilling.php
+
+		-
+			message: "#^Access to private property \\$trackingNum of parent class Orders\\\\Record\\.$#"
+			count: 1
+			path: src/Legacy/Orders/Lazada/AutoFilling.php
+
+		-
+			message: "#^Access to private property \\$voucher of parent class Orders\\\\Record\\.$#"
+			count: 1
+			path: src/Legacy/Orders/MonthlyRecord.php
+
+		-
+			message: "#^Undefined variable\\: \\$bankIn$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$billno$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$cash$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$id$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$platformChargesAmount$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingFee$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingFeeByCust$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$trackingNum$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$voucher$#"
+			count: 2
+			path: src/Legacy/Orders/MonthlyRecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$date$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$orderNum$#"
+			count: 2
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$sellingPrice$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingFee$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingFeeByCust$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingState$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$shippingWeight$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$sku$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$status$#"
+			count: 2
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$trackingNum$#"
+			count: 2
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$voucher$#"
+			count: 1
+			path: src/Legacy/Orders/RecordInserter.php
+
+		-
+			message: "#^Undefined variable\\: \\$dateStockOut$#"
+			count: 2
+			path: src/Legacy/Orders/RecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$trackingNum$#"
+			count: 2
+			path: src/Legacy/Orders/RecordUpdater.php
+
+		-
+			message: "#^Undefined variable\\: \\$itemCode$#"
+			count: 2
+			path: src/Legacy/Orders/SkuManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$sku$#"
+			count: 2
+			path: src/Legacy/Orders/SkuManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$description$#"
+			count: 1
+			path: src/Legacy/Product/ItemManager.php
+
+		-
+			message: "#^Undefined variable\\: \\$id$#"
+			count: 1
+			path: src/Legacy/Product/ItemManager.php
+
+		-
+			message: "#^Binary operation \"\\-\" between string and 1 results in an error\\.$#"
+			count: 1
+			path: src/Legacy/StockBookmark.php
+
+		-
+			message: "#^Binary operation \"\\-\" between string and 1 results in an error\\.$#"
+			count: 1
+			path: src/Legacy/StockManager.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$date\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$orderNum\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$sellingPrice\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$shippingFee\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$shippingState\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$shippingWeight\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$trackingNum\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$voucher\\.$#"
+			count: 1
+			path: src/OrderProcess/Shopee/ShopeeOrderProcess.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$date\\.$#"
+			count: 1
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$orderNum\\.$#"
+			count: 1
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$sellingPrice\\.$#"
+			count: 1
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$shippingFee\\.$#"
+			count: 1
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$shippingState\\.$#"
+			count: 1
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Access to private property Orders\\\\Record\\:\\:\\$trackingNum\\.$#"
+			count: 3
+			path: src/OrderProcess/TikTok/TikTok.php
+
+		-
+			message: "#^Result of function var_dump \\(void\\) is used\\.$#"
+			count: 1
+			path: src/console.php
+
+		-
+			message: "#^Result of function var_dump \\(void\\) is used\\.$#"
+			count: 2
+			path: src/global.function.php
+
+		-
+			message: "#^Variable \\$_exception might not be defined\\.$#"
+			count: 3
+			path: view/404.php
+
+		-
+			message: "#^Variable \\$_exception might not be defined\\.$#"
+			count: 3
+			path: view/500.php
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/Cashsale.html
+
+		-
+			message: "#^Variable \\$error might not be defined\\.$#"
+			count: 1
+			path: view/ItemManager.html
+
+		-
+			message: "#^Variable \\$errormsg might not be defined\\.$#"
+			count: 1
+			path: view/LzdFeeChecker.html
+
+		-
+			message: "#^Variable \\$tbl might not be defined\\.$#"
+			count: 1
+			path: view/LzdFeeChecker.html
+
+		-
+			message: "#^Variable \\$errorMsg might not be defined\\.$#"
+			count: 1
+			path: view/LzdItemManager.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/LzdItemManager.html
+
+		-
+			message: "#^Variable \\$pageFloor might not be defined\\.$#"
+			count: 1
+			path: view/RecordEditor.html
+
+		-
+			message: "#^Variable \\$recordEditor might not be defined\\.$#"
+			count: 1
+			path: view/RecordEditor.html
+
+		-
+			message: "#^Variable \\$error might not be defined\\.$#"
+			count: 1
+			path: view/RecordInserter.html
+
+		-
+			message: "#^Variable \\$errorMsg might not be defined\\.$#"
+			count: 1
+			path: view/RecordInserterCSV.html
+
+		-
+			message: "#^Variable \\$insertLogId might not be defined\\.$#"
+			count: 1
+			path: view/RecordInserterCSV.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/RecordInserterCSV.html
+
+		-
+			message: "#^Variable \\$error might not be defined\\.$#"
+			count: 1
+			path: view/RecordUpdater.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/RecordUpdater.html
+
+		-
+			message: "#^Variable \\$stockOutTable might not be defined\\.$#"
+			count: 1
+			path: view/RecordUpdater.html
+
+		-
+			message: "#^Variable \\$handler might not be defined\\.$#"
+			count: 4
+			path: view/ShippedItemReport.html
+
+		-
+			message: "#^Variable \\$errormsg might not be defined\\.$#"
+			count: 1
+			path: view/SkuManager.html
+
+		-
+			message: "#^Variable \\$_view_html_path might not be defined\\.$#"
+			count: 1
+			path: view/_layout.main.html
+
+		-
+			message: "#^Variable \\$Data might not be defined\\.$#"
+			count: 5
+			path: view/bigseller.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/bigseller.html
+
+		-
+			message: "#^Variable \\$handler might not be defined\\.$#"
+			count: 2
+			path: view/itemdetail.html.php
+
+		-
+			message: "#^Variable \\$Data might not be defined\\.$#"
+			count: 5
+			path: view/lazada.php
+
+		-
+			message: "#^Variable \\$dailyOrderFile_Sha1Hash might not be defined\\.$#"
+			count: 1
+			path: view/lazada.php
+
+		-
+			message: "#^Variable \\$jsonOrders might not be defined\\.$#"
+			count: 1
+			path: view/lazada.php
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/lazada.php
+
+		-
+			message: "#^Variable \\$Data might not be defined\\.$#"
+			count: 5
+			path: view/shopee.html
+
+		-
+			message: "#^Variable \\$dailyOrderFile_Sha1Hash might not be defined\\.$#"
+			count: 1
+			path: view/shopee.html
+
+		-
+			message: "#^Variable \\$jsonOrders might not be defined\\.$#"
+			count: 1
+			path: view/shopee.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/shopee.html
+
+		-
+			message: "#^Variable \\$Data might not be defined\\.$#"
+			count: 5
+			path: view/tiktok.html
+
+		-
+			message: "#^Variable \\$dailyOrderFile_Sha1Hash might not be defined\\.$#"
+			count: 1
+			path: view/tiktok.html
+
+		-
+			message: "#^Variable \\$jsonOrders might not be defined\\.$#"
+			count: 1
+			path: view/tiktok.html
+
+		-
+			message: "#^Variable \\$msg might not be defined\\.$#"
+			count: 1
+			path: view/tiktok.html

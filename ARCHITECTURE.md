@@ -57,7 +57,7 @@ upload  ->  App\Handler\<Platform>Handler (AbstractDailyOrderHandler)
 | `db/` | Database connection logic (`conn_staff.php`), seed dump and idempotent migrations (`upgrade.sql`). |
 | `js/` / `css/` | Frontend assets. |
 | `tests/` | PHPUnit suites (`Unit`, `Integration`, `Smoke`) and support classes – see [tests/README.md](tests/README.md). |
-| `compose.test.yml` | Throwaway test stack (PHP 7.4 + seeded MySQL 8) used by `composer run tests:docker`. |
+| `compose.test.yml` | Throwaway test stack (PHP 7.3 / 7.4 / 8.3 + seeded MySQL 8) used by `composer run tests:docker`, `tests:docker:74`, `tests:docker:73` and `tests:matrix`. |
 
 ## 3. Key Components & Conventions
 
@@ -73,7 +73,7 @@ upload  ->  App\Handler\<Platform>Handler (AbstractDailyOrderHandler)
 - **Files:** PascalCase for classes (`StockManager.php`), snake_case for some legacy handlers/views.
 - **Classes:** PascalCase.
 - **Methods/Variables:** camelCase (modern) or snake_case (legacy).
-- **PHP version:** everything must stay PHP 7.3-compatible (`composer run lint`).
+- **PHP version:** everything must run on PHP 7.3 (production) and PHP 8.3 (dev container) alike: `composer run check` and `composer run tests:matrix`.
 
 ## 4. Testing Strategy
 

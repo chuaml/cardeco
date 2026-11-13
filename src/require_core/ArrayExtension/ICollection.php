@@ -36,6 +36,7 @@ interface ICollection extends IteratorAggregate, ArrayAccess, JsonSerializable, 
     function offsetSet($offset, $value): void;
     function offsetExists($offset): bool;
     function offsetUnset($offset): void;
+    #[\ReturnTypeWillChange]
     function offsetGet($offset);
 
     // JsonSerializable

@@ -61,6 +61,7 @@ Use the global `$con` (mysqli) injected into the handler's constructor. Avoid us
 
 - Lock existing behaviour before changing it: pure classes -> `tests/Unit/`, database classes -> `tests/Integration/`
   (extend `test\Support\DatabaseTestCase`, prefix fixtures with `ZZTEST-`), page output -> golden/smoke tests.
-- Run `composer run tests:docker` (full suite on PHP 7.4 + seeded MySQL) and `composer run lint` (PHP 7.3 compatibility) before opening a PR.
+- Run `composer run tests:matrix` (full suite on PHP 7.3, 7.4 and 8.3 + seeded MySQL; a deprecation fails the run) and `composer run check` (PHP 7.3 - 8.3 lint, `php -l`, case audit, PHPStan) before opening a PR.
+- Production runs PHP 7.3, the dev container PHP 8.3: no PHP 7.4+ syntax, and the same behaviour on both (see AGENTS.md section 2, rules 1, 4 and 5).
 - A bug you cannot fix right away becomes a `@group known-bug` test describing the intended behaviour (excluded from the default run).
 - See [tests/README.md](tests/README.md) for details.

@@ -10,6 +10,7 @@ use mysqli_sql_exception;
 use Orders\Factory\MonthlyRecord as MonthlyRecordFactory;
 use Orders\MonthlyRecord;
 use Orders\PaymentCharges;
+use Orders\RecordEditor;
 use test\Support\DatabaseTestCase;
 
 /**
@@ -225,6 +226,28 @@ final class MonthlyRecordFactoryTest extends DatabaseTestCase
         $all = $list[0]->getAll();
         $this->assertNull($all['platformCharges']);
         $this->assertNull($all['platformChargesAmount']);
+    }
+
+    /**
+     * orders.platformCharges is a nullable column. strlen(null) (MonthlyRecord.php, setPlatformCharges) is deprecated
+     * since PHP 8.1, and the editor's number_format('') for the missing amount was a TypeError on PHP 8 but only a
+     * warning on PHP 7: the listing and the /RecordEditor table must come out the same on every version.
+     */
+    public function testGenerateRecords_NullPlatformCharges_LeavesPlatformChargesNullAndStillRendersInTheRecordEditor(): void
+    {
+        $this->insertOrder(['orderNum' => $this->orderNum('O1'), 'date' => $this->recentDate(), 'platformCharges' => null]);
+
+        $list = $this->mine($this->factory()->generateRecords(null));
+
+        $this->assertCount(1, $list);
+        $this->assertNull($list[0]->getPlatformCharges());
+
+        $editor = new RecordEditor();
+        $editor->setMonthlyRecords($list, 1);
+        $this->assertStringContainsString(
+            'name="r[' . $list[0]->recordId . '][platformChargesAmount]" value=""',
+            $editor->getTable()
+        );
     }
 
     /**

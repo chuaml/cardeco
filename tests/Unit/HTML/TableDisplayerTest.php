@@ -133,13 +133,32 @@ final class TableDisplayerTest extends TestCase
 
     public function testFormatCell_Null_RendersEmptyCell(): void
     {
+        // formatCell() casts to string: no "passing null to htmlspecialchars()" deprecation on PHP >= 8.1
         $table = new TableDisplayer([['v' => null]]);
 
-        $html = $this->withDeprecationsSilenced(function () use ($table) {
-            return $table->getTable();
-        });
+        $this->assertStringContainsString('<tbody><tr><td></td></tr></tbody>', $table->getTable());
+    }
 
-        $this->assertStringContainsString('<tbody><tr><td></td></tr></tbody>', $html);
+    public function testSetHead_Null_RendersAnEmptyTheadAndTheRawRows(): void
+    {
+        // setHead(?array) accepts null: array_keys(null) was a warning on PHP 7 (leaving no column keys) but a
+        // TypeError on PHP 8. Without keys the rows are imploded as they are - unescaped and unformatted.
+        $table = new TableDisplayer([['a' => 'ZZTEST-001', 'b' => '<b>2</b>']]);
+        $table->setHead(null);
+
+        $this->assertSame(
+            '<table><thead></thead><tbody><tr><td>ZZTEST-001</td><td><b>2</b></td></tr></tbody></table>',
+            $table->getTable()
+        );
+    }
+
+    public function testSetAttributes_Null_RendersTheTableTagWithoutAttributes(): void
+    {
+        // setAttributes(?string) accepts null; getTable() measures the attribute string with strlen()
+        $table = new TableDisplayer([['sku' => 'ZZTEST-001']], 'zz-table');
+        $table->setAttributes(null);
+
+        $this->assertStringStartsWith('<table><thead>', $table->getTable());
     }
 
     public function testSetAttributes_RawAttributeString_IsPlacedInsideTableTag(): void
@@ -243,21 +262,5 @@ final class TableDisplayerTest extends TestCase
         };
 
         $this->assertStringContainsString('<tbody><tr><td data-col="sku">zztest-001</td></tr></tbody>', $table->getTable());
-    }
-
-    /**
-     * @param callable(): string $fn
-     */
-    private function withDeprecationsSilenced(callable $fn): string
-    {
-        // htmlspecialchars(null) is deprecated on PHP >= 8.1 but still returns ''
-        set_error_handler(function () {
-            return true;
-        }, E_DEPRECATED);
-        try {
-            return $fn();
-        } finally {
-            restore_error_handler();
-        }
     }
 }

@@ -5,7 +5,8 @@
     Suites
       unit         pure tests: no database, no ext-zip  -> also runs on the host (`composer run tests:unit`)
       integration  needs MYSQL_* env + ext-zip          -> run via `composer run tests:docker`
-      smoke        needs APP_BASE_URL (Apache inside the test container)
+      smoke        needs APP_BASE_URL (Apache inside the test container); the tests that render or change
+                   database rows also need MYSQL_*
 
     Groups
       known-bug    tests that describe the INTENDED behaviour of a documented bug; excluded by default,
@@ -16,7 +17,7 @@
          xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          bootstrap="tests/bootstrap.php"
          colors="true"
-         convertDeprecationsToExceptions="false"
+         convertDeprecationsToExceptions="true"
          cacheResultFile=".phpunit.result.cache">
     <testsuites>
         <testsuite name="unit">

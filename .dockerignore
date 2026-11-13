@@ -15,6 +15,12 @@ db/dump/*
 db/dump-dev/*
 config.dev
 tests
+# dev-only tools, their configuration and their output (lint / audit scripts, git hooks, PHPStan, audit report)
+dev.tool
+.githooks
+phpstan*.neon
+analysis
+audit-php83-blockers.txt
 
 
 **/.classpath

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace test\Smoke;
 
 use PHPUnit\Framework\TestCase;
+use test\Support\HttpRequests;
 
 /**
  * HTTP smoke test over every page linked from the navigation (all four routing tiers).
@@ -15,6 +16,8 @@ use PHPUnit\Framework\TestCase;
  */
 final class RouteSmokeTest extends TestCase
 {
+    use HttpRequests;
+
     /** Routes linked from inc/html/nav.html plus the default route. */
     const NAV_ROUTES = [
         '/',
@@ -41,17 +44,6 @@ final class RouteSmokeTest extends TestCase
         '/CashSaleSqlImport',
         '/ShippedItemReport',
         '/fee_statement',
-    ];
-
-    /** Fragments that indicate PHP blew up while rendering (display_errors is on in the dev image). */
-    const ERROR_MARKERS = [
-        'Fatal error',
-        'Parse error',
-        'Warning:',
-        'Notice:',
-        'Deprecated:',
-        'Uncaught',
-        'Stack trace:',
     ];
 
     /** @var string */
@@ -85,14 +77,9 @@ final class RouteSmokeTest extends TestCase
     {
         $response = $this->get($route);
 
+        // display_errors is on in the dev/test image; Apache prints the messages as HTML (<b>Warning</b>: ...)
+        $this->assertNoPhpErrors($response['body'], "GET {$route}");
         $this->assertSame(200, $response['status'], "GET {$route} returned HTTP {$response['status']}");
-        foreach (self::ERROR_MARKERS as $marker) {
-            $this->assertStringNotContainsString(
-                $marker,
-                $response['body'],
-                "GET {$route}: response body contains '{$marker}'"
-            );
-        }
         $this->assertStringContainsString('<nav', $response['body'], "GET {$route}: layout (nav) missing");
     }
 

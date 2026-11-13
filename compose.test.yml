@@ -1,16 +1,45 @@
 ## Disposable test stack - never touches the dev database (cardeco_dev) or its volume.
 ##
-##   docker compose -f compose.test.yml run --rm phpunit [phpunit args]   # == composer run tests:docker
-##   docker compose -f compose.test.yml down -v                           # == composer run tests:docker:down
+##   docker compose -f compose.test.yml run --rm phpunit   [phpunit args]   # PHP 8.3 == composer run tests:docker
+##   docker compose -f compose.test.yml run --rm phpunit74 [phpunit args]   # PHP 7.4 == composer run tests:docker:74
+##   docker compose -f compose.test.yml run --rm phpunit73 [phpunit args]   # PHP 7.3 == composer run tests:docker:73
+##   docker compose -f compose.test.yml down -v                             # == composer run tests:docker:down
 ##
 ## - mysql-test : mysql:8.0.41 on tmpfs, database `cardeco_test`, seeded from the SAME files the dev
 ##                stack uses (db/cardeco.sql.gz + db/upgrade.sql). Fresh on every `up`.
-## - phpunit    : PHP 7.4 image built from the existing Dockerfile `dev_app` target (mysqli/zip/gd/xdebug),
-##                runs ./dev.tool/run-tests.sh which installs deps, starts Apache (for tests/Smoke) and
-##                exec's PHPUnit so the container exit code is the PHPUnit exit code.
+## - phpunit*   : one service per PHP runtime, all built from the Dockerfile `dev_app` target
+##                (mysqli/zip/gd/xdebug) with a different PHP_VERSION build arg:
+##                  phpunit    PHP 8.3  the dev container runtime
+##                  phpunit74  PHP 7.4  the staging / planned production container image
+##                  phpunit73  PHP 7.3  the WAMP production floor
+##                Each runs ./dev.tool/run-tests.sh which installs deps, starts Apache (for tests/Smoke) and
+##                runs PHPUnit so the container exit code is the PHPUnit exit code.
+##                Every runtime has its own vendor volume; the packages are identical (composer.json pins
+##                config.platform.php to the production floor), only the installing PHP differs.
+
+x-phpunit: &phpunit
+  depends_on:
+    mysql-test:
+      condition: service_healthy
+  working_dir: /var/www/html
+  environment:
+    IS_PRODUCTION: 0
+    MYSQL_HOST: mysql-test
+    MYSQL_USER: cardeco-app
+    MYSQL_PASSWORD: cardeco-app
+    MYSQL_DB: cardeco_test
+    XDEBUG_MODE: "off"
+    APP_BASE_URL: http://localhost  # Apache inside this container, used by tests/Smoke
+    COMPOSER_ALLOW_SUPERUSER: 1
+  # `docker compose run -e CARDECO_RUN=check|lint-syntax ...` runs the static gates instead of PHPUnit
+  entrypoint: ["sh", "./dev.tool/run-tests.sh"]
+
 services:
   mysql-test:
     image: mysql:8.0.41
+    # PHP < 7.4 (mysqlnd) cannot authenticate against MySQL 8's default caching_sha2_password plugin:
+    # "The server requested authentication method unknown to the client". Every PHP version can use this one.
+    command: ["--default-authentication-plugin=mysql_native_password"]
     tmpfs:
       - /var/lib/mysql  # throw-away storage; re-seeded on every `up`
     environment:
@@ -29,27 +58,40 @@ services:
       retries: 36
       start_period: 20s
 
-  phpunit:
+  phpunit:  # PHP 8.3 + mysqli/zip/gd, identical to the dev container
+    <<: *phpunit
     build:
       dockerfile: ./Dockerfile
-      target: dev_app  # PHP 7.4 + mysqli/zip/gd, identical to the dev container
-    depends_on:
-      mysql-test:
-        condition: service_healthy
-    working_dir: /var/www/html
+      target: dev_app
+      args:
+        PHP_VERSION: "8.3"
     volumes:
       - ./:/var/www/html
-      - test_dependencies_php:/var/www/html/vendor  # keeps the host (PHP 8.3) vendor/ out of the container
-    environment:
-      IS_PRODUCTION: 0
-      MYSQL_HOST: mysql-test
-      MYSQL_USER: cardeco-app
-      MYSQL_PASSWORD: cardeco-app
-      MYSQL_DB: cardeco_test
-      XDEBUG_MODE: "off"
-      APP_BASE_URL: http://localhost  # Apache inside this container, used by tests/Smoke
-      COMPOSER_ALLOW_SUPERUSER: 1
-    entrypoint: ["sh", "./dev.tool/run-tests.sh"]
+      - test_vendor_php83:/var/www/html/vendor  # keeps the host vendor/ out of the container
+
+  phpunit74:  # PHP 7.4, the runtime of the staging / planned production image (Dockerfile default)
+    <<: *phpunit
+    build:
+      dockerfile: ./Dockerfile
+      target: dev_app
+      args:
+        PHP_VERSION: "7.4"
+    volumes:
+      - ./:/var/www/html
+      - test_dependencies_php:/var/www/html/vendor
+
+  phpunit73:  # PHP 7.3, the WAMP production floor
+    <<: *phpunit
+    build:
+      dockerfile: ./Dockerfile
+      target: dev_app
+      args:
+        PHP_VERSION: "7.3"
+    volumes:
+      - ./:/var/www/html
+      - test_vendor_php73:/var/www/html/vendor
 
 volumes:
+  test_vendor_php83:
   test_dependencies_php:
+  test_vendor_php73:

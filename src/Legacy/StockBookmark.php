@@ -71,7 +71,7 @@ class StockBookmark extends StockManager{
 		$current_page = mysqli_real_escape_string($this->con, $current_page);
 		$limit_result = mysqli_real_escape_string($this->con, $limit_result);
 		
-		$query_arg = strlen(trim($this->query_arg)) === 0 ? '' : 'AND ' .$this->query_arg; 
+		$query_arg = strlen(trim((string) $this->query_arg)) === 0 ? '' : 'AND ' .$this->query_arg; 
 		
 		$sql = "SELECT COUNT(stock_items.id)AS count_id FROM stock_items 
 		INNER JOIN bookmarks_items ON stock_items.id = bookmarks_items.item_id 

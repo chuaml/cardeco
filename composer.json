@@ -46,11 +46,63 @@
             "Composer\\Config::disableProcessTimeout",
             "docker compose -f compose.test.yml run --rm phpunit"
         ],
+        "tests:docker:74": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm phpunit74"
+        ],
+        "tests:docker:73": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm phpunit73"
+        ],
+        "tests:matrix": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm phpunit73",
+            "docker compose -f compose.test.yml run --rm phpunit74",
+            "docker compose -f compose.test.yml run --rm phpunit"
+        ],
         "tests:docker:down": [
             "docker compose -f compose.test.yml down -v"
         ],
         "lint": [
             "./vendor/bin/phpcs --standard=phpcs.xml.dist"
+        ],
+        "lint:syntax": [
+            "@php dev.tool/lint-syntax.php"
+        ],
+        "lint:php73": [
+            "php7.3 dev.tool/lint-syntax.php --with-vendor"
+        ],
+        "lint:docker:73": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm -e CARDECO_RUN=lint-syntax phpunit73"
+        ],
+        "lint:case": [
+            "@php dev.tool/audit-case.php"
+        ],
+        "stan": [
+            "./vendor/bin/phpstan analyse -c phpstan.neon --no-progress --memory-limit=1G"
+        ],
+        "stan:83": [
+            "./vendor/bin/phpstan analyse -c phpstan-83.neon --no-progress --memory-limit=1G"
+        ],
+        "audit:php83": [
+            "@php dev.tool/audit-php83.php"
+        ],
+        "audit:docker": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm -e CARDECO_RUN=audit phpunit"
+        ],
+        "check": [
+            "Composer\\Config::disableProcessTimeout",
+            "@lint",
+            "@lint:syntax",
+            "@lint:case",
+            "@stan",
+            "@stan:83"
+        ],
+        "check:docker": [
+            "Composer\\Config::disableProcessTimeout",
+            "docker compose -f compose.test.yml run --rm -e CARDECO_RUN=check phpunit"
         ],
         "debug-tests": [
             "XDEBUG_MODE=off composer dumpautoload --no-interaction",
@@ -66,11 +118,24 @@
         ]
     },
     "require": {
-        "phpoffice/phpspreadsheet": "^1.29"
+        "php": ">=7.3",
+        "phpoffice/phpspreadsheet": "^1.25"
     },
     "require-dev": {
-        "phpunit/phpunit": "9.5",
-        "squizlabs/php_codesniffer": "^3.7",
-        "phpcompatibility/php-compatibility": "^9.3"
+        "phpcompatibility/php-compatibility": "^10.0@alpha",
+        "phpstan/phpstan": "^1.12",
+        "phpunit/phpunit": "^9.6",
+        "squizlabs/php_codesniffer": "^3.13"
+    },
+    "config": {
+        "platform": {
+            "php": "7.3.33"
+        },
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "audit": {
+            "block-insecure": false
+        }
     }
 }

@@ -91,7 +91,7 @@ class CSV_Table_Handler{
 	private function isEmptyLine(array $row){
 		$empty_col = 0;
 		foreach($row as $col){
-			if(strlen(trim($col)) <= 0){
+			if(strlen(trim((string) $col)) <= 0){
 				++$empty_col;
 			}
 		}

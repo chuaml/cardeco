@@ -6,9 +6,11 @@ The authoritative reference is [AGENTS.md](AGENTS.md); the test harness is descr
 ## Common Tasks
 
 ### Running Tests
-Full suite on the real runtime (PHP 7.4 + a throwaway, seeded MySQL 8 – never touches the dev database):
+Full suite on the real runtimes (a throwaway, seeded MySQL 8 – never touches the dev database):
 ```bash
-composer run tests:docker                       # everything; first run builds the image
+composer run tests:matrix                       # PHP 7.3 (production floor), 7.4 (staging image), 8.3 (dev container)
+composer run tests:docker                       # PHP 8.3 only; first run builds the image
+composer run tests:docker:73                    # PHP 7.3 only
 composer run tests:docker -- --testsuite unit   # any PHPUnit argument is passed through
 composer run tests:docker -- --filter Golden
 composer run tests:docker:down                  # tear the throwaway database down
@@ -26,9 +28,14 @@ composer run tests:integration
 composer run reload           # dump-autoload + tests
 ```
 
-PHP 7.3 compatibility guard (production still runs 7.3):
+Dual-runtime guards (production runs PHP 7.3, the dev container PHP 8.3):
 ```bash
-composer run lint
+composer run check            # lint + lint:syntax + lint:case + stan + stan:83
+composer run lint             # PHPCompatibility 7.3 - 8.3 (phpcs.xml.dist)
+composer run lint:php73       # real `php7.3 -l` inside the dev container
+composer run check:docker     # the static gates from the host, in the PHP 8.3 test image
+composer run lint:docker:73   # real `php -l` from the host, in the PHP 7.3 test image
+composer run audit:docker     # writes audit-php83-blockers.txt (PHPCompatibility report) from the host
 ```
 
 Documented-but-unfixed bugs are tests in the `known-bug` group (excluded by default):
@@ -64,7 +71,7 @@ composer run serve
 - **Global Functions:** Core helper functions are located in `./src/global.function.php`.
 - **Entry Point:** The primary entry point for all web requests is `router.php`; routing rules live in `src/Routing/RouteResolver.php`.
 - **New pages:** implement `App\Handler\<Name>Handler` in `src/Handler/` (see `AbstractDailyOrderHandler` for the upload pattern); do not add new `request_handler/*.php` scripts.
-- **Tests:** `tests/Unit`, `tests/Integration` (extend `test\Support\DatabaseTestCase`, fixtures prefixed `ZZTEST-`), `tests/Smoke`; PHPUnit 9.5, config in `phpunit.xml.dist`.
+- **Tests:** `tests/Unit`, `tests/Integration` (extend `test\Support\DatabaseTestCase`, fixtures prefixed `ZZTEST-`), `tests/Smoke`; PHPUnit 9.6, config in `phpunit.xml.dist` (deprecations fail the run).
 
 ## Working with Git
 - **Configuration Files:** Avoid modifying or committing files in `config.dev/`. They should be kept as `assume-unchanged` locally.

@@ -34,6 +34,23 @@ changes should be applied to branch accordingly:
 2. `staging` for UAT and playground
 3. `main` for live production
 
+## PHP versions: one code base, two runtimes
+
+| where | PHP | how |
+| :--- | :--- | :--- |
+| dev container | 8.3 (and `php7.3` as a second CLI) | `compose.yml` build args `PHP_VERSION=8.3`, `FLOOR_PHP_CLI=7.3` |
+| staging / production image | 7.4 | `Dockerfile` default, `setup.staging.bat` / `setup.production.bat` unchanged |
+| live production (WAMP) | 7.3 | the floor: `composer.json` `config.platform.php = 7.3.33` |
+
+- after pulling this change: `Dev Containers: Rebuild and Reopen in Container` (the image changed)
+- every line must work on PHP 7.3 **and** PHP 8.3; before merging to `staging` / `main` run
+    - `composer run check` (inside the container) - PHP 7.3 - 8.3 lint, `php -l`, case audit, PHPStan
+    - `composer run lint:php73` (inside the container) - real PHP 7.3 syntax check
+    - `composer run tests:matrix` (on the host) - full test suite on PHP 7.3, 7.4 and 8.3
+- optional pre-commit hook: `git config core.hooksPath .githooks`
+- on the WAMP host after pulling: `composer install --no-dev` then `composer check-platform-reqs --no-dev`
+- details: `AGENTS.md` section 2 (rules 1, 4, 5) and section 6
+
 
 
 # Project note

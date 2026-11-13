@@ -160,7 +160,8 @@ class MonthlyRecord implements RecordFactory{
 
     private function setPlatformCharges(\Orders\MonthlyRecord $MonthlyRecord, array &$r):void{
         $platformCharges = &$r['platformCharges'];
-        if(strlen($platformCharges) === 0){return;}
+        // orders.platformCharges is nullable; strlen(null) is deprecated since PHP 8.1
+        if(strlen((string) $platformCharges) === 0){return;}
         $amount = (double)$r['platformChargesAmount'];
         // resolve through the single registry so every PlatformCharges subclass (incl. *_Eplus) can be read back
         try{

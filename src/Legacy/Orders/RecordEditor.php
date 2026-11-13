@@ -26,7 +26,7 @@ class RecordEditor extends TableDisplayer
                 if (is_float($v) === true) {
                     $cleanRecord[$fieldName] = $v;
                 } else {
-                    $cleanRecord[$fieldName] = \htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+                    $cleanRecord[$fieldName] = \htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8');
                 }
             }
             $this->records[] = $cleanRecord;
@@ -51,28 +51,42 @@ class RecordEditor extends TableDisplayer
 
             $r['shippingFee'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][shippingFee]" value="'
-                . number_format($r['shippingFee'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['shippingFee']) . '" maxlength="16" class="money" readonly/>';
 
             $r['shippingFeeByCust'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][shippingFeeByCust]" value="'
-                . number_format($r['shippingFeeByCust'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['shippingFeeByCust']) . '" maxlength="16" class="money" readonly/>';
 
             $r['voucher'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][voucher]" value="'
-                . number_format($r['voucher'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['voucher']) . '" maxlength="16" class="money" readonly/>';
 
             $r['platformChargesAmount'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][platformChargesAmount]" value="'
-                . number_format($r['platformChargesAmount'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['platformChargesAmount']) . '" maxlength="16" class="money" readonly/>';
 
             $r['cash'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][cash]" value="'
-                . number_format($r['cash'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['cash']) . '" maxlength="16" class="money" readonly/>';
 
             $r['bankIn'] =
                 '<input inputmode="numeric" pattern="[0-9,]+(?:\.[0-9]{1,2})?" name="r[' . $recordId . '][bankIn]" value="'
-                . number_format($r['bankIn'], 2, '.', ',') . '" maxlength="16" class="money" readonly/>';
+                . self::moneyValue($r['bankIn']) . '" maxlength="16" class="money" readonly/>';
         }
+    }
+
+    /**
+     * The value="" of a money <input>: two decimals, or '' when the field holds no number.
+     *
+     * A record without platform charges gets here with '' (its null amount went through htmlspecialchars()).
+     * number_format('') is only a warning on PHP 7 - which then rendered value="" - but a TypeError on PHP 8,
+     * so the empty case is explicit and both render the same cell.
+     *
+     * @param mixed $value a float, or the escaped string of a non-float field
+     */
+    private static function moneyValue($value): string
+    {
+        return is_numeric($value) ? number_format((float) $value, 2, '.', ',') : '';
     }
 
     protected function formatCell($value, $ofColumnIndex): string

@@ -1,20 +1,30 @@
 <?xml version="1.0"?>
 <!--
-    PHP 7.3 compatibility guard (AGENTS.md section 2, rule 1): live production still runs PHP 7.3 on WAMP,
-    while the Docker stack runs 7.4. `composer run lint` fails on any syntax/function that 7.3 does not have.
+    Dual-runtime compatibility guard (AGENTS.md section 2, rule 1; TODO.md 1.1 / 1.2):
+    live production runs PHP 7.3 on WAMP, the dev container runs PHP 8.3, and every line must work on both.
+    `composer run lint` fails on any syntax/function that 7.3 does not have AND on anything that was
+    removed or deprecated up to 8.3.
 
-    testVersion "7.3-" = compatible with 7.3 AND every later version (also flags things removed in 8.x).
+    testVersion "7.3-8.3" = compatible with every version from 7.3 to 8.3.
+    An open-ended "7.3-" additionally reports PHP 8.4 / 8.5 deprecations ((double) casts, fgetcsv $escape, ...).
+
+    PHPCompatibility 9.3.5 (the last stable release, 2019) knows nothing about PHP 8, hence 10.0.0-alpha;
+    it needs PHPCSUtils, so both paths are registered here.
 -->
-<ruleset name="cardeco-php73">
-    <description>Fail on PHP syntax or functions that are not available in PHP 7.3.</description>
+<ruleset name="cardeco-php73-83">
+    <description>Fail on PHP syntax or functions that do not work on every PHP version from 7.3 to 8.3.</description>
 
-    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility"/>
-    <config name="testVersion" value="7.3-"/>
+    <config name="installed_paths" value="vendor/phpcompatibility/php-compatibility,vendor/phpcsstandards/phpcsutils"/>
+    <config name="testVersion" value="7.3-8.3"/>
 
     <rule ref="PHPCompatibility"/>
 
-    <arg name="extensions" value="php"/>
-    <arg name="parallel" value="4"/>
+    <!-- *.html is scanned because most views embed PHP; the ones that do not are not a finding -->
+    <rule ref="Internal.NoCodeFound">
+        <severity>0</severity>
+    </rule>
+
+    <arg name="extensions" value="php,html"/>
     <arg value="p"/>
 
     <file>src</file>
@@ -23,10 +33,15 @@
     <file>process</file>
     <file>ajax</file>
     <file>db</file>
+    <file>view</file>
+    <file>inc</file>
+    <file>dev.tool</file>
     <file>tests</file>
     <file>router.php</file>
     <file>index.php</file>
 
     <exclude-pattern>*/vendor/*</exclude-pattern>
     <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <!-- expected-output fixtures and golden files: markup only -->
+    <exclude-pattern>*/tests/*\.html$</exclude-pattern>
 </ruleset>

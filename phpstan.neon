@@ -1,0 +1,31 @@
+# PHPStan profile 1 of 2 (TODO.md 1.3): analyse the code as PHP 7.3 - the production floor.
+#   composer run stan        this file            phpVersion 70300  (features newer than 7.3 are errors)
+#   composer run stan:83     phpstan-83.neon      phpVersion 80300  (changed internal signatures, tentative return types)
+#
+# Level 2. The baseline holds the findings that existed when the gate was introduced (almost all of them are
+# variables that request_handler/, process/, legacy_pages/, ajax/ and view/ files receive from the script that
+# includes them: $con from db/conn_staff.php, view data from router.php). The gate therefore fails on NEW findings.
+# Regenerate deliberately:  vendor/bin/phpstan analyse -c phpstan.neon --generate-baseline phpstan-baseline.neon
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 2
+    phpVersion: 70300
+    paths:
+        - src
+        - request_handler
+        - legacy_pages
+        - process
+        - ajax
+        - db
+        - view
+        - inc
+        - router.php
+        - index.php
+    # most views are *.html files with embedded PHP
+    fileExtensions:
+        - php
+        - html
+    # /analysis is gitignored; one cache per profile so the two runs do not invalidate each other
+    tmpDir: analysis/phpstan-73
